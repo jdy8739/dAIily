@@ -55,13 +55,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 /shared/                 # Feature shared code (ui, types, config, api)
 ```
 
-## Database
+## Database & Auth
 
 ### PostgreSQL + Prisma
 - Use Prisma client in Server Actions and Server Components only
 - Schema at `prisma/schema.prisma`
 - Use Prisma transactions for complex operations
 - Always use generated Prisma types
+
+### Authentication
+- **OAuth Providers**: Google and GitHub authentication
+- **Custom Auth Logic**: Implement own session management and user handling
+- **Server Actions**: Handle auth flows in Server Actions, not API routes
+- **Session Storage**: Use secure HTTP-only cookies for session tokens
 
 ## Advanced Rules
 
