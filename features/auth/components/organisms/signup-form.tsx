@@ -8,6 +8,8 @@ import { signupSchema, type SignupFormData } from "../../schemas";
 import { signupAction } from "../../lib/actions";
 import Input from "../../../../components/atoms/input";
 import Button from "../../../../components/atoms/button";
+import GoogleSignIn from "../../../../components/atoms/google-sign-in";
+import GitHubSignIn from "../../../../components/atoms/github-sign-in";
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
@@ -39,20 +41,37 @@ const SignupForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white py-8 px-4 shadow-lg rounded-lg sm:px-10">
+      <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg rounded-lg sm:px-10">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center">
             Create your account
           </h2>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <GoogleSignIn callbackUrl="/dashboard" text="Sign up with Google" />
+            <GitHubSignIn callbackUrl="/dashboard" text="Sign up with GitHub" />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                Or create account with email
+              </span>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <Input
               {...register("firstName")}
@@ -95,7 +114,7 @@ const SignupForm = () => {
             error={errors.confirmPassword?.message}
           />
 
-          <div className="text-xs text-gray-600">
+          <div className="text-xs text-gray-600 dark:text-gray-400">
             <p>Password must contain:</p>
             <ul className="list-disc list-inside mt-1 space-y-1">
               <li>At least 8 characters</li>
@@ -115,15 +134,18 @@ const SignupForm = () => {
           </Button>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600">Already have an account? </span>
+            <span className="text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
+            </span>
             <Link
               href="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
             >
               Sign in
             </Link>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
