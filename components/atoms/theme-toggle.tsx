@@ -31,11 +31,6 @@ const ThemeToggle = () => {
 
     console.log("Setting theme to:", newTheme);
     setTheme(newTheme);
-
-    // Force a small delay to see if the change takes effect
-    setTimeout(() => {
-      console.log("Theme after change:", theme);
-    }, 100);
   };
 
   const getIcon = () => {
@@ -104,6 +99,9 @@ const ThemeToggle = () => {
     }
   };
 
+  const { resolvedTheme } = useTheme();
+  const currentTheme = mounted ? resolvedTheme : 'light';
+
   return (
     <button
       onClick={handleThemeChange}
@@ -111,7 +109,11 @@ const ThemeToggle = () => {
         console.log("Mouse down on theme toggle");
         e.preventDefault();
       }}
-      className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 cursor-pointer"
+      className={`inline-flex items-center justify-center w-9 h-9 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${
+        currentTheme === 'dark'
+          ? 'border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 focus:ring-offset-gray-800'
+          : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 focus:ring-offset-white'
+      }`}
       title={getLabel()}
       aria-label={getLabel()}
       type="button"

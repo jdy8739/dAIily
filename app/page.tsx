@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 
 const Home = () => {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
+
+  console.log("Current theme:", theme, "Resolved theme:", resolvedTheme);
 
   useEffect(() => {
     setMounted(true);
@@ -29,9 +31,15 @@ const Home = () => {
         Welcome to the professional growth tracking app!
       </p>
       <div className="space-y-4">
-        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-600">
+        <div className={`p-4 rounded-lg border-2 ${
+          (mounted ? resolvedTheme : 'light') === 'dark'
+            ? 'bg-gray-800 border-gray-600'
+            : 'bg-gray-100 border-gray-300'
+        }`}>
           <p className="font-semibold">Theme Test Box</p>
-          <p>Current theme: <span className="font-mono">{theme}</span></p>
+          <p>
+            Current theme: <span className="font-mono">{theme}</span>
+          </p>
           <p>Light mode: gray-100 background</p>
           <p>Dark mode: gray-800 background</p>
         </div>
