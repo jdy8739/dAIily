@@ -39,6 +39,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Const Assertions**: Use `as const` for immutable objects and arrays
 - **No Default Props**: Use modern default parameter syntax instead of defaultProps
 
+### Responsive Design Rules
+
+- **Mobile First**: Design for mobile first, then scale up using Tailwind breakpoints
+- **Breakpoints**: Use standard Tailwind breakpoints - `sm:` (640px+), `md:` (768px+), `lg:` (1024px+), `xl:` (1280px+)
+- **Mobile (< 640px)**: Single column, touch-friendly spacing, collapsible navigation
+- **Tablet (640px - 1023px)**: Two columns where appropriate, compact layouts
+- **Desktop (1024px+)**: Multi-column layouts, hover states, larger spacing
+
 ## File Structure
 
 ### Root Structure
