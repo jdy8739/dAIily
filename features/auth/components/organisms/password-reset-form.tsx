@@ -43,26 +43,26 @@ const PasswordResetForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg rounded-lg sm:px-10">
+      <div className="bg-background py-8 px-4 shadow-lg rounded-lg sm:px-10 border border-border">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center">
+          <h2 className="text-2xl font-bold text-foreground text-center">
             Reset your password
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-center">
+          <p className="mt-2 text-sm text-muted-foreground text-center">
             Enter your email address and we'll send you instructions to reset
             your password.
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <p className="text-sm text-destructive">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
-            <p className="text-sm text-green-600 dark:text-green-400">
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+            <p className="text-sm text-green-600">
               {success}
             </p>
           </div>
@@ -91,18 +91,18 @@ const PasswordResetForm = () => {
             <div>
               <Link
                 href="/login"
-                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                className="font-medium text-primary hover:text-primary/80"
               >
                 Back to sign in
               </Link>
             </div>
             <div>
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="text-muted-foreground">
                 Don't have an account?{" "}
               </span>
               <Link
                 href="/signup"
-                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                className="font-medium text-primary hover:text-primary/80"
               >
                 Sign up
               </Link>

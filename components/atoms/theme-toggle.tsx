@@ -13,7 +13,7 @@ const ThemeToggle = () => {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-md border border-gray-200 bg-gray-100 animate-pulse" />
+      <div className="w-9 h-9 rounded-md border border-border bg-muted animate-pulse" />
     );
   }
 
@@ -108,11 +108,7 @@ const ThemeToggle = () => {
         console.log("Mouse down on theme toggle");
         e.preventDefault();
       }}
-      className={`inline-flex items-center justify-center w-9 h-9 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${
-        currentTheme === 'dark'
-          ? 'border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 focus:ring-offset-gray-800'
-          : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 focus:ring-offset-white'
-      }`}
+      className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background cursor-pointer"
       title={getLabel()}
       aria-label={getLabel()}
       type="button"

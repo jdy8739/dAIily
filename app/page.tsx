@@ -26,34 +26,30 @@ const Home = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-bold mb-4">Daiily</h1>
-      <p className="text-lg mb-4">
+      <h1 className="text-4xl font-bold mb-4 text-foreground">Daiily</h1>
+      <p className="text-lg mb-4 text-muted-foreground">
         Welcome to the professional growth tracking app!
       </p>
       <div className="space-y-4">
-        <div className={`p-4 rounded-lg border-2 ${
-          (mounted ? resolvedTheme : 'light') === 'dark'
-            ? 'bg-gray-800 border-gray-600'
-            : 'bg-gray-100 border-gray-300'
-        }`}>
-          <p className="font-semibold">Theme Test Box</p>
-          <p>
-            Current theme: <span className="font-mono">{theme}</span>
+        <div className="p-4 rounded-lg border bg-card border-border">
+          <p className="font-semibold text-foreground">Theme Test Box</p>
+          <p className="text-muted-foreground">
+            Current theme: <span className="font-mono text-foreground">{theme}</span>
           </p>
-          <p>Light mode: gray-100 background</p>
-          <p>Dark mode: gray-800 background</p>
+          <p className="text-muted-foreground">Light mode: muted background</p>
+          <p className="text-muted-foreground">Dark mode: muted background</p>
         </div>
 
         <div className="flex space-x-4">
           <button
             onClick={testThemeChange}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
           >
             Test Theme Toggle (Light/Dark)
           </button>
           <button
             onClick={() => setTheme("system")}
-            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90"
           >
             Set System Theme
           </button>
@@ -62,13 +58,13 @@ const Home = () => {
         <div className="flex space-x-4">
           <a
             href="/login"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90"
           >
             Go to Login
           </a>
           <a
             href="/signup"
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+            className="px-4 py-2 bg-success text-success-foreground rounded-md hover:bg-success/90"
           >
             Go to Signup
           </a>

@@ -41,16 +41,16 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-lg rounded-lg sm:px-10">
+      <div className="bg-card py-8 px-4 shadow-lg rounded-lg sm:px-10 border border-primary/30">
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center">
+          <h2 className="text-2xl font-bold text-foreground text-center">
             Sign in to your account
           </h2>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <p className="text-sm text-destructive">{error}</p>
           </div>
         )}
 
@@ -62,10 +62,10 @@ const LoginForm = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+              <span className="px-2 bg-card text-muted-foreground">
                 Or continue with email
               </span>
             </div>
@@ -92,7 +92,7 @@ const LoginForm = () => {
               <div className="text-sm">
                 <Link
                   href="/password-reset"
-                  className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                  className="font-medium text-primary hover:text-primary/80"
                 >
                   Forgot your password?
                 </Link>
@@ -109,12 +109,12 @@ const LoginForm = () => {
             </Button>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600 dark:text-gray-400">
+              <span className="text-muted-foreground">
                 Don't have an account?{" "}
               </span>
               <Link
                 href="/signup"
-                className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                className="font-medium text-primary hover:text-primary/80"
               >
                 Sign up
               </Link>

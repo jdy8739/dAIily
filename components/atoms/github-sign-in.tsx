@@ -26,7 +26,7 @@ const GitHubSignIn = ({ callbackUrl = "/dashboard", text = "Continue with GitHub
     <button
       onClick={handleGitHubSignIn}
       disabled={loading}
-      className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="w-full flex items-center justify-center px-4 py-2 border border-border rounded-md shadow-sm text-sm font-medium text-foreground bg-background hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
       {loading ? (
         <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />

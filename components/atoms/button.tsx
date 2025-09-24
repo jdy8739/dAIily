@@ -17,17 +17,17 @@ const Button = ({
   ...props
 }: ButtonProps) => {
   const baseClasses =
-    "font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
+    "font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer";
 
   const variantClasses = {
     primary:
-      "bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-blue-500",
+      "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-ring",
     secondary:
-      "bg-gray-600 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 focus:ring-gray-500",
+      "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-ring",
     outline:
-      "border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-blue-500",
+      "border border-border text-foreground bg-background hover:bg-accent hover:text-accent-foreground focus:ring-ring",
     ai:
-      "border border-purple-300 dark:border-purple-600 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 focus:ring-purple-500",
+      "border border-primary/30 text-primary bg-primary/10 hover:bg-primary/20 focus:ring-ring",
   };
 
   const sizeClasses = {

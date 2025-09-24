@@ -39,6 +39,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Const Assertions**: Use `as const` for immutable objects and arrays
 - **No Default Props**: Use modern default parameter syntax instead of defaultProps
 
+### Theme & Styling Rules
+
+- **CSS Variables Only**: Always use semantic CSS variables for colors, never hardcoded colors
+- **Semantic Classes**: Use `bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`
+- **No Dark Mode Classes**: Never use `dark:` prefix classes, CSS variables handle theme switching
+- **Core Variables**: `background`, `foreground`, `muted`, `primary`, `secondary`, `accent`, `border`, `input`, `ring`
+- **State Variables**: `destructive`, `success`, `warning`, `info` (each with foreground variants)
+- **Component Variables**: `card`, `popover` (for elevated surfaces with distinct styling)
+
 ### Responsive Design Rules
 
 - **Mobile First**: Design for mobile first, then scale up using Tailwind breakpoints

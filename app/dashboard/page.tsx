@@ -9,20 +9,20 @@ const DashboardPage = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-muted">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow px-5 py-6 sm:px-6">
-          <div className="border-b border-gray-200 dark:border-gray-700 pb-5">
-            <h1 className="text-2xl font-bold leading-6 text-gray-900 dark:text-gray-100">
-              Welcome to Daiily, {user.firstName}!
-            </h1>
-            <p className="mt-2 max-w-4xl text-sm text-gray-500 dark:text-gray-400">
-              Track your professional growth journey
-            </p>
-          </div>
+        <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-xl mb-8">
+          <h1 className="text-3xl font-bold text-primary-foreground mb-2">
+            Welcome to Daiily, {user.firstName}!
+          </h1>
+          <p className="text-primary-foreground/90">
+            Track your professional growth journey
+          </p>
+        </div>
+        <div className="bg-card rounded-lg shadow px-5 py-6 sm:px-6 border border-primary/20">
 
           <div className="mt-6">
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4">
+            <div className="bg-gradient-to-r from-info/20 to-accent/20 border border-accent/30 rounded-md p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -38,10 +38,10 @@ const DashboardPage = async () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                  <h3 className="text-sm font-medium text-accent">
                     Authentication Setup Complete
                   </h3>
-                  <div className="mt-2 text-sm text-blue-700 dark:text-blue-400">
+                  <div className="mt-2 text-sm text-accent/90">
                     <p>
                       Your account has been successfully created and you are now
                       logged in. This dashboard will be the starting point for
@@ -53,7 +53,7 @@ const DashboardPage = async () => {
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+              <div className="bg-gradient-to-br from-success/10 to-primary/10 overflow-hidden shadow rounded-lg border border-primary/30">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -65,10 +65,10 @@ const DashboardPage = async () => {
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                        <dt className="text-sm font-medium text-muted-foreground truncate">
                           Daily Entries
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        <dd className="text-lg font-medium text-foreground">
                           0
                         </dd>
                       </dl>
@@ -77,7 +77,7 @@ const DashboardPage = async () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+              <div className="bg-gradient-to-br from-success/10 to-primary/10 overflow-hidden shadow rounded-lg border border-primary/30">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -89,10 +89,10 @@ const DashboardPage = async () => {
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                        <dt className="text-sm font-medium text-muted-foreground truncate">
                           Growth Streak
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        <dd className="text-lg font-medium text-foreground">
                           0 days
                         </dd>
                       </dl>
@@ -101,7 +101,7 @@ const DashboardPage = async () => {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+              <div className="bg-gradient-to-br from-success/10 to-primary/10 overflow-hidden shadow rounded-lg border border-primary/30">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -113,10 +113,10 @@ const DashboardPage = async () => {
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                        <dt className="text-sm font-medium text-muted-foreground truncate">
                           Goals Achieved
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        <dd className="text-lg font-medium text-foreground">
                           0
                         </dd>
                       </dl>
