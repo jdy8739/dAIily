@@ -139,7 +139,7 @@ const SignupForm = () => {
             </span>
             <Link
               href="/login"
-              className="font-medium text-primary hover:text-primary/80"
+              className="font-medium text-primary hover-primary transition-colors"
             >
               Sign in
             </Link>

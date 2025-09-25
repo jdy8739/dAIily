@@ -92,7 +92,7 @@ const LoginForm = () => {
               <div className="text-sm">
                 <Link
                   href="/password-reset"
-                  className="font-medium text-primary hover:text-primary/80"
+                  className="font-medium text-primary hover-primary transition-colors"
                 >
                   Forgot your password?
                 </Link>
@@ -114,7 +114,7 @@ const LoginForm = () => {
               </span>
               <Link
                 href="/signup"
-                className="font-medium text-primary hover:text-primary/80"
+                className="font-medium text-primary hover-primary transition-colors"
               >
                 Sign up
               </Link>

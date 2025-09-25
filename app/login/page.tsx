@@ -2,20 +2,24 @@ import LoginForm from "../../features/auth/components/organisms/login-form";
 
 const LoginPage = () => {
   return (
-    <div className="min-h-screen bg-muted flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Daiily
-          </h1>
-          <p className="text-muted-foreground">
-            Track your professional growth journey
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-info/20 via-primary/10 to-accent/20">
+      <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <div className="bg-gradient-to-r from-info to-primary p-6 rounded-xl mb-8 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold text-info-foreground mb-2">
+              Welcome Back to Daiily
+            </h1>
+            <p className="text-info-foreground/90 text-lg">
+              Continue your professional growth journey
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <LoginForm />
+        <div className="flex flex-col lg:flex-row gap-8 items-center">
+          <div className="flex-1 max-w-md mx-auto">
+            <LoginForm />
+          </div>
+        </div>
       </div>
     </div>
   );
