@@ -40,13 +40,13 @@ export const verifyToken = (token: string): any => {
 // Session management
 export const createSession = async (userId: string): Promise<string> => {
   const token = generateToken({ userId });
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
   await prisma.session.create({
     data: {
       userId,
-      token,
-      expiresAt,
+      sessionToken: token,
+      expires,
     },
   });
 
@@ -56,11 +56,11 @@ export const createSession = async (userId: string): Promise<string> => {
 export const getSessionFromToken = async (token: string) => {
   try {
     const session = await prisma.session.findUnique({
-      where: { token },
+      where: { sessionToken: token },
       include: { user: true },
     });
 
-    if (!session || session.expiresAt < new Date()) {
+    if (!session || session.expires < new Date()) {
       if (session) {
         await prisma.session.delete({ where: { id: session.id } });
       }
@@ -75,7 +75,7 @@ export const getSessionFromToken = async (token: string) => {
 
 export const deleteSession = async (token: string): Promise<void> => {
   try {
-    await prisma.session.delete({ where: { token } });
+    await prisma.session.delete({ where: { sessionToken: token } });
   } catch (error) {
     // Session might not exist, ignore error
   }
