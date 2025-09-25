@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginSchema, type LoginFormData } from "../../schemas";
 import { loginAction } from "../../lib/actions";
@@ -11,19 +12,22 @@ import Button from "../../../../components/atoms/button";
 import GoogleSignIn from "../../../../components/atoms/google-sign-in";
 import GitHubSignIn from "../../../../components/atoms/github-sign-in";
 
+const resolver = zodResolver(loginSchema);
+
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver,
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = useCallback(async (data: LoginFormData) => {
     setLoading(true);
     setError(null);
 
@@ -31,13 +35,16 @@ const LoginForm = () => {
       const result = await loginAction(data);
       if (result?.error) {
         setError(result.error);
+      } else {
+        // Success - redirect client-side
+        router.push("/dashboard");
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   return (
     <div className="w-full max-w-md mx-auto">

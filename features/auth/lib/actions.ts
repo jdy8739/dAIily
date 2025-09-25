@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
 import {
   hashPassword,
@@ -44,7 +43,7 @@ export const loginAction = async (formData: LoginFormData) => {
     const sessionToken = await createSession(user.id);
     await setSessionCookie(sessionToken);
 
-    redirect("/dashboard");
+    return { success: true };
   } catch (error) {
     console.error("Login error:", error);
     return { error: "Authentication failed. Please try again." };
