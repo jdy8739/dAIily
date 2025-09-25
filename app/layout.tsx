@@ -2,7 +2,6 @@ import "./globals.css";
 import ThemeProvider from "../components/providers/theme-provider";
 import SessionProvider from "../components/providers/session-provider";
 import ThemeToggle from "../components/atoms/theme-toggle";
-import ThemeBody from "../components/providers/theme-body";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -10,20 +9,17 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <body className="transition-colors">
         <SessionProvider>
           <ThemeProvider
-            attribute="class"
+            attribute="data-theme"
             defaultTheme="system"
-            enableSystem={true}
-            disableTransitionOnChange={false}
+            enableSystem
             storageKey="theme"
           >
-            <ThemeBody>
-              {/* Global Theme Toggle */}
-              <div className="fixed top-4 right-4 z-50">
-                <ThemeToggle />
-              </div>
+            {/* Global Theme Toggle */}
+            <div className="fixed top-4 right-4 z-50">
+              <ThemeToggle />
+            </div>
 
-              {children}
-            </ThemeBody>
+            {children}
           </ThemeProvider>
         </SessionProvider>
       </body>

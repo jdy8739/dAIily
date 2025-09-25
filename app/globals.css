@@ -1,67 +1,194 @@
 @import "tailwindcss";
 
 :root {
-  --background: 255 255 255;
-  --foreground: 15 23 42;
-  --muted: 248 250 252;
-  --muted-foreground: 100 116 139;
-  --border: 226 232 240;
-  --input: 255 255 255;
-  --primary: 99 102 241;
-  --primary-foreground: 255 255 255;
-  --secondary: 107 114 128;
-  --secondary-foreground: 255 255 255;
-  --accent: 59 130 246;
-  --accent-foreground: 255 255 255;
-  --destructive: 239 68 68;
-  --destructive-foreground: 255 255 255;
-  --success: 16 185 129;
-  --success-foreground: 255 255 255;
-  --warning: 245 158 11;
-  --warning-foreground: 255 255 255;
-  --info: 59 130 246;
-  --info-foreground: 255 255 255;
-  --card: 255 255 255;
-  --card-foreground: 15 23 42;
-  --popover: 255 255 255;
-  --popover-foreground: 15 23 42;
-  --ring: 99 102 241;
+  /* Light theme colors using HSL */
+  --background: 0 0% 100%;
+  --foreground: 222 84% 5%;
+  --muted: 210 40% 98%;
+  --muted-foreground: 215 16% 47%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --primary: 239 84% 67%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 220 9% 46%;
+  --accent: 210 40% 98%;
+  --accent-foreground: 222 84% 5%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 9%;
+  --info: 221 83% 53%;
+  --info-foreground: 0 0% 98%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 84% 5%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 84% 5%;
+  --ring: 239 84% 67%;
   --radius: 0.5rem;
 }
 
-.dark {
-  --background: 15 15 23;
-  --foreground: 248 250 252;
-  --muted: 30 27 75;
-  --muted-foreground: 156 163 175;
-  --border: 55 48 163;
-  --input: 30 27 75;
-  --primary: 147 51 234;
-  --primary-foreground: 255 255 255;
-  --secondary: 236 72 153;
-  --secondary-foreground: 255 255 255;
-  --accent: 59 130 246;
-  --accent-foreground: 255 255 255;
-  --destructive: 248 113 113;
-  --destructive-foreground: 255 255 255;
-  --success: 52 211 153;
-  --success-foreground: 255 255 255;
-  --warning: 251 191 36;
-  --warning-foreground: 255 255 255;
-  --info: 56 189 248;
-  --info-foreground: 255 255 255;
-  --card: 30 27 75;
-  --card-foreground: 248 250 252;
-  --popover: 30 27 75;
-  --popover-foreground: 248 250 252;
-  --ring: 147 51 234;
+[data-theme="dark"] {
+  /* Dark theme colors using HSL */
+  --background: 222 84% 5%;
+  --foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --primary: 263 70% 50%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+  --accent: 217 33% 17%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142 71% 45%;
+  --success-foreground: 0 0% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 9%;
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 98%;
+  --card: 222 84% 5%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 84% 5%;
+  --popover-foreground: 210 40% 98%;
+  --ring: 263 70% 50%;
 }
 
 * {
-  border-color: rgb(var(--border));
+  border-color: hsl(var(--border));
 }
 
 body {
-  background-color: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* CSS Variable-based Color Classes */
+.bg-primary {
+  background-color: hsl(var(--primary));
+}
+
+.text-primary-foreground {
+  color: hsl(var(--primary-foreground));
+}
+
+.bg-secondary {
+  background-color: hsl(var(--secondary));
+}
+
+.text-secondary-foreground {
+  color: hsl(var(--secondary-foreground));
+}
+
+.bg-accent {
+  background-color: hsl(var(--accent));
+}
+
+.text-accent-foreground {
+  color: hsl(var(--accent-foreground));
+}
+
+.bg-muted {
+  background-color: hsl(var(--muted));
+}
+
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.bg-success {
+  background-color: hsl(var(--success));
+}
+
+.text-success-foreground {
+  color: hsl(var(--success-foreground));
+}
+
+.bg-warning {
+  background-color: hsl(var(--warning));
+}
+
+.text-warning-foreground {
+  color: hsl(var(--warning-foreground));
+}
+
+.bg-info {
+  background-color: hsl(var(--info));
+}
+
+.text-info-foreground {
+  color: hsl(var(--info-foreground));
+}
+
+.bg-destructive {
+  background-color: hsl(var(--destructive));
+}
+
+.text-destructive-foreground {
+  color: hsl(var(--destructive-foreground));
+}
+
+.bg-card {
+  background-color: hsl(var(--card));
+}
+
+.text-card-foreground {
+  color: hsl(var(--card-foreground));
+}
+
+.bg-popover {
+  background-color: hsl(var(--popover));
+}
+
+.text-popover-foreground {
+  color: hsl(var(--popover-foreground));
+}
+
+.bg-background {
+  background-color: hsl(var(--background));
+}
+
+.text-foreground {
+  color: hsl(var(--foreground));
+}
+
+.border-border {
+  border-color: hsl(var(--border));
+}
+
+/* Hover states */
+.hover-primary:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+
+.hover-secondary:hover {
+  background-color: hsl(var(--secondary) / 0.9);
+}
+
+.hover-accent:hover {
+  background-color: hsl(var(--accent) / 0.9);
+}
+
+.hover-success:hover {
+  background-color: hsl(var(--success) / 0.9);
+}
+
+.hover-warning:hover {
+  background-color: hsl(var(--warning) / 0.9);
+}
+
+.hover-info:hover {
+  background-color: hsl(var(--info) / 0.9);
+}
+
+.hover-destructive:hover {
+  background-color: hsl(var(--destructive) / 0.9);
 }
