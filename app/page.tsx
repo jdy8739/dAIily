@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const Home = () => {
   const [mounted, setMounted] = useState(false);
@@ -127,30 +128,30 @@ const Home = () => {
           <div className="p-6 rounded-lg border bg-card text-card-foreground border-border shadow-sm">
             <h2 className="text-xl font-semibold mb-4">Quick Navigation</h2>
             <div className="flex flex-wrap gap-3">
-              <a
+              <Link
                 href="/login"
                 className="px-4 py-2 bg-info text-info-foreground rounded-md hover-info transition-colors"
               >
                 Login
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/signup"
                 className="px-4 py-2 bg-success text-success-foreground rounded-md hover-success transition-colors"
               >
                 Sign Up
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/dashboard"
                 className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover-accent transition-colors"
               >
                 Dashboard
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/write"
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-primary transition-colors"
               >
                 Write Entry
-              </a>
+              </Link>
             </div>
           </div>
         </div>

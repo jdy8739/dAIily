@@ -39,6 +39,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Const Assertions**: Use `as const` for immutable objects and arrays
 - **No Default Props**: Use modern default parameter syntax instead of defaultProps
 
+### Navigation Rules
+
+- **NEVER use `<a>` tags for internal links**: Always use Next.js `<Link>` component for internal navigation
+- **Internal Links**: `<Link href="/page">` for client-side routing (no page reload)
+- **External Links**: `<a href="https://external.com">` for external sites only
+- **Special Links**: `<a href="mailto:">` for emails, `<a href="tel:">` for phone numbers
+- **Import Required**: Always `import Link from "next/link"` when using internal navigation
+
 ### Theme & Styling Rules
 
 - **CSS Variables Only**: Always use semantic CSS variables for colors, never hardcoded colors
