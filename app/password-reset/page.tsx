@@ -6,7 +6,7 @@ const PasswordResetPage = () => {
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <div className="bg-gradient-to-r from-warning to-accent p-6 rounded-xl mb-8 max-w-xl mx-auto">
-            <h1 className="text-3xl font-bold text-warning-foreground mb-2">
+            <h1 className="text-3xl font-bold text-warning-foreground mb-2 text-foreground">
               Reset Your Password
             </h1>
             <p className="text-warning-foreground/90">

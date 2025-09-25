@@ -6,7 +6,7 @@ const SignupPage = () => {
       <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <div className="bg-gradient-to-r from-success to-accent p-6 rounded-xl mb-8 max-w-2xl mx-auto">
-            <h1 className="text-4xl font-bold text-success-foreground mb-2">
+            <h1 className="text-4xl font-bold text-success-foreground mb-2 text-foreground">
               Join the Daiily Community
             </h1>
             <p className="text-success-foreground/90 text-lg">
