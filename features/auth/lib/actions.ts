@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "../../../lib/prisma";
 import {
   hashPassword,
@@ -7,6 +9,8 @@ import {
   createSession,
   setSessionCookie,
   createPasswordResetToken,
+  deleteSession,
+  clearSessionCookie,
 } from "../../../lib/auth";
 import {
   loginSchema,
@@ -111,5 +115,22 @@ export const passwordResetAction = async (formData: PasswordResetFormData) => {
   } catch (error) {
     console.error("Password reset error:", error);
     return { error: "Password reset failed. Please try again." };
+  }
+};
+
+export const logoutAction = async () => {
+  try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("session")?.value;
+
+    if (sessionToken) {
+      await deleteSession(sessionToken);
+      await clearSessionCookie();
+    }
+
+    redirect("/login");
+  } catch (error) {
+    console.error("Logout error:", error);
+    redirect("/login");
   }
 };
