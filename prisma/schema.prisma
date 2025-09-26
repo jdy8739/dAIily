@@ -29,6 +29,7 @@ model User {
   sessions      Session[]
   passwordReset PasswordReset[]
   accounts      Account[]
+  posts         Post[]
 
   @@map("users")
 }
@@ -85,4 +86,18 @@ model PasswordReset {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_resets")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
 }
