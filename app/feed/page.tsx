@@ -1,17 +1,11 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "../../lib/auth";
 import Link from "next/link";
+import AuthLayout from "../../components/templates/auth-layout";
 
 const FeedPage = async () => {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent/20 via-primary/10 to-info/20">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <AuthLayout>
+      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
+        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl mb-8">
           <h1 className="text-3xl font-bold text-accent-foreground mb-2">
             Growth Feed
@@ -138,8 +132,9 @@ const FeedPage = async () => {
             </Link>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 

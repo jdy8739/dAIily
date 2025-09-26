@@ -1,20 +1,14 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "../../lib/auth";
 import Link from "next/link";
+import AuthLayout from "../../components/templates/auth-layout";
 
 const DashboardPage = async () => {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/20 via-accent/10 to-success/20">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <AuthLayout>
+      <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-success/20 min-h-[calc(100vh-73px)]">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-xl mb-8">
           <h1 className="text-3xl font-bold text-primary-foreground mb-2">
-            Welcome to Daiily, {user.firstName}!
+            Welcome to Daiily!
           </h1>
           <p className="text-primary-foreground/90">
             Track your professional growth journey
@@ -169,8 +163,9 @@ const DashboardPage = async () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 
