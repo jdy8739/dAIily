@@ -1,6 +1,14 @@
+import { getCurrentUser } from "../../lib/auth";
+import { redirect } from "next/navigation";
 import PasswordResetForm from "../../features/auth/components/organisms/password-reset-form";
 
-const PasswordResetPage = () => {
+const PasswordResetPage = async () => {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-warning/20 via-accent/10 to-primary/20">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">

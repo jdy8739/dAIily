@@ -1,6 +1,14 @@
+import { getCurrentUser } from "../../lib/auth";
+import { redirect } from "next/navigation";
 import LoginForm from "../../features/auth/components/organisms/login-form";
 
-const LoginPage = () => {
+const LoginPage = async () => {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-info/20 via-primary/10 to-accent/20">
       <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
