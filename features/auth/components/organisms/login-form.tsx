@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -27,24 +27,27 @@ const LoginForm = () => {
     resolver,
   });
 
-  const onSubmit = useCallback(async (data: LoginFormData) => {
-    setLoading(true);
-    setError(null);
+  const onSubmit = useCallback(
+    async (data: LoginFormData) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const result = await loginAction(data);
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        // Success - redirect client-side
-        router.push("/dashboard");
+      try {
+        const result = await loginAction(data);
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          // Success - redirect client-side
+          router.push("/dashboard");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   return (
     <div className="w-full max-w-md mx-auto">
