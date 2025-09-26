@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPostSchema, type CreatePostData } from "../../schemas/post";
@@ -10,6 +11,7 @@ import Input from "../../../../components/atoms/input";
 import Textarea from "../../../../components/atoms/textarea";
 
 const PostForm = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,8 +32,9 @@ const PostForm = () => {
       const result = await createPost(data);
       if (result?.error) {
         setError(result.error);
-      } else {
+      } else if (result?.success) {
         reset();
+        router.push("/feed");
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");

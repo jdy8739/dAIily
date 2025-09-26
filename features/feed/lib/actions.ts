@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
@@ -25,8 +24,11 @@ export const createPost = async (data: CreatePostData) => {
     });
 
     revalidatePath("/feed");
-    redirect("/feed");
+
+    // Return success instead of redirecting
+    return { success: true, postId: post.id };
   } catch (error) {
+    console.error("Post creation error:", error);
     if (error instanceof Error) {
       return { error: error.message };
     }
