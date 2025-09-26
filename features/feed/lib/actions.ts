@@ -35,3 +35,43 @@ export const createPost = async (data: CreatePostData) => {
     return { error: "Failed to create post" };
   }
 };
+
+export const deletePost = async (postId: string) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return { error: "You must be logged in to delete a post" };
+  }
+
+  try {
+    // First check if the post exists and belongs to the user
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { authorId: true },
+    });
+
+    if (!post) {
+      return { error: "Post not found" };
+    }
+
+    if (post.authorId !== user.id) {
+      return { error: "You can only delete your own posts" };
+    }
+
+    // Delete the post
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    revalidatePath("/feed");
+    revalidatePath(`/feed/${postId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Post deletion error:", error);
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: "Failed to delete post" };
+  }
+};

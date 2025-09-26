@@ -48,37 +48,39 @@ const FeedPage = async () => {
             </div>
           ) : (
             posts.map((post) => (
-              <div key={post.id} className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                    <span className="text-primary-foreground font-semibold text-sm">
-                      {post.author.firstName?.[0]}{post.author.lastName?.[0]}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-semibold text-foreground">
-                        {post.author.firstName} {post.author.lastName}
-                      </h3>
-                      <span className="text-sm text-muted-foreground">•</span>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(post.createdAt).toLocaleDateString()}
+              <Link key={post.id} href={`/feed/${post.id}`} className="block">
+                <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 hover:shadow-md hover:border-accent/50 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-primary-foreground font-semibold text-sm">
+                        {post.author.firstName?.[0]}{post.author.lastName?.[0]}
                       </span>
                     </div>
-                    <h4 className="font-medium text-foreground mb-2">
-                      {post.title}
-                    </h4>
-                    <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
-                      {post.content}
-                    </p>
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <button className="hover:text-accent transition-colors">👍 0</button>
-                      <button className="hover:text-accent transition-colors">💬 0</button>
-                      <button className="hover:text-accent transition-colors">🔄 Share</button>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <h3 className="font-semibold text-foreground">
+                          {post.author.firstName} {post.author.lastName}
+                        </h3>
+                        <span className="text-sm text-muted-foreground">•</span>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <h4 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h4>
+                      <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
+                        {post.content}
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <span className="hover:text-accent transition-colors">👍 0</span>
+                        <span className="hover:text-accent transition-colors">💬 0</span>
+                        <span className="hover:text-accent transition-colors">🔄 Share</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
 

@@ -1,0 +1,70 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { deletePost } from "../../lib/actions";
+
+interface DeletePostButtonProps {
+  postId: string;
+}
+
+const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    try {
+      const result = await deletePost(postId);
+
+      if (result.success) {
+        router.push("/feed");
+        router.refresh();
+      } else {
+        console.error("Delete failed:", result.error);
+        alert(result.error || "Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+      setShowConfirm(false);
+    }
+  };
+
+  if (showConfirm) {
+    return (
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {isDeleting ? "Deleting..." : "Confirm Delete"}
+        </button>
+        <button
+          onClick={() => setShowConfirm(false)}
+          disabled={isDeleting}
+          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setShowConfirm(true)}
+      className="px-3 py-1 text-sm text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-destructive/10"
+      title="Delete post"
+    >
+      🗑️ Delete
+    </button>
+  );
+};
+
+export default DeletePostButton;
