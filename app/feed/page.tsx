@@ -23,6 +23,7 @@ const FeedPage = async () => {
       _count: {
         select: {
           likes: true,
+          replies: true,
         },
       },
     },
@@ -92,7 +93,7 @@ const FeedPage = async () => {
                           initialLiked={currentUser ? post.likes.some(like => like.userId === currentUser.id) : false}
                           initialLikeCount={post._count.likes}
                         />
-                        <span className="hover:text-accent transition-colors">💬 0</span>
+                        <span className="hover:text-accent transition-colors">💬 {post._count.replies}</span>
                         <span className="hover:text-accent transition-colors">🔄 Share</span>
                       </div>
                     </div>

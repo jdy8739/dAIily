@@ -5,6 +5,8 @@ import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
 import LikeButton from "../../../features/feed/components/molecules/like-button";
+import ReplyForm from "../../../features/feed/components/molecules/reply-form";
+import ReplyList from "../../../features/feed/components/molecules/reply-list";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -32,6 +34,21 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
       _count: {
         select: {
           likes: true,
+          replies: true,
+        },
+      },
+      replies: {
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       },
     },
@@ -105,15 +122,40 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 initialLiked={currentUser ? post.likes.some(like => like.userId === currentUser.id) : false}
                 initialLikeCount={post._count.likes}
               />
-              <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors">
+              <span className="flex items-center space-x-2 text-muted-foreground">
                 <span>💬</span>
-                <span>Comment</span>
-              </button>
+                <span>{post._count.replies} {post._count.replies === 1 ? 'Reply' : 'Replies'}</span>
+              </span>
               <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors">
                 <span>🔄</span>
                 <span>Share</span>
               </button>
             </div>
+          </div>
+
+          {/* Replies Section */}
+          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 mb-8">
+            <h3 className="text-lg font-semibold text-foreground mb-6">
+              Replies ({post._count.replies})
+            </h3>
+
+            {/* Reply Form - only show to logged in users */}
+            {currentUser && (
+              <div className="mb-8">
+                <ReplyForm postId={post.id} />
+              </div>
+            )}
+
+            {/* Replies List */}
+            <ReplyList
+              replies={post.replies.map(reply => ({
+                ...reply,
+                createdAt: reply.createdAt.toISOString(),
+                updatedAt: reply.updatedAt.toISOString(),
+              }))}
+              currentUserId={currentUser?.id}
+              postAuthorId={post.author.id}
+            />
           </div>
 
           {/* Call to Action */}
