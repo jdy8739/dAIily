@@ -25,10 +25,10 @@ const DashboardPage = async () => {
                 <span className="text-2xl">✏️</span>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-success-foreground mb-1">
+                <h3 className="text-xl font-semibold text-accent-foreground mb-1">
                   Write New Entry
                 </h3>
-                <p className="text-success-foreground/80">
+                <p className="text-accent-foreground/80">
                   Share your daily professional growth and achievements
                 </p>
               </div>
