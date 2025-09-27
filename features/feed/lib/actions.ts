@@ -75,3 +75,101 @@ export const deletePost = async (postId: string) => {
     return { error: "Failed to delete post" };
   }
 };
+
+export const likePost = async (postId: string) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return { error: "You must be logged in to like a post" };
+  }
+
+  try {
+    // Check if post exists
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true },
+    });
+
+    if (!post) {
+      return { error: "Post not found" };
+    }
+
+    // Check if user already liked this post
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId: user.id,
+          postId: postId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      return { error: "You have already liked this post" };
+    }
+
+    // Create the like
+    await prisma.like.create({
+      data: {
+        userId: user.id,
+        postId: postId,
+      },
+    });
+
+    revalidatePath("/feed");
+    revalidatePath(`/feed/${postId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Like post error:", error);
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: "Failed to like post" };
+  }
+};
+
+export const unlikePost = async (postId: string) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return { error: "You must be logged in to unlike a post" };
+  }
+
+  try {
+    // Check if user has liked this post
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId: user.id,
+          postId: postId,
+        },
+      },
+    });
+
+    if (!existingLike) {
+      return { error: "You have not liked this post" };
+    }
+
+    // Remove the like
+    await prisma.like.delete({
+      where: {
+        userId_postId: {
+          userId: user.id,
+          postId: postId,
+        },
+      },
+    });
+
+    revalidatePath("/feed");
+    revalidatePath(`/feed/${postId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Unlike post error:", error);
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: "Failed to unlike post" };
+  }
+};

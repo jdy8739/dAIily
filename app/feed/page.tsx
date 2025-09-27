@@ -1,14 +1,28 @@
 import Link from "next/link";
 import AuthLayout from "../../components/templates/auth-layout";
 import { prisma } from "../../lib/prisma";
+import { getCurrentUser } from "../../lib/auth";
+import LikeButton from "../../features/feed/components/molecules/like-button";
 
 const FeedPage = async () => {
+  const currentUser = await getCurrentUser();
+
   const posts = await prisma.post.findMany({
     include: {
       author: {
         select: {
           firstName: true,
           lastName: true,
+        },
+      },
+      likes: {
+        select: {
+          userId: true,
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
         },
       },
     },
@@ -73,7 +87,11 @@ const FeedPage = async () => {
                         {post.content}
                       </p>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span className="hover:text-accent transition-colors">👍 0</span>
+                        <LikeButton
+                          postId={post.id}
+                          initialLiked={currentUser ? post.likes.some(like => like.userId === currentUser.id) : false}
+                          initialLikeCount={post._count.likes}
+                        />
                         <span className="hover:text-accent transition-colors">💬 0</span>
                         <span className="hover:text-accent transition-colors">🔄 Share</span>
                       </div>

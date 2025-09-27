@@ -4,6 +4,7 @@ import AuthLayout from "../../../components/templates/auth-layout";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
+import LikeButton from "../../../features/feed/components/molecules/like-button";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -21,6 +22,16 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
           id: true,
           firstName: true,
           lastName: true,
+        },
+      },
+      likes: {
+        select: {
+          userId: true,
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
         },
       },
     },
@@ -89,10 +100,11 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
 
             {/* Engagement Actions */}
             <div className="flex items-center space-x-6 mt-8 pt-6 border-t border-border">
-              <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors">
-                <span>👍</span>
-                <span>Like</span>
-              </button>
+              <LikeButton
+                postId={post.id}
+                initialLiked={currentUser ? post.likes.some(like => like.userId === currentUser.id) : false}
+                initialLikeCount={post._count.likes}
+              />
               <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors">
                 <span>💬</span>
                 <span>Comment</span>
