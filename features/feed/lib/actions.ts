@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
-import { createPostSchema, type CreatePostData } from "../schemas/post";
+import { createPostSchema, editPostSchema, type CreatePostData, type EditPostData } from "../schemas/post";
 import { createReplySchema, editReplySchema, type CreateReplyData, type EditReplyData } from "../schemas/reply";
 
 export const createPost = async (data: CreatePostData) => {
@@ -34,6 +34,54 @@ export const createPost = async (data: CreatePostData) => {
       return { error: error.message };
     }
     return { error: "Failed to create post" };
+  }
+};
+
+export const editPost = async (data: EditPostData) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return { error: "You must be logged in to edit a post" };
+  }
+
+  try {
+    const validatedData = editPostSchema.parse(data);
+
+    // Get the post to check ownership
+    const post = await prisma.post.findUnique({
+      where: { id: validatedData.postId },
+      select: { authorId: true },
+    });
+
+    if (!post) {
+      return { error: "Post not found" };
+    }
+
+    // Check if user is the post author
+    if (post.authorId !== user.id) {
+      return { error: "You can only edit your own posts" };
+    }
+
+    // Update the post
+    await prisma.post.update({
+      where: { id: validatedData.postId },
+      data: {
+        title: validatedData.title,
+        content: validatedData.content,
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath("/feed");
+    revalidatePath(`/feed/${validatedData.postId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Post edit error:", error);
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
+    return { error: "Failed to edit post" };
   }
 };
 
