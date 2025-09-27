@@ -43,6 +43,12 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
                 >
                   Feed
                 </Link>
+                <Link
+                  href="/story"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Story
+                </Link>
               </nav>
             </div>
 
