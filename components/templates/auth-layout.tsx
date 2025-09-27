@@ -54,9 +54,12 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
+              <Link
+                href="/profile"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
                 {user.firstName} {user.lastName}
-              </span>
+              </Link>
               <LogoutButton />
               <ThemeToggle />
             </div>
