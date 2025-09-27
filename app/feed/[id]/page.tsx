@@ -99,13 +99,25 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {new Date(post.createdAt).toLocaleString()}
+                    {post.updatedAt.getTime() !== post.createdAt.getTime() && (
+                      <span className="ml-2 text-muted-foreground/70">(edited)</span>
+                    )}
                   </p>
                 </div>
               </div>
 
-              {/* Delete button - only show to author */}
+              {/* Edit and Delete buttons - only show to author */}
               {isAuthor && (
-                <DeletePostButton postId={post.id} />
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href={`/feed/${post.id}/edit`}
+                    className="px-3 py-1 text-sm text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer"
+                    title="Edit post"
+                  >
+                    ✏️ Edit
+                  </Link>
+                  <DeletePostButton postId={post.id} />
+                </div>
               )}
             </div>
 
