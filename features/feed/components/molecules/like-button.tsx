@@ -55,7 +55,7 @@ const LikeButton = ({ postId, initialLiked, initialLikeCount }: LikeButtonProps)
         isLiked
           ? "text-accent hover:text-accent/80"
           : "text-muted-foreground hover:text-accent"
-      } disabled:opacity-50 disabled:cursor-not-allowed`}
+      } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
       title={isLiked ? "Unlike this post" : "Like this post"}
     >
       <span className={`transition-transform ${isLoading ? "scale-110" : ""}`}>

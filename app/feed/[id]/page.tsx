@@ -138,7 +138,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 <span>💬</span>
                 <span>{post._count.replies} {post._count.replies === 1 ? 'Reply' : 'Replies'}</span>
               </span>
-              <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors">
+              <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                 <span>🔄</span>
                 <span>Share</span>
               </button>

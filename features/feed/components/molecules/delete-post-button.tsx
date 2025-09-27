@@ -41,14 +41,14 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {isDeleting ? "Deleting..." : "Confirm Delete"}
         </button>
         <button
           onClick={() => setShowConfirm(false)}
           disabled={isDeleting}
-          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 transition-colors"
+          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors"
         >
           Cancel
         </button>
@@ -59,7 +59,7 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="px-3 py-1 text-sm text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-destructive/10"
+      className="px-3 py-1 text-sm text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-destructive/10 cursor-pointer"
       title="Delete post"
     >
       🗑️ Delete
