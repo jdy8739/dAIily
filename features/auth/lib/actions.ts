@@ -20,6 +20,7 @@ import {
   type SignupFormData,
   type PasswordResetFormData,
 } from "../schemas";
+import { User } from "next-auth";
 
 export const loginAction = async (formData: LoginFormData) => {
   try {
@@ -55,6 +56,8 @@ export const loginAction = async (formData: LoginFormData) => {
 };
 
 export const signupAction = async (formData: SignupFormData) => {
+  let user: User | null = null;
+
   try {
     const validatedData = signupSchema.parse(formData);
 
@@ -71,7 +74,7 @@ export const signupAction = async (formData: SignupFormData) => {
     const hashedPassword = await hashPassword(validatedData.password);
 
     // Create user
-    const user = await prisma.user.create({
+    user = await prisma.user.create({
       data: {
         email: validatedData.email,
         firstName: validatedData.firstName,
@@ -81,11 +84,13 @@ export const signupAction = async (formData: SignupFormData) => {
     });
 
     // TODO: Send verification email
-
-    redirect("/login?message=Account created successfully. Please log in.");
   } catch (error) {
     console.error("Signup error:", error);
     return { error: "Account creation failed. Please try again." };
+  } finally {
+    if (user) {
+      redirect("/login?message=Account created successfully. Please log in.");
+    }
   }
 };
 
