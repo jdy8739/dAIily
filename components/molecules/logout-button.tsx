@@ -20,7 +20,7 @@ const LogoutButton = () => {
     <button
       onClick={handleLogout}
       disabled={loading}
-      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
     >
       {loading ? "Signing out..." : "Sign Out"}
     </button>

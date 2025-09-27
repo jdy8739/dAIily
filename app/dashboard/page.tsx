@@ -4,7 +4,7 @@ import AuthLayout from "../../components/templates/auth-layout";
 const DashboardPage = async () => {
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-success/20 min-h-[calc(100vh-73px)]">
+      <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-success/20 min-h-screen">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-primary to-accent p-6 rounded-xl mb-8">
           <h1 className="text-3xl font-bold text-primary-foreground mb-2">

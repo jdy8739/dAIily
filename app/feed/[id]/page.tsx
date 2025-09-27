@@ -62,7 +62,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
 
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
+      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-screen">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
