@@ -8,7 +8,10 @@ interface GoogleSignInProps {
   text?: string;
 }
 
-const GoogleSignIn = ({ callbackUrl = "/dashboard", text = "Continue with Google" }: GoogleSignInProps) => {
+const GoogleSignIn = ({
+  callbackUrl = "/dashboard",
+  text = "Continue with Google",
+}: GoogleSignInProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {

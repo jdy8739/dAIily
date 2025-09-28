@@ -5,7 +5,33 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: {
+    ...PrismaAdapter(prisma),
+    createUser: async data => {
+      // Extract first and last name from the name field
+      const nameParts = data.name?.split(" ") || [];
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      const user = await prisma.user.create({
+        data: {
+          email: data.email,
+          firstName,
+          lastName,
+          image: data.image,
+          emailVerified: data.emailVerified,
+        },
+      });
+
+      return {
+        id: user.id,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        name: `${user.firstName} ${user.lastName}`.trim(),
+        image: user.image,
+      };
+    },
+  } as any,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -37,50 +63,19 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google" || account?.provider === "github") {
-        try {
-          // Check if user exists, if not create
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! },
-          });
-
-          if (!existingUser) {
-            let firstName = "";
-            let lastName = "";
-
-            if (account.provider === "google") {
-              // Extract first and last name from Google profile
-              firstName = profile?.given_name || user.name?.split(" ")[0] || "";
-              lastName = profile?.family_name || user.name?.split(" ").slice(1).join(" ") || "";
-            } else if (account.provider === "github") {
-              // GitHub doesn't provide separate first/last names, extract from display name
-              const nameParts = user.name?.split(" ") || [];
-              firstName = nameParts[0] || "";
-              lastName = nameParts.slice(1).join(" ") || "";
-            }
-
-            await prisma.user.create({
-              data: {
-                email: user.email!,
-                firstName,
-                lastName,
-                image: user.image,
-                emailVerified: new Date(),
-              },
-            });
-          }
-          return true;
-        } catch (error) {
-          console.error("Error during sign in:", error);
-          return false;
-        }
+      // For Google OAuth, update the user name to use given_name + family_name
+      if (account?.provider === "google" && profile) {
+        const firstName = profile.given_name || "";
+        const lastName = profile.family_name || "";
+        user.name = `${firstName} ${lastName}`.trim();
       }
+
       return true;
     },
   },
   events: {
     async signIn({ user, account, isNewUser }) {
-      console.log("User signed in:", { user: user.email, account: account?.provider, isNewUser });
+      // Optional: Add any post sign-in logic here
     },
   },
 };

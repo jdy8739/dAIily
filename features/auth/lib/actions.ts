@@ -125,12 +125,27 @@ export const passwordResetAction = async (formData: PasswordResetFormData) => {
 
 export const logoutAction = async () => {
   try {
+    // Clear custom session (for email/password users)
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get("session")?.value;
 
     if (sessionToken) {
       await deleteSession(sessionToken);
       await clearSessionCookie();
+    }
+
+    // Clear NextAuth cookies (for OAuth users)
+    const nextAuthCookies = [
+      "next-auth.session-token",
+      "__Secure-next-auth.session-token",
+      "next-auth.csrf-token",
+      "__Secure-next-auth.csrf-token",
+      "next-auth.callback-url",
+      "__Secure-next-auth.callback-url"
+    ];
+
+    for (const cookieName of nextAuthCookies) {
+      cookieStore.delete(cookieName);
     }
 
     redirect("/login");

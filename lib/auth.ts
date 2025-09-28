@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "./auth-config";
 import { prisma } from "./prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -115,8 +117,20 @@ export const clearSessionCookie = async (): Promise<void> => {
 
 // Current user helper
 export const getCurrentUser = async () => {
-  const session = await getSessionFromCookie();
-  return session?.user ?? null;
+  // First check NextAuth session (for OAuth users)
+  const nextAuthSession = await getServerSession(authOptions);
+
+  if (nextAuthSession?.user) {
+    // If NextAuth session exists, get user from database using the email
+    const user = await prisma.user.findUnique({
+      where: { email: nextAuthSession.user.email! },
+    });
+    return user;
+  }
+
+  // Fallback to custom session (for email/password users)
+  const customSession = await getSessionFromCookie();
+  return customSession?.user ?? null;
 };
 
 // Password reset utilities
