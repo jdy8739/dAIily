@@ -7,6 +7,9 @@ const LogoutButton = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
+    const confirmed = window.confirm("Are you sure you want to sign out?");
+    if (!confirmed) return;
+
     setLoading(true);
     try {
       await logoutAction();

@@ -25,6 +25,9 @@ const PostForm = () => {
   });
 
   const onSubmit = async (data: CreatePostData) => {
+    const confirmed = window.confirm("Are you sure you want to share your growth story?");
+    if (!confirmed) return;
+
     setLoading(true);
     setError(null);
 
@@ -46,8 +49,8 @@ const PostForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error && (
-        <div className="p-4 rounded-md bg-destructive/10 border border-destructive/30">
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="p-4 rounded-md bg-warning/10 border border-warning/30">
+          <p className="text-sm text-warning font-medium">{error}</p>
         </div>
       )}
 

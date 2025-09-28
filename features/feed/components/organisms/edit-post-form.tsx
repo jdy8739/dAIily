@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { editPost } from "../../lib/actions";
+import Button from "../../../../components/atoms/button";
 
 interface EditPostFormProps {
   postId: string;
@@ -31,6 +32,9 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
       router.push(`/feed/${postId}`);
       return;
     }
+
+    const confirmed = window.confirm("Are you sure you want to update your post?");
+    if (!confirmed) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -63,8 +67,8 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-destructive/10 border border-destructive/30 text-destructive px-4 py-3 rounded-md">
-          {error}
+        <div className="bg-warning/10 border border-warning/30 text-warning px-4 py-3 rounded-md">
+          <span className="font-medium">{error}</span>
         </div>
       )}
 
@@ -108,22 +112,35 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
         </div>
       </div>
 
-      <div className="flex justify-end space-x-4">
-        <button
-          type="button"
-          onClick={handleCancel}
-          disabled={isSubmitting}
-          className="px-6 py-2 bg-muted text-muted-foreground rounded-md hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting || !title.trim() || !content.trim() || !hasChanges}
-          className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
-        >
-          {isSubmitting ? "Updating..." : "Update Post"}
-        </button>
+      <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center space-x-4">
+          <Button type="button" variant="outline" disabled={isSubmitting}>
+            Save Draft
+          </Button>
+
+          <Button type="button" variant="ai" disabled={isSubmitting}>
+            ✨ AI Correct
+          </Button>
+        </div>
+
+        <div className="flex space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            disabled={isSubmitting || !title.trim() || !content.trim() || !hasChanges}
+          >
+            {isSubmitting ? "Updating..." : "Update Post"}
+          </Button>
+        </div>
       </div>
     </form>
   );

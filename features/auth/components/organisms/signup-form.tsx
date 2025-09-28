@@ -13,27 +13,38 @@ import GitHubSignIn from "../../../../components/atoms/github-sign-in";
 
 const SignupForm = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
 
   const onSubmit = async (data: SignupFormData) => {
     setLoading(true);
-    setError(null);
+    setServerError(null);
 
     try {
       const result = await signupAction(data);
       if (result?.error) {
-        setError(result.error);
+        // Check if error is field-specific
+        if (result.error.includes("An account with this email already exists")) {
+          // Show error under email field
+          setError("email", {
+            type: "server",
+            message: result.error
+          });
+        } else {
+          // Show general errors at the top
+          setServerError(result.error);
+        }
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      setServerError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -48,9 +59,9 @@ const SignupForm = () => {
           </h2>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-sm text-destructive">{error}</p>
+        {serverError && (
+          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
+            <p className="text-sm text-warning font-medium">{serverError}</p>
           </div>
         )}
 

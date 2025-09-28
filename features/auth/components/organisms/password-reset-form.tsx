@@ -55,8 +55,8 @@ const PasswordResetForm = () => {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-sm text-destructive">{error}</p>
+          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
+            <p className="text-sm text-warning font-medium">{error}</p>
           </div>
         )}
 

@@ -29,13 +29,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             bg-input text-foreground
             focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring
             disabled:bg-muted disabled:text-muted-foreground
-            ${error ? "border-destructive" : "border-border"}
+            ${error ? "border-warning" : "border-border"}
             ${className}
           `}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-destructive">{error}</p>
+          <p className="mt-1 text-sm text-warning font-medium">{error}</p>
         )}
       </div>
     );

@@ -16,13 +16,14 @@ const resolver = zodResolver(loginSchema);
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<LoginFormData>({
     resolver,
   });
@@ -30,23 +31,33 @@ const LoginForm = () => {
   const onSubmit = useCallback(
     async (data: LoginFormData) => {
       setLoading(true);
-      setError(null);
+      setServerError(null);
 
       try {
         const result = await loginAction(data);
         if (result?.error) {
-          setError(result.error);
+          // Check if error is field-specific
+          if (result.error.includes("Invalid email or password")) {
+            // Show error under email field for login errors
+            setError("email", {
+              type: "server",
+              message: result.error
+            });
+          } else {
+            // Show general errors at the top
+            setServerError(result.error);
+          }
         } else {
           // Success - redirect client-side
           router.push("/dashboard");
         }
       } catch (err) {
-        setError("An unexpected error occurred. Please try again.");
+        setServerError("An unexpected error occurred. Please try again.");
       } finally {
         setLoading(false);
       }
     },
-    [router]
+    [router, setError]
   );
 
   return (
@@ -58,9 +69,9 @@ const LoginForm = () => {
           </h2>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-sm text-destructive">{error}</p>
+        {serverError && (
+          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
+            <p className="text-sm text-warning font-medium">{serverError}</p>
           </div>
         )}
 
