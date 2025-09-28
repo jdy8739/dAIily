@@ -70,6 +70,12 @@ export const authOptions: NextAuthOptions = {
         user.name = `${firstName} ${lastName}`.trim();
       }
 
+      // For GitHub OAuth, GitHub doesn't provide separate first/last names
+      // We'll extract from the display name in the adapter
+      if (account?.provider === "github" && profile) {
+        user.name = profile.name || user.name;
+      }
+
       return true;
     },
   },
