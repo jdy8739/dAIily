@@ -33,13 +33,16 @@ const StoryPage = () => {
 
               {/* Description */}
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                We&apos;re working on something amazing! Soon you&apos;ll be able to see AI-powered insights
-                of your professional growth journey across different time periods.
+                We&apos;re working on something amazing! Soon you&apos;ll be
+                able to see AI-powered insights of your professional growth
+                journey across different time periods.
               </p>
 
               {/* Features Preview */}
               <div className="bg-muted/30 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-foreground mb-3">What&apos;s Coming:</h3>
+                <h3 className="font-semibold text-foreground mb-3">
+                  What&apos;s Coming:
+                </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center justify-center space-x-2">
                     <span>📈</span>
@@ -63,7 +66,10 @@ const StoryPage = () => {
               {/* Call to Action */}
               <p className="text-sm text-muted-foreground">
                 Keep sharing your professional journey in the{" "}
-                <Link href="/feed" className="text-primary hover:text-primary/80 transition-colors">
+                <Link
+                  href="/feed"
+                  className="text-primary hover:text-primary/80 transition-colors"
+                >
                   Feed
                 </Link>{" "}
                 to unlock powerful insights when this feature launches!

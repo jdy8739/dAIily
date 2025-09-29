@@ -9,7 +9,11 @@ interface LikeButtonProps {
   initialLikeCount: number;
 }
 
-const LikeButton = ({ postId, initialLiked, initialLikeCount }: LikeButtonProps) => {
+const LikeButton = ({
+  postId,
+  initialLiked,
+  initialLikeCount,
+}: LikeButtonProps) => {
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isLoading, setIsLoading] = useState(false);

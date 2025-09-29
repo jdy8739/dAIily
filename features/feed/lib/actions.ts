@@ -3,8 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
-import { createPostSchema, editPostSchema, type CreatePostData, type EditPostData } from "../schemas/post";
-import { createReplySchema, editReplySchema, type CreateReplyData, type EditReplyData } from "../schemas/reply";
+import {
+  createPostSchema,
+  editPostSchema,
+  type CreatePostData,
+  type EditPostData,
+} from "../schemas/post";
+import {
+  createReplySchema,
+  editReplySchema,
+  type CreateReplyData,
+  type EditReplyData,
+} from "../schemas/reply";
 
 export const createPost = async (data: CreatePostData) => {
   const user = await getCurrentUser();
@@ -342,7 +352,9 @@ export const deleteReply = async (replyId: string) => {
     const isPostOwner = reply.post.authorId === user.id;
 
     if (!isReplyAuthor && !isPostOwner) {
-      return { error: "You can only delete your own replies or replies on your posts" };
+      return {
+        error: "You can only delete your own replies or replies on your posts",
+      };
     }
 
     // Delete the reply

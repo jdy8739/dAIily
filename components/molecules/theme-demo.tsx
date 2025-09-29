@@ -17,7 +17,11 @@ const ThemeDemo = () => {
   };
 
   if (!mounted) {
-    return <div className="p-6 rounded-lg border bg-card text-card-foreground border-border shadow-sm">Loading theme...</div>;
+    return (
+      <div className="p-6 rounded-lg border bg-card text-card-foreground border-border shadow-sm">
+        Loading theme...
+      </div>
+    );
   }
 
   return (

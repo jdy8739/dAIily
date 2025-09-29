@@ -25,7 +25,9 @@ const PostForm = () => {
   });
 
   const onSubmit = async (data: CreatePostData) => {
-    const confirmed = window.confirm("Are you sure you want to share your growth story?");
+    const confirmed = window.confirm(
+      "Are you sure you want to share your growth story?"
+    );
     if (!confirmed) return;
 
     setLoading(true);

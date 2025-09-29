@@ -15,25 +15,30 @@ A growth diary feed application where professionals share their daily experience
 ### Database Setup
 
 1. **Install PostgreSQL** (if not already installed):
+
    ```bash
    brew install postgresql
    ```
 
 2. **Start PostgreSQL service**:
+
    ```bash
    brew services start postgresql@14
    ```
 
 3. **Create the database**:
+
    ```bash
    createdb daiily
    ```
 
 4. **Configure environment variables**:
    Update `.env` with your local database connection:
+
    ```env
    DATABASE_URL="postgresql://[your_username]:@localhost:5432/daiily"
    ```
+
    Replace `[your_username]` with your system username.
 
 5. **Generate Prisma client and sync database**:

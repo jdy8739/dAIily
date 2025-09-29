@@ -32,11 +32,13 @@ const SignupForm = () => {
       const result = await signupAction(data);
       if (result?.error) {
         // Check if error is field-specific
-        if (result.error.includes("An account with this email already exists")) {
+        if (
+          result.error.includes("An account with this email already exists")
+        ) {
           // Show error under email field
           setError("email", {
             type: "server",
-            message: result.error
+            message: result.error,
           });
         } else {
           // Show general errors at the top
@@ -83,78 +85,78 @@ const SignupForm = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <Input
+                {...register("firstName")}
+                type="text"
+                label="First name"
+                autoComplete="given-name"
+                error={errors.firstName?.message}
+              />
+
+              <Input
+                {...register("lastName")}
+                type="text"
+                label="Last name"
+                autoComplete="family-name"
+                error={errors.lastName?.message}
+              />
+            </div>
+
             <Input
-              {...register("firstName")}
-              type="text"
-              label="First name"
-              autoComplete="given-name"
-              error={errors.firstName?.message}
+              {...register("email")}
+              type="email"
+              label="Email address"
+              autoComplete="email"
+              error={errors.email?.message}
             />
 
             <Input
-              {...register("lastName")}
-              type="text"
-              label="Last name"
-              autoComplete="family-name"
-              error={errors.lastName?.message}
+              {...register("password")}
+              type="password"
+              label="Password"
+              autoComplete="new-password"
+              error={errors.password?.message}
             />
-          </div>
 
-          <Input
-            {...register("email")}
-            type="email"
-            label="Email address"
-            autoComplete="email"
-            error={errors.email?.message}
-          />
+            <Input
+              {...register("confirmPassword")}
+              type="password"
+              label="Confirm password"
+              autoComplete="new-password"
+              error={errors.confirmPassword?.message}
+            />
 
-          <Input
-            {...register("password")}
-            type="password"
-            label="Password"
-            autoComplete="new-password"
-            error={errors.password?.message}
-          />
+            <div className="text-xs text-muted-foreground">
+              <p>Password must contain:</p>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                <li>At least 8 characters</li>
+                <li>One uppercase letter</li>
+                <li>One lowercase letter</li>
+                <li>One number</li>
+              </ul>
+            </div>
 
-          <Input
-            {...register("confirmPassword")}
-            type="password"
-            label="Confirm password"
-            autoComplete="new-password"
-            error={errors.confirmPassword?.message}
-          />
-
-          <div className="text-xs text-muted-foreground">
-            <p>Password must contain:</p>
-            <ul className="list-disc list-inside mt-1 space-y-1">
-              <li>At least 8 characters</li>
-              <li>One uppercase letter</li>
-              <li>One lowercase letter</li>
-              <li>One number</li>
-            </ul>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            loading={loading}
-            disabled={loading}
-          >
-            Create account
-          </Button>
-
-          <div className="text-center text-sm">
-            <span className="text-muted-foreground">
-              Already have an account?{" "}
-            </span>
-            <Link
-              href="/login"
-              className="font-medium text-primary hover-primary transition-colors"
+            <Button
+              type="submit"
+              className="w-full"
+              loading={loading}
+              disabled={loading}
             >
-              Sign in
-            </Link>
-          </div>
+              Create account
+            </Button>
+
+            <div className="text-center text-sm">
+              <span className="text-muted-foreground">
+                Already have an account?{" "}
+              </span>
+              <Link
+                href="/login"
+                className="font-medium text-primary hover-primary transition-colors"
+              >
+                Sign in
+              </Link>
+            </div>
           </form>
         </div>
       </div>

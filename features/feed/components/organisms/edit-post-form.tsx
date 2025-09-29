@@ -11,14 +11,20 @@ interface EditPostFormProps {
   initialContent: string;
 }
 
-const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProps) => {
+const EditPostForm = ({
+  postId,
+  initialTitle,
+  initialContent,
+}: EditPostFormProps) => {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const hasChanges = title.trim() !== initialTitle.trim() || content.trim() !== initialContent.trim();
+  const hasChanges =
+    title.trim() !== initialTitle.trim() ||
+    content.trim() !== initialContent.trim();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +39,9 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
       return;
     }
 
-    const confirmed = window.confirm("Are you sure you want to update your post?");
+    const confirmed = window.confirm(
+      "Are you sure you want to update your post?"
+    );
     if (!confirmed) return;
 
     setIsSubmitting(true);
@@ -73,14 +81,17 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
       )}
 
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-foreground mb-2">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-foreground mb-2"
+        >
           Title
         </label>
         <input
           type="text"
           id="title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
           placeholder="What did you accomplish today?"
           maxLength={200}
@@ -93,13 +104,16 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
       </div>
 
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-foreground mb-2">
+        <label
+          htmlFor="content"
+          className="block text-sm font-medium text-foreground mb-2"
+        >
           Content
         </label>
         <textarea
           id="content"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={e => setContent(e.target.value)}
           className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
           placeholder="Share the details of your professional growth, challenges overcome, skills learned, or achievements gained..."
           rows={12}
@@ -136,7 +150,9 @@ const EditPostForm = ({ postId, initialTitle, initialContent }: EditPostFormProp
             type="submit"
             variant="primary"
             size="lg"
-            disabled={isSubmitting || !title.trim() || !content.trim() || !hasChanges}
+            disabled={
+              isSubmitting || !title.trim() || !content.trim() || !hasChanges
+            }
           >
             {isSubmitting ? "Updating..." : "Update Post"}
           </Button>

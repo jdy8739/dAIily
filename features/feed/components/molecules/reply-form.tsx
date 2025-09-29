@@ -46,7 +46,7 @@ const ReplyForm = ({ postId, onReplyCreated }: ReplyFormProps) => {
       <div>
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={e => setContent(e.target.value)}
           placeholder="Write your reply..."
           className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
           rows={3}

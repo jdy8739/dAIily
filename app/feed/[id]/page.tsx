@@ -77,7 +77,9 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 {post.title}
               </h1>
               <div className="flex items-center space-x-2 text-accent-foreground/90">
-                <span>By {post.author.firstName} {post.author.lastName}</span>
+                <span>
+                  By {post.author.firstName} {post.author.lastName}
+                </span>
                 <span>•</span>
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
               </div>
@@ -90,7 +92,8 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-primary-foreground font-semibold">
-                    {post.author.firstName?.[0]}{post.author.lastName?.[0]}
+                    {post.author.firstName?.[0]}
+                    {post.author.lastName?.[0]}
                   </span>
                 </div>
                 <div>
@@ -100,7 +103,9 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                   <p className="text-sm text-muted-foreground">
                     {new Date(post.createdAt).toLocaleString()}
                     {post.updatedAt.getTime() !== post.createdAt.getTime() && (
-                      <span className="ml-2 text-muted-foreground/70">(edited)</span>
+                      <span className="ml-2 text-muted-foreground/70">
+                        (edited)
+                      </span>
                     )}
                   </p>
                 </div>
@@ -131,12 +136,19 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
             <div className="flex items-center space-x-6 mt-8 pt-6 border-t border-border">
               <LikeButton
                 postId={post.id}
-                initialLiked={currentUser ? post.likes.some(like => like.userId === currentUser.id) : false}
+                initialLiked={
+                  currentUser
+                    ? post.likes.some(like => like.userId === currentUser.id)
+                    : false
+                }
                 initialLikeCount={post._count.likes}
               />
               <span className="flex items-center space-x-2 text-muted-foreground">
                 <span>💬</span>
-                <span>{post._count.replies} {post._count.replies === 1 ? 'Reply' : 'Replies'}</span>
+                <span>
+                  {post._count.replies}{" "}
+                  {post._count.replies === 1 ? "Reply" : "Replies"}
+                </span>
               </span>
               <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                 <span>🔄</span>

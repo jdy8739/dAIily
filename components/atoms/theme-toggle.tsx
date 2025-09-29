@@ -99,12 +99,12 @@ const ThemeToggle = () => {
     }
   };
 
-  const currentTheme = mounted ? resolvedTheme : 'light';
+  const currentTheme = mounted ? resolvedTheme : "light";
 
   return (
     <button
       onClick={handleThemeChange}
-      onMouseDown={(e) => {
+      onMouseDown={e => {
         console.log("Mouse down on theme toggle");
         e.preventDefault();
       }}

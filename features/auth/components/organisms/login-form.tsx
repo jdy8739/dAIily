@@ -41,7 +41,7 @@ const LoginForm = () => {
             // Show error under email field for login errors
             setError("email", {
               type: "server",
-              message: result.error
+              message: result.error,
             });
           } else {
             // Show general errors at the top

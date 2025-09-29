@@ -141,7 +141,7 @@ export const logoutAction = async () => {
       "next-auth.csrf-token",
       "__Secure-next-auth.csrf-token",
       "next-auth.callback-url",
-      "__Secure-next-auth.callback-url"
+      "__Secure-next-auth.callback-url",
     ];
 
     for (const cookieName of nextAuthCookies) {

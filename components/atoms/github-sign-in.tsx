@@ -8,7 +8,10 @@ interface GitHubSignInProps {
   text?: string;
 }
 
-const GitHubSignIn = ({ callbackUrl = "/dashboard", text = "Continue with GitHub" }: GitHubSignInProps) => {
+const GitHubSignIn = ({
+  callbackUrl = "/dashboard",
+  text = "Continue with GitHub",
+}: GitHubSignInProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleGitHubSignIn = async () => {

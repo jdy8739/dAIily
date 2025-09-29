@@ -26,8 +26,7 @@ const Button = ({
       "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-ring",
     outline:
       "border border-border text-foreground bg-background hover:bg-accent hover:text-accent-foreground focus:ring-ring",
-    ai:
-      "border border-primary/30 text-primary bg-primary/10 hover:bg-primary/20 focus:ring-ring",
+    ai: "border border-primary/30 text-primary bg-primary/10 hover:bg-primary/20 focus:ring-ring",
   };
 
   const sizeClasses = {

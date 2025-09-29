@@ -10,7 +10,12 @@ interface EditReplyFormProps {
   onSuccess: () => void;
 }
 
-const EditReplyForm = ({ replyId, initialContent, onCancel, onSuccess }: EditReplyFormProps) => {
+const EditReplyForm = ({
+  replyId,
+  initialContent,
+  onCancel,
+  onSuccess,
+}: EditReplyFormProps) => {
   const [content, setContent] = useState(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +64,7 @@ const EditReplyForm = ({ replyId, initialContent, onCancel, onSuccess }: EditRep
       <div>
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={e => setContent(e.target.value)}
           className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none text-sm"
           rows={3}
           maxLength={1000}
@@ -83,7 +88,11 @@ const EditReplyForm = ({ replyId, initialContent, onCancel, onSuccess }: EditRep
         </button>
         <button
           type="submit"
-          disabled={isSubmitting || !content.trim() || content.trim() === initialContent.trim()}
+          disabled={
+            isSubmitting ||
+            !content.trim() ||
+            content.trim() === initialContent.trim()
+          }
           className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {isSubmitting ? "Saving..." : "Save"}
