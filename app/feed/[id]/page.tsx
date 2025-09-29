@@ -22,8 +22,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          name: true,
         },
       },
       likes: {
@@ -42,8 +41,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
           author: {
             select: {
               id: true,
-              firstName: true,
-              lastName: true,
+              name: true,
             },
           },
         },
@@ -78,7 +76,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
               </h1>
               <div className="flex items-center space-x-2 text-accent-foreground/90">
                 <span>
-                  By {post.author.firstName} {post.author.lastName}
+                  By {post.author.name}
                 </span>
                 <span>•</span>
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
@@ -92,13 +90,12 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-primary-foreground font-semibold">
-                    {post.author.firstName?.[0]}
-                    {post.author.lastName?.[0]}
+                    {post.author.name?.split(' ').map(n => n[0]).join('') || '??'}
                   </span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    {post.author.firstName} {post.author.lastName}
+                    {post.author.name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {new Date(post.createdAt).toLocaleString()}

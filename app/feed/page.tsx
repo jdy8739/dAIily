@@ -11,8 +11,7 @@ const FeedPage = async () => {
     include: {
       author: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
         },
       },
       likes: {
@@ -68,14 +67,13 @@ const FeedPage = async () => {
                     <div className="flex items-start space-x-4">
                       <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                         <span className="text-primary-foreground font-semibold text-sm">
-                          {post.author.firstName?.[0]}
-                          {post.author.lastName?.[0]}
+                          {post.author.name?.split(' ').map(n => n[0]).join('') || '??'}
                         </span>
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <h3 className="font-semibold text-foreground">
-                            {post.author.firstName} {post.author.lastName}
+                            {post.author.name}
                           </h3>
                           <span className="text-sm text-muted-foreground">
                             •

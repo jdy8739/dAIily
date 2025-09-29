@@ -23,8 +23,7 @@ const EditPostPage = async ({ params }: EditPostPageProps) => {
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          name: true,
         },
       },
     },

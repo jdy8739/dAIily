@@ -11,8 +11,7 @@ interface Reply {
   updatedAt: string;
   author: {
     id: string;
-    firstName: string | null;
-    lastName: string | null;
+    name: string | null;
   };
 }
 
@@ -79,13 +78,12 @@ const ReplyList = ({
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-primary-foreground font-semibold text-xs">
-                    {reply.author.firstName?.[0]}
-                    {reply.author.lastName?.[0]}
+                    {reply.author.name?.split(' ').map(n => n[0]).join('') || '??'}
                   </span>
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground text-sm">
-                    {reply.author.firstName} {reply.author.lastName}
+                    {reply.author.name}
                     {reply.author.id === postAuthorId && (
                       <span className="ml-2 px-2 py-0.5 text-xs bg-accent text-accent-foreground rounded-full">
                         Author
