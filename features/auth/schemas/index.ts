@@ -16,8 +16,7 @@ export const signupSchema = z
         "Password must contain at least one lowercase letter, one uppercase letter, and one number"
       ),
     confirmPassword: z.string(),
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
+    name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",

@@ -85,23 +85,13 @@ const SignupForm = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Input
-                {...register("firstName")}
-                type="text"
-                label="First name"
-                autoComplete="given-name"
-                error={errors.firstName?.message}
-              />
-
-              <Input
-                {...register("lastName")}
-                type="text"
-                label="Last name"
-                autoComplete="family-name"
-                error={errors.lastName?.message}
-              />
-            </div>
+            <Input
+              {...register("name")}
+              type="text"
+              label="Full name"
+              autoComplete="name"
+              error={errors.name?.message}
+            />
 
             <Input
               {...register("email")}

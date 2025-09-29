@@ -8,16 +8,10 @@ export const authOptions: NextAuthOptions = {
   adapter: {
     ...PrismaAdapter(prisma),
     createUser: async data => {
-      // Extract first and last name from the name field
-      const nameParts = data.name?.split(" ") || [];
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
-
       const user = await prisma.user.create({
         data: {
           email: data.email,
-          firstName,
-          lastName,
+          name: data.name || "",
           image: data.image,
           emailVerified: data.emailVerified,
         },
@@ -27,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
         email: user.email,
         emailVerified: user.emailVerified,
-        name: `${user.firstName} ${user.lastName}`.trim(),
+        name: user.name || "",
         image: user.image,
       };
     },
@@ -70,8 +64,7 @@ export const authOptions: NextAuthOptions = {
         user.name = `${firstName} ${lastName}`.trim();
       }
 
-      // For GitHub OAuth, GitHub doesn't provide separate first/last names
-      // We'll extract from the display name in the adapter
+      // For GitHub OAuth, use the display name
       if (account?.provider === "github" && profile) {
         user.name = profile.name || user.name;
       }
