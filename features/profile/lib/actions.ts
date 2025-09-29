@@ -33,12 +33,42 @@ export const updateProfile = async (data: UpdateProfileData) => {
       }
     }
 
+    // Convert comma-separated strings to arrays
+    const currentSkillsArray = validatedData.currentSkills
+      ? validatedData.currentSkills
+          .split(",")
+          .map(skill => skill.trim())
+          .filter(skill => skill.length > 0)
+      : [];
+
+    const targetSkillsArray = validatedData.targetSkills
+      ? validatedData.targetSkills
+          .split(",")
+          .map(skill => skill.trim())
+          .filter(skill => skill.length > 0)
+      : [];
+
+    const currentGoalsArray = validatedData.currentGoals
+      ? validatedData.currentGoals
+          .split(",")
+          .map(goal => goal.trim())
+          .filter(goal => goal.length > 0)
+      : [];
+
     await prisma.user.update({
       where: { id: currentUser.id },
       data: {
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         email: validatedData.email,
+        bio: validatedData.bio,
+        currentRole: validatedData.currentRole,
+        experienceLevel: validatedData.experienceLevel,
+        industry: validatedData.industry,
+        yearsOfExperience: validatedData.yearsOfExperience,
+        currentSkills: currentSkillsArray,
+        targetSkills: targetSkillsArray,
+        currentGoals: currentGoalsArray,
       },
     });
 
