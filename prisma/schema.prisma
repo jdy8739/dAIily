@@ -18,6 +18,22 @@ model User {
   updatedAt     DateTime        @updatedAt
   emailVerified DateTime?
   image         String?
+
+  // Career Information
+  currentRole       String?
+  experienceLevel   ExperienceLevel @default(JUNIOR)
+  industry          String?
+  yearsOfExperience Int?
+  currentSkills     String[]
+  targetSkills      String[]
+  bio               String?
+
+  // Goals & Achievement Tracking
+  currentGoals      String[]
+  achievementScore  Int             @default(0)
+  goals             Goal[]
+
+  // Relations
   accounts      Account[]
   passwordReset PasswordReset[]
   posts         Post[]
@@ -26,6 +42,43 @@ model User {
   replies       Reply[]
 
   @@map("users")
+}
+
+enum ExperienceLevel {
+  INTERN
+  JUNIOR
+  MID_LEVEL
+  SENIOR
+  LEAD
+  MANAGER
+  DIRECTOR
+  VP
+  C_LEVEL
+}
+
+model Goal {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  category    GoalCategory
+  targetDate  DateTime?
+  completedAt DateTime?
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("goals")
+}
+
+enum GoalCategory {
+  SKILL_DEVELOPMENT
+  CAREER_ADVANCEMENT
+  PROJECT_COMPLETION
+  LEARNING
+  NETWORKING
+  CERTIFICATION
+  OTHER
 }
 
 model Account {
