@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface TabItem {
   id: string;
@@ -12,10 +13,48 @@ interface TabsProps {
   items: TabItem[];
   defaultTab?: string;
   className?: string;
+  queryParam?: string; // URL query parameter name (e.g., "tab")
 }
 
-const Tabs = ({ items, defaultTab, className = "" }: TabsProps) => {
-  const [activeTab, setActiveTab] = useState(defaultTab || items[0]?.id);
+const Tabs = ({ items, defaultTab, className = "", queryParam }: TabsProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get initial tab from URL or default
+  const getInitialTab = () => {
+    if (queryParam) {
+      const tabFromUrl = searchParams.get(queryParam);
+      if (tabFromUrl && items.some(item => item.id === tabFromUrl)) {
+        return tabFromUrl;
+      }
+    }
+    return defaultTab || items[0]?.id;
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
+
+  // Update tab state when URL changes
+  useEffect(() => {
+    if (queryParam) {
+      const tabFromUrl = searchParams.get(queryParam);
+      if (tabFromUrl && items.some(item => item.id === tabFromUrl)) {
+        setActiveTab(tabFromUrl);
+      }
+    }
+  }, [searchParams, queryParam, items]);
+
+  // Handle tab change
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+
+    if (queryParam) {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set(queryParam, tabId);
+      const search = current.toString();
+      const query = search ? `?${search}` : "";
+      router.push(`${window.location.pathname}${query}`);
+    }
+  };
 
   const activeContent = items.find(item => item.id === activeTab)?.content;
 
@@ -27,7 +66,7 @@ const Tabs = ({ items, defaultTab, className = "" }: TabsProps) => {
           {items.map(item => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleTabChange(item.id)}
               className={`
                 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
                 transition-colors duration-200
