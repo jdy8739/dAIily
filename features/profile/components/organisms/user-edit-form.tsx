@@ -14,8 +14,7 @@ interface UserEditFormProps {
 
 const UserEditForm = ({ user }: UserEditFormProps) => {
   // Basic information
-  const [firstName, setFirstName] = useState(user.firstName || "");
-  const [lastName, setLastName] = useState(user.lastName || "");
+  const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email);
   const [bio, setBio] = useState(user.bio || "");
 
@@ -48,8 +47,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
   const router = useRouter();
 
   const hasChanges =
-    firstName.trim() !== (user.firstName || "").trim() ||
-    lastName.trim() !== (user.lastName || "").trim() ||
+    name.trim() !== (user.name || "").trim() ||
     email.trim() !== user.email.trim() ||
     bio.trim() !== (user.bio || "").trim() ||
     currentRole.trim() !== (user.currentRole || "").trim() ||
@@ -63,8 +61,8 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
-      setError("First name, last name, and email are required");
+    if (!name.trim() || !email.trim()) {
+      setError("Name and email are required");
       return;
     }
 
@@ -78,8 +76,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
 
     try {
       const result = await updateProfile({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        name: name.trim(),
         email: email.trim(),
         bio: bio.trim(),
         currentRole: currentRole.trim(),
@@ -163,29 +160,16 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
           Basic Information
         </h3>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <Input
-            label="First Name *"
-            type="text"
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            placeholder="Enter your first name"
-            maxLength={50}
-            disabled={isSubmitting || isDeleting}
-            required
-          />
-
-          <Input
-            label="Last Name *"
-            type="text"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            placeholder="Enter your last name"
-            maxLength={50}
-            disabled={isSubmitting || isDeleting}
-            required
-          />
-        </div>
+        <Input
+          label="Name *"
+          type="text"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Enter your full name"
+          maxLength={100}
+          disabled={isSubmitting || isDeleting}
+          required
+        />
 
         <Input
           label="Email Address *"
@@ -329,8 +313,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
             isSubmitting ||
             isDeleting ||
             !hasChanges ||
-            !firstName.trim() ||
-            !lastName.trim() ||
+            !name.trim() ||
             !email.trim()
           }
           className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-medium"

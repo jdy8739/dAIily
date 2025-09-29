@@ -48,8 +48,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
     try {
       const result = await updateProfile({
         // Keep existing basic profile data
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        name: user.name || "",
         email: user.email,
         bio: user.bio || "",
         // Update career data

@@ -58,8 +58,7 @@ export const updateProfile = async (data: UpdateProfileData) => {
     await prisma.user.update({
       where: { id: currentUser.id },
       data: {
-        firstName: validatedData.firstName,
-        lastName: validatedData.lastName,
+        name: validatedData.name,
         email: validatedData.email,
         bio: validatedData.bio,
         currentRole: validatedData.currentRole,

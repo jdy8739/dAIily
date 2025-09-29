@@ -14,14 +14,10 @@ const ExperienceLevel = z.enum([
 
 export const updateProfileSchema = z.object({
   // Basic Information
-  firstName: z
+  name: z
     .string()
-    .min(1, "First name is required")
-    .max(50, "First name must be less than 50 characters"),
-  lastName: z
-    .string()
-    .min(1, "Last name is required")
-    .max(50, "Last name must be less than 50 characters"),
+    .min(1, "Name is required")
+    .max(100, "Name must be less than 100 characters"),
   email: z.string().email("Please enter a valid email address"),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
 
