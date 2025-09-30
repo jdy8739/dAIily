@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { updateProfile } from "../../lib/actions";
 import type { User } from "@prisma/client";
 import Input from "../../../../components/atoms/input";
-import Textarea from "../../../../components/atoms/textarea";
 import Dropdown from "../../../../components/atoms/dropdown";
+import ChipList from "../../../../components/atoms/chip-list";
 
 interface CareerProfileFormProps {
   user: User;
@@ -14,12 +14,16 @@ interface CareerProfileFormProps {
 
 const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
   const [currentRole, setCurrentRole] = useState(user.currentRole || "");
-  const [experienceLevel, setExperienceLevel] = useState(user.experienceLevel || "JUNIOR");
+  const [experienceLevel, setExperienceLevel] = useState(
+    user.experienceLevel || "JUNIOR"
+  );
   const [industry, setIndustry] = useState(user.industry || "");
-  const [yearsOfExperience, setYearsOfExperience] = useState(user.yearsOfExperience || 0);
-  const [currentSkills, setCurrentSkills] = useState(user.currentSkills?.join(", ") || "");
-  const [targetSkills, setTargetSkills] = useState(user.targetSkills?.join(", ") || "");
-  const [currentGoals, setCurrentGoals] = useState(user.currentGoals?.join(", ") || "");
+  const [yearsOfExperience, setYearsOfExperience] = useState(
+    user.yearsOfExperience || 0
+  );
+  const [currentSkills, setCurrentSkills] = useState(user.currentSkills || []);
+  const [targetSkills, setTargetSkills] = useState(user.targetSkills || []);
+  const [currentGoals, setCurrentGoals] = useState(user.currentGoals || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -30,9 +34,10 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
     experienceLevel !== user.experienceLevel ||
     industry.trim() !== (user.industry || "").trim() ||
     yearsOfExperience !== (user.yearsOfExperience || 0) ||
-    currentSkills.trim() !== (user.currentSkills?.join(", ") || "") ||
-    targetSkills.trim() !== (user.targetSkills?.join(", ") || "") ||
-    currentGoals.trim() !== (user.currentGoals?.join(", ") || "");
+    JSON.stringify(currentSkills) !==
+      JSON.stringify(user.currentSkills || []) ||
+    JSON.stringify(targetSkills) !== JSON.stringify(user.targetSkills || []) ||
+    JSON.stringify(currentGoals) !== JSON.stringify(user.currentGoals || []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,9 +70,9 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
           | "C_LEVEL",
         industry: industry.trim(),
         yearsOfExperience: Number(yearsOfExperience),
-        currentSkills: currentSkills.trim(),
-        targetSkills: targetSkills.trim(),
-        currentGoals: currentGoals.trim(),
+        currentSkills: currentSkills.join(", "),
+        targetSkills: targetSkills.join(", "),
+        currentGoals: currentGoals.join(", "),
       });
 
       if (result.success) {
@@ -100,8 +105,10 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
 
       {/* Career Information */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-          Career Information
+        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
+          <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
+            Career Information
+          </span>
         </h3>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -160,54 +167,46 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
 
       {/* Skills & Goals */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">
-          Skills & Goals
+        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
+          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Skills & Goals
+          </span>
         </h3>
 
-        <div>
-          <Input
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <ChipList
             label="Current Skills"
-            type="text"
-            value={currentSkills}
-            onChange={e => setCurrentSkills(e.target.value)}
-            placeholder="e.g., React, TypeScript, Python (separate with commas)"
+            items={currentSkills}
+            onChange={setCurrentSkills}
+            placeholder="e.g., React, TypeScript, Python..."
             disabled={isSubmitting}
+            variant="primary"
+            maxItems={20}
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            Separate skills with commas
-          </p>
-        </div>
 
-        <div>
-          <Input
+          <ChipList
             label="Skills I Want to Learn"
-            type="text"
-            value={targetSkills}
-            onChange={e => setTargetSkills(e.target.value)}
-            placeholder="e.g., GraphQL, Machine Learning, AWS (separate with commas)"
+            items={targetSkills}
+            onChange={setTargetSkills}
+            placeholder="e.g., GraphQL, Machine Learning, AWS..."
             disabled={isSubmitting}
+            variant="secondary"
+            maxItems={20}
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            Separate skills with commas
-          </p>
         </div>
 
-        <div>
-          <Textarea
-            label="Current Goals"
-            value={currentGoals}
-            onChange={e => setCurrentGoals(e.target.value)}
-            placeholder="e.g., Get promoted to senior developer, Learn React Native, Complete AWS certification (separate with commas)"
-            rows={3}
-            disabled={isSubmitting}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Separate goals with commas
-          </p>
-        </div>
+        <ChipList
+          label="Current Goals"
+          items={currentGoals}
+          onChange={setCurrentGoals}
+          placeholder="e.g., Get promoted to senior developer, Learn React Native..."
+          disabled={isSubmitting}
+          variant="accent"
+          maxItems={15}
+        />
       </div>
 
-      <div className="pt-4">
+      <div className="pt-6">
         <button
           type="submit"
           disabled={isSubmitting || !hasChanges}
