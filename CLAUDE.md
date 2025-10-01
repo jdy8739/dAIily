@@ -132,3 +132,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **CSRF Protection**: Implement CSRF tokens for sensitive operations
 - **Rate Limiting**: Add rate limiting to API routes
 - **Content Security Policy**: Configure CSP headers for security
+
+## Environment Variable Policy
+
+**CRITICAL**: **NEVER modify, change, update, or touch the `.env` file unless explicitly ordered by the user.**
+
+- If any operation requires environment variable changes, **STOP** and **ASK** the user for permission first
+- Never assume environment variables need to be changed or updated
+- Never suggest environment variable modifications without explicit user request
+- If you encounter missing environment variables, inform the user but do not modify the `.env` file
+- This policy applies to all environment files: `.env`, `.env.local`, `.env.development`, `.env.production`
