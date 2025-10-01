@@ -7,6 +7,7 @@ import type { User } from "@prisma/client";
 import Input from "../../../../components/atoms/input";
 import Textarea from "../../../../components/atoms/textarea";
 import Dropdown from "../../../../components/atoms/dropdown";
+import ClientDate from "../../../../components/atoms/client-date";
 
 interface UserEditFormProps {
   user: User;
@@ -324,7 +325,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
 
       <div className="pt-2 text-center">
         <p className="text-sm text-muted-foreground">
-          Account created: {new Date(user.createdAt).toLocaleDateString()}
+          Account created: <ClientDate date={user.createdAt} />
         </p>
       </div>
 

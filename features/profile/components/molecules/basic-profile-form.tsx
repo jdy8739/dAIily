@@ -6,6 +6,7 @@ import { updateProfile } from "../../lib/actions";
 import type { User } from "@prisma/client";
 import Input from "../../../../components/atoms/input";
 import Textarea from "../../../../components/atoms/textarea";
+import ClientDate from "../../../../components/atoms/client-date";
 
 interface BasicProfileFormProps {
   user: User;
@@ -122,7 +123,7 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
 
       <div className="pt-2 text-center">
         <p className="text-sm text-muted-foreground">
-          Account created: {new Date(user.createdAt).toLocaleDateString()}
+          Account created: <ClientDate date={user.createdAt} />
         </p>
       </div>
 
