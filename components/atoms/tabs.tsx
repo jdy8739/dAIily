@@ -69,7 +69,7 @@ const Tabs = ({ items, defaultTab, className = "", queryParam }: TabsProps) => {
               onClick={() => handleTabChange(item.id)}
               className={`
                 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
-                transition-colors duration-200
+                transition-colors duration-200 cursor-pointer
                 ${
                   activeTab === item.id
                     ? "border-primary text-primary"
