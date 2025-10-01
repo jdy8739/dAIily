@@ -230,7 +230,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
           <Dropdown
             label="Experience Level"
             value={experienceLevel}
-            onChange={e => setExperienceLevel(e.target.value)}
+            onChange={e => setExperienceLevel(e.target.value as "INTERN" | "JUNIOR" | "MID_LEVEL" | "SENIOR" | "LEAD" | "MANAGER" | "DIRECTOR" | "VP" | "C_LEVEL")}
             disabled={isSubmitting || isDeleting}
             options={[
               { value: "INTERN", label: "Intern" },

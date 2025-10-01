@@ -48,7 +48,7 @@ const DashboardPage = async () => {
                     Browse Feed
                   </h3>
                   <p className="text-accent-foreground/80">
-                    Discover and get inspired by others' growth stories
+                    Discover and get inspired by others&apos; growth stories
                   </p>
                 </div>
               </div>

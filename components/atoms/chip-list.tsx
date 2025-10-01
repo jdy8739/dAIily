@@ -29,7 +29,6 @@ const ChipList = ({
   error,
 }: ChipListProps) => {
   const [inputValue, setInputValue] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
 
   const addItem = (value: string) => {
     const trimmedValue = value.trim();
@@ -58,7 +57,6 @@ const ChipList = ({
   };
 
   const handleInputBlur = () => {
-    setIsFocused(false);
     if (inputValue.trim()) {
       addItem(inputValue);
     }
@@ -112,7 +110,6 @@ const ChipList = ({
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              onFocus={() => setIsFocused(true)}
               onBlur={handleInputBlur}
               placeholder={items.length === 0 ? placeholder : ""}
               disabled={disabled}

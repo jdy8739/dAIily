@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -99,7 +99,6 @@ const ThemeToggle = () => {
     }
   };
 
-  const currentTheme = mounted ? resolvedTheme : "light";
 
   return (
     <button

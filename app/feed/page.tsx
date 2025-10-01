@@ -40,7 +40,7 @@ const FeedPage = async () => {
               Growth Feed
             </h1>
             <p className="text-accent-foreground/90">
-              Discover and be inspired by others' professional journeys
+              Discover and be inspired by others&apos; professional journeys
             </p>
           </div>
 

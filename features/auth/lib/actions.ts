@@ -31,7 +31,7 @@ export const loginAction = async (formData: LoginFormData) => {
       where: { email: validatedData.email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       return { error: "Invalid email or password" };
     }
 

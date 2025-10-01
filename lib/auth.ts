@@ -31,10 +31,11 @@ export const generateToken = (payload: object): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 };
 
-export const verifyToken = (token: string): any => {
+export const verifyToken = (token: string): object | null => {
   try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
+    const result = jwt.verify(token, JWT_SECRET);
+    return typeof result === 'object' ? result : null;
+  } catch {
     return null;
   }
 };
@@ -70,7 +71,7 @@ export const getSessionFromToken = async (token: string) => {
     }
 
     return session;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -78,7 +79,7 @@ export const getSessionFromToken = async (token: string) => {
 export const deleteSession = async (token: string): Promise<void> => {
   try {
     await prisma.session.delete({ where: { sessionToken: token } });
-  } catch (error) {
+  } catch {
     // Session might not exist, ignore error
   }
 };
@@ -105,7 +106,7 @@ export const getSessionFromCookie = async () => {
     }
 
     return getSessionFromToken(sessionToken);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -167,7 +168,7 @@ export const createPasswordResetToken = async (
 
 export const verifyPasswordResetToken = async (token: string) => {
   try {
-    const decoded = jwt.verify(token, SESSION_SECRET) as any;
+    const decoded = jwt.verify(token, SESSION_SECRET) as { type: string; timestamp: number; iat: number; exp: number; };
     if (decoded.type !== "password_reset") {
       return null;
     }
@@ -186,7 +187,7 @@ export const verifyPasswordResetToken = async (token: string) => {
     }
 
     return resetRecord;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

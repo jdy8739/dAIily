@@ -2,12 +2,14 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { Adapter } from "next-auth/adapters";
 import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
   adapter: {
     ...PrismaAdapter(prisma),
-    createUser: async data => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createUser: async (data: any) => {
       const user = await prisma.user.create({
         data: {
           email: data.email,
@@ -25,7 +27,7 @@ export const authOptions: NextAuthOptions = {
         image: user.image,
       };
     },
-  } as any,
+  } as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -44,36 +46,40 @@ export const authOptions: NextAuthOptions = {
     newUser: "/dashboard",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
+      if (token && session.user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).id = token.id as string;
       }
       return session;
     },
     async signIn({ user, account, profile }) {
       // For Google OAuth, update the user name to use given_name + family_name
       if (account?.provider === "google" && profile) {
-        const firstName = profile.given_name || "";
-        const lastName = profile.family_name || "";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const firstName = (profile as any).given_name || "";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lastName = (profile as any).family_name || "";
         user.name = `${firstName} ${lastName}`.trim();
       }
 
       // For GitHub OAuth, use the display name
       if (account?.provider === "github" && profile) {
-        user.name = profile.name || user.name;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        user.name = (profile as any).name || user.name;
       }
 
       return true;
     },
   },
   events: {
-    async signIn({ user, account, isNewUser }) {
+    async signIn() {
       // Optional: Add any post sign-in logic here
     },
   },
