@@ -7,6 +7,7 @@ import DeletePostButton from "../../../features/feed/components/molecules/delete
 import LikeButton from "../../../features/feed/components/molecules/like-button";
 import ReplyForm from "../../../features/feed/components/molecules/reply-form";
 import ReplyList from "../../../features/feed/components/molecules/reply-list";
+import UserNameMenu from "../../../components/molecules/user-name-menu";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -76,7 +77,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
               </h1>
               <div className="flex items-center space-x-2 text-accent-foreground/90">
                 <span>
-                  By {post.author.name}
+                  By <UserNameMenu userId={post.author.id} userName={post.author.name || "Unknown"} />
                 </span>
                 <span>•</span>
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
