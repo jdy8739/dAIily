@@ -1,5 +1,6 @@
 import { getCurrentUser } from "../../lib/auth";
 import { redirect } from "next/navigation";
+import { generateCsrfToken } from "../../lib/csrf";
 import PasswordResetForm from "../../features/auth/components/organisms/password-reset-form";
 
 const PasswordResetPage = async () => {
@@ -8,6 +9,8 @@ const PasswordResetPage = async () => {
   if (user) {
     redirect("/dashboard");
   }
+
+  const csrfToken = generateCsrfToken();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-warning/20 via-accent/10 to-primary/20">
@@ -25,7 +28,7 @@ const PasswordResetPage = async () => {
 
         <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
           <div className="flex-1 max-w-md">
-            <PasswordResetForm />
+            <PasswordResetForm csrfToken={csrfToken} />
           </div>
         </div>
       </div>

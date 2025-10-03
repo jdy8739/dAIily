@@ -1,5 +1,6 @@
 import { getCurrentUser } from "../../lib/auth";
 import { redirect } from "next/navigation";
+import { generateCsrfToken } from "../../lib/csrf";
 import SignupForm from "../../features/auth/components/organisms/signup-form";
 
 const SignupPage = async () => {
@@ -8,6 +9,8 @@ const SignupPage = async () => {
   if (user) {
     redirect("/dashboard");
   }
+
+  const csrfToken = generateCsrfToken();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-success/20 via-accent/10 to-info/20">
@@ -25,7 +28,7 @@ const SignupPage = async () => {
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="flex-1 max-w-md mx-auto">
-            <SignupForm />
+            <SignupForm csrfToken={csrfToken} />
           </div>
         </div>
       </div>
