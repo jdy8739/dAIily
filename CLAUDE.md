@@ -115,6 +115,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Type Safety & DX
 
 - **Strict TypeScript**: Enable all strict flags in tsconfig.json
+- **No Any Type**: Never use `any` type - use proper TypeScript types, `unknown`, or generics instead
 - **Zod Everywhere**: Use Zod for runtime validation and type inference
 - **Custom Hooks**: Extract complex logic into reusable custom hooks
 - **Error Boundaries**: Implement error boundaries for graceful error handling
