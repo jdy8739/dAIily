@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { prisma } from "../../../lib/prisma";
+import { validateCsrf } from "../../../lib/csrf-middleware";
 import {
   hashPassword,
   verifyPassword,
@@ -22,8 +23,16 @@ import {
 } from "../schemas";
 import { User } from "next-auth";
 
-export const loginAction = async (formData: LoginFormData) => {
+export const loginAction = async (
+  formData: LoginFormData & { csrfToken: string }
+) => {
   try {
+    // Validate CSRF token
+    const isValidCsrf = validateCsrf(formData.csrfToken);
+    if (!isValidCsrf) {
+      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+    }
+
     const validatedData = loginSchema.parse(formData);
 
     // Find user by email
@@ -55,10 +64,18 @@ export const loginAction = async (formData: LoginFormData) => {
   }
 };
 
-export const signupAction = async (formData: SignupFormData) => {
+export const signupAction = async (
+  formData: SignupFormData & { csrfToken: string }
+) => {
   let user: User | null = null;
 
   try {
+    // Validate CSRF token
+    const isValidCsrf = validateCsrf(formData.csrfToken);
+    if (!isValidCsrf) {
+      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+    }
+
     const validatedData = signupSchema.parse(formData);
 
     // Check if user already exists
@@ -93,8 +110,16 @@ export const signupAction = async (formData: SignupFormData) => {
   }
 };
 
-export const passwordResetAction = async (formData: PasswordResetFormData) => {
+export const passwordResetAction = async (
+  formData: PasswordResetFormData & { csrfToken: string }
+) => {
   try {
+    // Validate CSRF token
+    const isValidCsrf = validateCsrf(formData.csrfToken);
+    if (!isValidCsrf) {
+      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+    }
+
     const validatedData = passwordResetSchema.parse(formData);
 
     // Check if user exists
