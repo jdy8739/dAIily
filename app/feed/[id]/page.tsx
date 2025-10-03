@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../components/templates/auth-layout";
-import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
 import LikeButton from "../../../features/feed/components/molecules/like-button";
 import ReplyForm from "../../../features/feed/components/molecules/reply-form";
 import ReplyList from "../../../features/feed/components/molecules/reply-list";
 import UserNameMenu from "../../../components/molecules/user-name-menu";
+import { getPostById } from "../../../features/feed/lib/queries";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -16,42 +16,7 @@ interface FeedDetailPageProps {
 const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
   const { id } = await params;
   const currentUser = await getCurrentUser();
-
-  const post = await prisma.post.findUnique({
-    where: { id },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      likes: {
-        select: {
-          userId: true,
-        },
-      },
-      _count: {
-        select: {
-          likes: true,
-          replies: true,
-        },
-      },
-      replies: {
-        include: {
-          author: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-    },
-  });
+  const post = await getPostById(id);
 
   if (!post) {
     notFound();

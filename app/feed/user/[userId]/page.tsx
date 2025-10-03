@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../../components/templates/auth-layout";
 import Tabs from "../../../../components/atoms/tabs";
-import { prisma } from "../../../../lib/prisma";
+import { getUserById, getUserPosts } from "../../../../features/feed/lib/queries";
 
 interface UserProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -11,34 +11,20 @@ interface UserProfilePageProps {
 const UserProfilePage = async ({ params }: UserProfilePageProps) => {
   const { userId } = await params;
 
-  // Fetch user with their posts
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      posts: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          _count: {
-            select: {
-              likes: true,
-              replies: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  // Fetch user and their posts
+  const [user, posts] = await Promise.all([
+    getUserById(userId),
+    getUserPosts(userId),
+  ]);
 
   if (!user) {
     notFound();
   }
 
   // Calculate stats
-  const totalPosts = user.posts.length;
-  const totalLikes = user.posts.reduce((sum, post) => sum + post._count.likes, 0);
-  const totalReplies = user.posts.reduce(
+  const totalPosts = posts.length;
+  const totalLikes = posts.reduce((sum, post) => sum + post._count.likes, 0);
+  const totalReplies = posts.reduce(
     (sum, post) => sum + post._count.replies,
     0
   );
@@ -73,13 +59,13 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
         <h3 className="text-xl font-semibold text-foreground mb-4">
           All Posts
         </h3>
-        {user.posts.length === 0 ? (
+        {posts.length === 0 ? (
           <div className="text-center py-12 bg-muted/30 rounded-lg">
             <p className="text-muted-foreground">No posts yet</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {user.posts.map((post) => (
+            {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/feed/${post.id}`}
@@ -118,29 +104,31 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
             <span className="font-medium text-foreground">Member since:</span>{" "}
             {new Date(user.createdAt).toLocaleDateString()}
           </div>
-          {user.firm && (
+          {user.currentRole && (
             <div>
-              <span className="font-medium text-foreground">Company:</span>{" "}
-              {user.firm}
+              <span className="font-medium text-foreground">Current Role:</span>{" "}
+              {user.currentRole}
             </div>
           )}
-          {user.role && (
+          {user.industry && (
             <div>
-              <span className="font-medium text-foreground">Role:</span>{" "}
-              {user.role}
+              <span className="font-medium text-foreground">Industry:</span>{" "}
+              {user.industry}
             </div>
           )}
         </div>
       </div>
 
-      {user.careerGoals && (
+      {user.currentGoals && user.currentGoals.length > 0 && (
         <div className="bg-muted/30 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            Career Goals
+            Current Goals
           </h3>
-          <p className="text-muted-foreground whitespace-pre-wrap">
-            {user.careerGoals}
-          </p>
+          <ul className="list-disc list-inside text-muted-foreground space-y-1">
+            {user.currentGoals.map((goal, index) => (
+              <li key={index}>{goal}</li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
@@ -183,9 +171,9 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                     {user.name}
                   </h1>
                   <p className="text-accent-foreground/90">
-                    {user.firm && user.role
-                      ? `${user.role} at ${user.firm}`
-                      : user.firm || user.role || "Professional"}
+                    {user.currentRole && user.industry
+                      ? `${user.currentRole} in ${user.industry}`
+                      : user.currentRole || user.industry || "Professional"}
                   </p>
                 </div>
               </div>

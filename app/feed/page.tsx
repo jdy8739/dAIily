@@ -1,35 +1,12 @@
 import Link from "next/link";
 import AuthLayout from "../../components/templates/auth-layout";
-import { prisma } from "../../lib/prisma";
 import { getCurrentUser } from "../../lib/auth";
 import LikeButton from "../../features/feed/components/molecules/like-button";
+import { getFeedPosts } from "../../features/feed/lib/queries";
 
 const FeedPage = async () => {
   const currentUser = await getCurrentUser();
-
-  const posts = await prisma.post.findMany({
-    include: {
-      author: {
-        select: {
-          name: true,
-        },
-      },
-      likes: {
-        select: {
-          userId: true,
-        },
-      },
-      _count: {
-        select: {
-          likes: true,
-          replies: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const posts = await getFeedPosts();
 
   return (
     <AuthLayout>

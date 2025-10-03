@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import AuthLayout from "../../../../components/templates/auth-layout";
-import { prisma } from "../../../../lib/prisma";
 import { getCurrentUser } from "../../../../lib/auth";
 import EditPostForm from "../../../../features/feed/components/organisms/edit-post-form";
+import { getPostForEdit } from "../../../../features/feed/lib/queries";
 
 interface EditPostPageProps {
   params: Promise<{ id: string }>;
@@ -17,17 +17,7 @@ const EditPostPage = async ({ params }: EditPostPageProps) => {
     redirect("/login");
   }
 
-  const post = await prisma.post.findUnique({
-    where: { id },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-  });
+  const post = await getPostForEdit(id);
 
   if (!post) {
     notFound();
