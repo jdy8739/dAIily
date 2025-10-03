@@ -18,8 +18,6 @@ const ThemeToggle = () => {
   }
 
   const handleThemeChange = () => {
-    console.log("Button clicked! Current theme:", theme);
-
     let newTheme: string;
     if (theme === "light") {
       newTheme = "dark";
@@ -29,7 +27,6 @@ const ThemeToggle = () => {
       newTheme = "light";
     }
 
-    console.log("Setting theme to:", newTheme);
     setTheme(newTheme);
   };
 
@@ -104,7 +101,6 @@ const ThemeToggle = () => {
     <button
       onClick={handleThemeChange}
       onMouseDown={e => {
-        console.log("Mouse down on theme toggle");
         e.preventDefault();
       }}
       className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background cursor-pointer"

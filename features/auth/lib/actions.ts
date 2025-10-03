@@ -133,7 +133,7 @@ export const passwordResetAction = async (
       const resetToken = await createPasswordResetToken(user.id);
 
       // TODO: Send password reset email with resetToken
-      console.log("Password reset token for", user.email, ":", resetToken);
+      // Token generated but email sending not implemented yet
     }
 
     return {
