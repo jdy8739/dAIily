@@ -129,10 +129,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Security & Best Practices
 
-- **Environment Validation**: Validate all env vars with Zod schemas
-- **CSRF Protection**: Implement CSRF tokens for sensitive operations
-- **Rate Limiting**: Add rate limiting to API routes
-- **Content Security Policy**: Configure CSP headers for security
+- **CSRF Protection**: Implemented for all auth Server Actions (login, signup, password reset)
+  - CSRF tokens generated server-side and validated on submission
+  - Tokens stored in HTTP-only cookies with 1-hour expiration
+  - Timing-safe comparison to prevent timing attacks
+- **Environment Validation**: Validate all env vars with Zod schemas (TODO)
+- **Rate Limiting**: Add rate limiting to API routes (TODO)
+- **Content Security Policy**: Configure CSP headers for security (TODO)
 
 ## Environment Variable Policy
 
