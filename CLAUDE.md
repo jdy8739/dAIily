@@ -98,10 +98,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Authentication
 
-- **OAuth Providers**: Google and GitHub authentication
-- **Custom Auth Logic**: Implement own session management and user handling
-- **Server Actions**: Handle auth flows in Server Actions, not API routes
-- **Session Storage**: Use secure HTTP-only cookies for session tokens
+- **NextAuth.js**: Use NextAuth for authentication with Prisma adapter
+- **OAuth Providers**: Google and GitHub authentication configured
+- **JWT Sessions**: Session strategy set to JWT for stateless authentication
+- **Custom Callbacks**: Handle user creation, sign-in, and session customization in NextAuth callbacks
 
 ## Advanced Rules
 
@@ -115,7 +115,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Type Safety & DX
 
 - **Strict TypeScript**: Enable all strict flags in tsconfig.json
-- **No Any Type**: Never use `any` type - use proper TypeScript types, `unknown`, or generics instead
+- **Minimize Any Type**: Avoid `any` type when possible - prefer proper TypeScript types, `unknown`, or generics instead
 - **Zod Everywhere**: Use Zod for runtime validation and type inference
 - **Custom Hooks**: Extract complex logic into reusable custom hooks
 - **Error Boundaries**: Implement error boundaries for graceful error handling
