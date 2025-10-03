@@ -4,15 +4,10 @@ import { cookies } from "next/headers";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth-config";
 import { prisma } from "./prisma";
+import { env } from "./env";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-const SESSION_SECRET = process.env.SESSION_SECRET!;
-
-if (!JWT_SECRET || !SESSION_SECRET) {
-  throw new Error(
-    "Missing required environment variables: JWT_SECRET, SESSION_SECRET"
-  );
-}
+const JWT_SECRET = env.JWT_SECRET;
+const SESSION_SECRET = env.SESSION_SECRET;
 
 // Password utilities
 export const hashPassword = async (password: string): Promise<string> => {
@@ -89,7 +84,7 @@ export const setSessionCookie = async (token: string): Promise<void> => {
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60, // 7 days
     path: "/",

@@ -1,6 +1,7 @@
 import { randomBytes, createHmac, timingSafeEqual as cryptoTimingSafeEqual } from "crypto";
+import { env } from "./env";
 
-const CSRF_SECRET = process.env.CSRF_SECRET || "default-csrf-secret-change-in-production";
+const CSRF_SECRET = env.CSRF_SECRET;
 const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 /**
