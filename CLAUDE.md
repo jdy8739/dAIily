@@ -131,11 +131,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **CSRF Protection**: Implemented for all auth Server Actions (login, signup, password reset)
   - CSRF tokens generated server-side and validated on submission
-  - Tokens stored in HTTP-only cookies with 1-hour expiration
+  - Stateless tokens with HMAC-SHA256 signature and 1-hour expiration
   - Timing-safe comparison to prevent timing attacks
+- **Content Security Policy**: Implemented via Next.js middleware
+  - Strict CSP headers for scripts, styles, images, frames
+  - Additional security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+  - Permissions-Policy to restrict camera, microphone, geolocation
 - **Environment Validation**: Validate all env vars with Zod schemas (TODO)
 - **Rate Limiting**: Add rate limiting to API routes (TODO)
-- **Content Security Policy**: Configure CSP headers for security (TODO)
 
 ## Environment Variable Policy
 
