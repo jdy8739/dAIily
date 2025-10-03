@@ -9,7 +9,11 @@ import { passwordResetAction } from "../../lib/actions";
 import Input from "../../../../components/atoms/input";
 import Button from "../../../../components/atoms/button";
 
-const PasswordResetForm = () => {
+interface PasswordResetFormProps {
+  csrfToken: string;
+}
+
+const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -28,7 +32,7 @@ const PasswordResetForm = () => {
     setSuccess(null);
 
     try {
-      const result = await passwordResetAction(data);
+      const result = await passwordResetAction({ ...data, csrfToken });
       if (result?.error) {
         setError(result.error);
       } else if (result?.success) {

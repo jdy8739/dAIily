@@ -11,7 +11,11 @@ import Button from "../../../../components/atoms/button";
 import GoogleSignIn from "../../../../components/atoms/google-sign-in";
 import GitHubSignIn from "../../../../components/atoms/github-sign-in";
 
-const SignupForm = () => {
+interface SignupFormProps {
+  csrfToken: string;
+}
+
+const SignupForm = ({ csrfToken }: SignupFormProps) => {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -29,7 +33,7 @@ const SignupForm = () => {
     setServerError(null);
 
     try {
-      const result = await signupAction(data);
+      const result = await signupAction({ ...data, csrfToken });
       if (result?.error) {
         // Check if error is field-specific
         if (

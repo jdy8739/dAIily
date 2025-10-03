@@ -14,7 +14,11 @@ import GitHubSignIn from "../../../../components/atoms/github-sign-in";
 
 const resolver = zodResolver(loginSchema);
 
-const LoginForm = () => {
+interface LoginFormProps {
+  csrfToken: string;
+}
+
+const LoginForm = ({ csrfToken }: LoginFormProps) => {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
@@ -34,7 +38,7 @@ const LoginForm = () => {
       setServerError(null);
 
       try {
-        const result = await loginAction(data);
+        const result = await loginAction({ ...data, csrfToken });
         if (result?.error) {
           // Check if error is field-specific
           if (result.error.includes("Invalid email or password")) {
@@ -57,7 +61,7 @@ const LoginForm = () => {
         setLoading(false);
       }
     },
-    [router, setError]
+    [router, setError, csrfToken]
   );
 
   return (
