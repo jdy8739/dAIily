@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { logoutAction } from "../../features/auth/lib/actions";
+import { logoutAction } from "../../lib/actions";
 
 const LogoutButton = () => {
   const [loading, setLoading] = useState(false);

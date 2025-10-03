@@ -1,7 +1,7 @@
 import { getCurrentUser } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import LogoutButton from "../molecules/logout-button";
+import LogoutButton from "../../features/auth/components/molecules/logout-button";
 import ThemeToggle from "../atoms/theme-toggle";
 
 interface AuthLayoutProps {
