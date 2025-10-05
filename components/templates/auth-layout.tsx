@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import LogoutButton from "../../features/auth/components/molecules/logout-button";
 import ThemeToggle from "../atoms/theme-toggle";
+import NavDropdown from "../molecules/nav-dropdown";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -32,18 +33,14 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
                 >
                   Dashboard
                 </Link>
-                <Link
-                  href="/write"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Write
-                </Link>
-                <Link
-                  href="/feed"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Feed
-                </Link>
+                <NavDropdown
+                  label="Posts"
+                  items={[
+                    { label: "Write", href: "/write" },
+                    { label: "Feed", href: "/feed" },
+                    { label: "Drafts", href: "/drafts" },
+                  ]}
+                />
                 <Link
                   href="/story"
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
