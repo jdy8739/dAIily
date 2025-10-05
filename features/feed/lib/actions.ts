@@ -16,7 +16,10 @@ import {
   type EditReplyData,
 } from "../schemas/reply";
 
-export const createPost = async (data: CreatePostData) => {
+export const createPost = async (
+  data: CreatePostData,
+  status: "DRAFT" | "PUBLISHED" = "PUBLISHED"
+) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -31,6 +34,7 @@ export const createPost = async (data: CreatePostData) => {
         title: validatedData.title,
         content: validatedData.content,
         authorId: user.id,
+        status,
       },
     });
 
@@ -47,7 +51,10 @@ export const createPost = async (data: CreatePostData) => {
   }
 };
 
-export const editPost = async (data: EditPostData) => {
+export const editPost = async (
+  data: EditPostData,
+  status?: "DRAFT" | "PUBLISHED"
+) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -78,6 +85,7 @@ export const editPost = async (data: EditPostData) => {
       data: {
         title: validatedData.title,
         content: validatedData.content,
+        ...(status && { status }),
         updatedAt: new Date(),
       },
     });

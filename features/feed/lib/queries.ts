@@ -3,9 +3,13 @@ import { prisma } from "../../../lib/prisma";
 /**
  * Get all posts for the feed page with author, likes, and reply counts
  * Ordered by creation date (newest first)
+ * Only shows published posts
  */
 export const getFeedPosts = async () => {
   return prisma.post.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
     include: {
       author: {
         select: {
@@ -83,6 +87,7 @@ export const getPostForEdit = async (id: string) => {
       id: true,
       title: true,
       content: true,
+      status: true,
       authorId: true,
     },
   });
@@ -128,6 +133,35 @@ export const getUserById = async (userId: string) => {
     where: { id: userId },
     select: {
       name: true,
+    },
+  });
+};
+
+/**
+ * Get all draft posts by a specific user
+ * Ordered by creation date (newest first)
+ */
+export const getUserDraftPosts = async (userId: string) => {
+  return prisma.post.findMany({
+    where: {
+      authorId: userId,
+      status: "DRAFT",
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
+          replies: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 };
