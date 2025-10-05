@@ -56,6 +56,7 @@ const EditPostPage = async ({ params }: EditPostPageProps) => {
               postId={post.id}
               initialTitle={post.title}
               initialContent={post.content}
+              isDraft={post.status === "DRAFT"}
             />
           </div>
         </div>
