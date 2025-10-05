@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { editPost, deletePost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
+import StreamingDots from "../../../../components/atoms/streaming-dots";
 
 interface EditPostFormProps {
   postId: string;
@@ -21,6 +22,7 @@ const EditPostForm = ({
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -136,116 +138,178 @@ const EditPostForm = ({
     }
   };
 
+  const handleAiCorrect = async () => {
+    if (!title.trim() || !content.trim()) {
+      setError("Please enter both title and content before using AI correct");
+      return;
+    }
+
+    setAiLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/ai/proofread", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to proofread content");
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let result = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          result += decoder.decode(value, { stream: true });
+        }
+      }
+
+      const parsed = JSON.parse(result);
+      if (parsed.title && parsed.content) {
+        setTitle(parsed.title);
+        setContent(parsed.content);
+      }
+    } catch (err) {
+      setError("AI correction failed. Please try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="bg-warning/10 border border-warning/30 text-warning px-4 py-3 rounded-md">
-          <span className="font-medium">{error}</span>
+    <div className="relative">
+      {aiLoading && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg">
+          <div className="flex flex-col items-center space-y-4">
+            <StreamingDots />
+            <p className="text-sm text-muted-foreground">AI is correcting your post...</p>
+          </div>
         </div>
       )}
 
-      <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-foreground mb-2"
-        >
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-          placeholder="What did you accomplish today?"
-          maxLength={200}
-          disabled={isSubmitting}
-          required
-        />
-        <div className="text-right text-sm text-muted-foreground mt-1">
-          {title.length}/200
-        </div>
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="bg-warning/10 border border-warning/30 text-warning px-4 py-3 rounded-md">
+            <span className="font-medium">{error}</span>
+          </div>
+        )}
 
-      <div>
-        <label
-          htmlFor="content"
-          className="block text-sm font-medium text-foreground mb-2"
-        >
-          Content
-        </label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={e => setContent(e.target.value)}
-          className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-          placeholder="Share the details of your professional growth, challenges overcome, skills learned, or achievements gained..."
-          rows={12}
-          maxLength={5000}
-          disabled={isSubmitting}
-          required
-        />
-        <div className="text-right text-sm text-muted-foreground mt-1">
-          {content.length}/5000
+        <div>
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
+            Title
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+            placeholder="What did you accomplish today?"
+            maxLength={200}
+            disabled={isSubmitting || aiLoading}
+            required
+          />
+          <div className="text-right text-sm text-muted-foreground mt-1">
+            {title.length}/200
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center justify-between pt-4">
-        <div className="flex items-center space-x-4">
-          {isDraft && (
+        <div>
+          <label
+            htmlFor="content"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
+            Content
+          </label>
+          <textarea
+            id="content"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+            placeholder="Share the details of your professional growth, challenges overcome, skills learned, or achievements gained..."
+            rows={12}
+            maxLength={5000}
+            disabled={isSubmitting || aiLoading}
+            required
+          />
+          <div className="text-right text-sm text-muted-foreground mt-1">
+            {content.length}/5000
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center space-x-4">
+            {isDraft && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSubmitting || aiLoading}
+                onClick={handleSaveDraft}
+              >
+                Save Draft
+              </Button>
+            )}
+
+            <Button
+              type="button"
+              variant="ai"
+              disabled={isSubmitting || aiLoading}
+              onClick={handleAiCorrect}
+            >
+              ✨ AI Correct
+            </Button>
+          </div>
+
+          <div className="flex space-x-4">
+            {isDraft && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isSubmitting || aiLoading}
+              >
+                Delete
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
-              disabled={isSubmitting}
-              onClick={handleSaveDraft}
+              onClick={handleCancel}
+              disabled={isSubmitting || aiLoading}
             >
-              Save Draft
+              Cancel
             </Button>
-          )}
-
-          <Button type="button" variant="ai" disabled={isSubmitting}>
-            ✨ AI Correct
-          </Button>
-        </div>
-
-        <div className="flex space-x-4">
-          {isDraft && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isSubmitting}
+              type="submit"
+              variant="primary"
+              size="lg"
+              disabled={
+                isSubmitting || aiLoading || !title.trim() || !content.trim() || !hasChanges
+              }
             >
-              Delete
+              {isSubmitting
+                ? isDraft
+                  ? "Publishing..."
+                  : "Updating..."
+                : isDraft
+                  ? "Publish"
+                  : "Update Post"}
             </Button>
-          )}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            disabled={
-              isSubmitting || !title.trim() || !content.trim() || !hasChanges
-            }
-          >
-            {isSubmitting
-              ? isDraft
-                ? "Publishing..."
-                : "Updating..."
-              : isDraft
-                ? "Publish"
-                : "Update Post"}
-          </Button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
