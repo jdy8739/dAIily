@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export const signupSchema = z
+const signupSchema = z
   .object({
     email: z.string().email("Invalid email address"),
     password: z
@@ -23,11 +23,11 @@ export const signupSchema = z
     path: ["confirmPassword"],
   });
 
-export const passwordResetSchema = z.object({
+const passwordResetSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-export const newPasswordSchema = z
+const newPasswordSchema = z
   .object({
     password: z
       .string()
@@ -48,3 +48,5 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type PasswordResetFormData = z.infer<typeof passwordResetSchema>;
 export type NewPasswordFormData = z.infer<typeof newPasswordSchema>;
+
+export { loginSchema, signupSchema, passwordResetSchema, newPasswordSchema };

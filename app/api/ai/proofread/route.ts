@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
 import { openai, agent } from "../../../../features/ai/lib/agent";
 
-export const runtime = "edge";
+const runtime = "edge";
 
-export async function POST(req: NextRequest) {
+async function POST(req: NextRequest) {
   try {
     const { title, content } = await req.json();
 
@@ -86,3 +86,5 @@ Respond in JSON format:
     return new Response("Failed to proofread content", { status: 500 });
   }
 }
+
+export { runtime, POST };

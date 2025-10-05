@@ -12,7 +12,7 @@ const ExperienceLevel = z.enum([
   "C_LEVEL",
 ]);
 
-export const updateProfileSchema = z.object({
+const updateProfileSchema = z.object({
   // Basic Information
   name: z
     .string()
@@ -47,4 +47,4 @@ export const updateProfileSchema = z.object({
 
 export type UpdateProfileData = z.infer<typeof updateProfileSchema>;
 
-export { ExperienceLevel };
+export { ExperienceLevel, updateProfileSchema };

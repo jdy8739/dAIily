@@ -9,7 +9,7 @@ const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
  * Format: {randomValue}.{timestamp}.{signature}
  * @returns The CSRF token string
  */
-export const generateCsrfToken = (): string => {
+const generateCsrfToken = (): string => {
   const randomValue = randomBytes(32).toString("hex");
   const timestamp = Date.now().toString();
   const signature = createHmac("sha256", CSRF_SECRET)
@@ -24,7 +24,7 @@ export const generateCsrfToken = (): string => {
  * @param token The token to validate
  * @returns True if valid and not expired, false otherwise
  */
-export const validateCsrfToken = (token: string | null | undefined): boolean => {
+const validateCsrfToken = (token: string | null | undefined): boolean => {
   if (!token) {
     return false;
   }
@@ -60,3 +60,5 @@ export const validateCsrfToken = (token: string | null | undefined): boolean => 
 
   return true;
 };
+
+export { generateCsrfToken, validateCsrfToken };

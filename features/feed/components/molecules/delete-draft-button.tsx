@@ -7,7 +7,7 @@ import Button from "../../../../components/atoms/button";
 
 interface DeleteDraftButtonProps {
   postId: string;
-  variant?: "destructive" | "outline";
+  variant?: "outline";
 }
 
 const DeleteDraftButton = ({ postId, variant = "outline" }: DeleteDraftButtonProps) => {

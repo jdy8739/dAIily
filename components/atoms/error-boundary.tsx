@@ -56,7 +56,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                   Something went wrong
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  We're sorry for the inconvenience
+                  We&apos;re sorry for the inconvenience
                 </p>
               </div>
             </div>

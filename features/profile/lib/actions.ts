@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-export const updateProfile = async (data: UpdateProfileData) => {
+const updateProfile = async (data: UpdateProfileData) => {
   try {
     const currentUser = await getCurrentUser();
 
@@ -80,7 +80,7 @@ export const updateProfile = async (data: UpdateProfileData) => {
   }
 };
 
-export const deleteAccount = async () => {
+const deleteAccount = async () => {
   try {
     const currentUser = await getCurrentUser();
 
@@ -103,3 +103,5 @@ export const deleteAccount = async () => {
     return { success: false, error: "Failed to delete account" };
   }
 };
+
+export { updateProfile, deleteAccount };

@@ -23,7 +23,7 @@ import {
 } from "../schemas";
 import { User } from "next-auth";
 
-export const loginAction = async (
+const loginAction = async (
   formData: LoginFormData & { csrfToken: string }
 ) => {
   try {
@@ -64,7 +64,7 @@ export const loginAction = async (
   }
 };
 
-export const signupAction = async (
+const signupAction = async (
   formData: SignupFormData & { csrfToken: string }
 ) => {
   let user: User | null = null;
@@ -110,7 +110,7 @@ export const signupAction = async (
   }
 };
 
-export const passwordResetAction = async (
+const passwordResetAction = async (
   formData: PasswordResetFormData & { csrfToken: string }
 ) => {
   try {
@@ -147,7 +147,7 @@ export const passwordResetAction = async (
   }
 };
 
-export const logoutAction = async () => {
+const logoutAction = async () => {
   try {
     // Clear custom session (for email/password users)
     const cookieStore = await cookies();
@@ -178,3 +178,5 @@ export const logoutAction = async () => {
     redirect("/login");
   }
 };
+
+export { loginAction, signupAction, passwordResetAction, logoutAction };

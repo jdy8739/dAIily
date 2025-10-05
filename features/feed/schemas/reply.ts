@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createReplySchema = z.object({
+const createReplySchema = z.object({
   content: z
     .string()
     .min(1, "Reply content is required")
@@ -8,7 +8,7 @@ export const createReplySchema = z.object({
   postId: z.string().min(1, "Post ID is required"),
 });
 
-export const editReplySchema = z.object({
+const editReplySchema = z.object({
   content: z
     .string()
     .min(1, "Reply content is required")
@@ -18,3 +18,5 @@ export const editReplySchema = z.object({
 
 export type CreateReplyData = z.infer<typeof createReplySchema>;
 export type EditReplyData = z.infer<typeof editReplySchema>;
+
+export { createReplySchema, editReplySchema };

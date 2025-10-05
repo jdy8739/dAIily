@@ -18,7 +18,7 @@ const cspHeader = `
   .replace(/\s{2,}/g, " ")
   .trim();
 
-export const middleware = (request: NextRequest) => {
+const middleware = (request: NextRequest) => {
   const response = NextResponse.next();
 
   // Add CSP header
@@ -36,7 +36,7 @@ export const middleware = (request: NextRequest) => {
   return response;
 };
 
-export const config = {
+const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
@@ -48,3 +48,5 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
+
+export { middleware, config };

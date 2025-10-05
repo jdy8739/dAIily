@@ -275,7 +275,7 @@ const EditPostForm = ({
             {isDraft && (
               <Button
                 type="button"
-                variant="destructive"
+                variant="outline"
                 onClick={handleDelete}
                 disabled={isSubmitting || aiLoading}
               >

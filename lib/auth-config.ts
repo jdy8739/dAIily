@@ -6,7 +6,7 @@ import { Adapter } from "next-auth/adapters";
 import { prisma } from "./prisma";
 import { env } from "./env";
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   adapter: {
     ...PrismaAdapter(prisma),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,3 +85,5 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
+export { authOptions };

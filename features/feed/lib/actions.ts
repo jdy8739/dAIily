@@ -16,7 +16,7 @@ import {
   type EditReplyData,
 } from "../schemas/reply";
 
-export const createPost = async (
+const createPost = async (
   data: CreatePostData,
   status: "DRAFT" | "PUBLISHED" = "PUBLISHED"
 ) => {
@@ -51,7 +51,7 @@ export const createPost = async (
   }
 };
 
-export const editPost = async (
+const editPost = async (
   data: EditPostData,
   status?: "DRAFT" | "PUBLISHED"
 ) => {
@@ -103,7 +103,7 @@ export const editPost = async (
   }
 };
 
-export const deletePost = async (postId: string) => {
+const deletePost = async (postId: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -143,7 +143,7 @@ export const deletePost = async (postId: string) => {
   }
 };
 
-export const likePost = async (postId: string) => {
+const likePost = async (postId: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -196,7 +196,7 @@ export const likePost = async (postId: string) => {
   }
 };
 
-export const unlikePost = async (postId: string) => {
+const unlikePost = async (postId: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -241,7 +241,7 @@ export const unlikePost = async (postId: string) => {
   }
 };
 
-export const createReply = async (data: CreateReplyData) => {
+const createReply = async (data: CreateReplyData) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -283,7 +283,7 @@ export const createReply = async (data: CreateReplyData) => {
   }
 };
 
-export const editReply = async (data: EditReplyData) => {
+const editReply = async (data: EditReplyData) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -330,7 +330,7 @@ export const editReply = async (data: EditReplyData) => {
   }
 };
 
-export const deleteReply = async (replyId: string) => {
+const deleteReply = async (replyId: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -381,4 +381,15 @@ export const deleteReply = async (replyId: string) => {
     }
     return { error: "Failed to delete reply" };
   }
+};
+
+export {
+  createPost,
+  editPost,
+  deletePost,
+  likePost,
+  unlikePost,
+  createReply,
+  editReply,
+  deleteReply,
 };

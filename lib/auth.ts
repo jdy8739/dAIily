@@ -10,11 +10,11 @@ const JWT_SECRET = env.JWT_SECRET;
 const SESSION_SECRET = env.SESSION_SECRET;
 
 // Password utilities
-export const hashPassword = async (password: string): Promise<string> => {
+const hashPassword = async (password: string): Promise<string> => {
   return bcrypt.hash(password, 12);
 };
 
-export const verifyPassword = async (
+const verifyPassword = async (
   password: string,
   hashedPassword: string
 ): Promise<boolean> => {
@@ -22,11 +22,11 @@ export const verifyPassword = async (
 };
 
 // JWT utilities
-export const generateToken = (payload: object): string => {
+const generateToken = (payload: object): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 };
 
-export const verifyToken = (token: string): object | null => {
+const verifyToken = (token: string): object | null => {
   try {
     const result = jwt.verify(token, JWT_SECRET);
     return typeof result === 'object' ? result : null;
@@ -36,7 +36,7 @@ export const verifyToken = (token: string): object | null => {
 };
 
 // Session management
-export const createSession = async (userId: string): Promise<string> => {
+const createSession = async (userId: string): Promise<string> => {
   const token = generateToken({ userId });
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
@@ -51,7 +51,7 @@ export const createSession = async (userId: string): Promise<string> => {
   return token;
 };
 
-export const getSessionFromToken = async (token: string) => {
+const getSessionFromToken = async (token: string) => {
   try {
     const session = await prisma.session.findUnique({
       where: { sessionToken: token },
@@ -71,7 +71,7 @@ export const getSessionFromToken = async (token: string) => {
   }
 };
 
-export const deleteSession = async (token: string): Promise<void> => {
+const deleteSession = async (token: string): Promise<void> => {
   try {
     await prisma.session.delete({ where: { sessionToken: token } });
   } catch {
@@ -80,7 +80,7 @@ export const deleteSession = async (token: string): Promise<void> => {
 };
 
 // Cookie utilities
-export const setSessionCookie = async (token: string): Promise<void> => {
+const setSessionCookie = async (token: string): Promise<void> => {
   const cookieStore = await cookies();
   cookieStore.set("session", token, {
     httpOnly: true,
@@ -91,7 +91,7 @@ export const setSessionCookie = async (token: string): Promise<void> => {
   });
 };
 
-export const getSessionFromCookie = async () => {
+const getSessionFromCookie = async () => {
   try {
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get("session")?.value;
@@ -106,13 +106,13 @@ export const getSessionFromCookie = async () => {
   }
 };
 
-export const clearSessionCookie = async (): Promise<void> => {
+const clearSessionCookie = async (): Promise<void> => {
   const cookieStore = await cookies();
   cookieStore.delete("session");
 };
 
 // Current user helper
-export const getCurrentUser = async () => {
+const getCurrentUser = async () => {
   // First check NextAuth session (for OAuth users)
   const nextAuthSession = await getServerSession(authOptions);
 
@@ -130,7 +130,7 @@ export const getCurrentUser = async () => {
 };
 
 // Password reset utilities
-export const generatePasswordResetToken = (): string => {
+const generatePasswordResetToken = (): string => {
   return jwt.sign(
     { type: "password_reset", timestamp: Date.now() },
     SESSION_SECRET,
@@ -138,7 +138,7 @@ export const generatePasswordResetToken = (): string => {
   );
 };
 
-export const createPasswordResetToken = async (
+const createPasswordResetToken = async (
   userId: string
 ): Promise<string> => {
   const token = generatePasswordResetToken();
@@ -161,7 +161,7 @@ export const createPasswordResetToken = async (
   return token;
 };
 
-export const verifyPasswordResetToken = async (token: string) => {
+const verifyPasswordResetToken = async (token: string) => {
   try {
     const decoded = jwt.verify(token, SESSION_SECRET) as { type: string; timestamp: number; iat: number; exp: number; };
     if (decoded.type !== "password_reset") {
@@ -187,9 +187,27 @@ export const verifyPasswordResetToken = async (token: string) => {
   }
 };
 
-export const usePasswordResetToken = async (token: string): Promise<void> => {
+const usePasswordResetToken = async (token: string): Promise<void> => {
   await prisma.passwordReset.updateMany({
     where: { token },
     data: { used: true },
   });
+};
+
+export {
+  hashPassword,
+  verifyPassword,
+  generateToken,
+  verifyToken,
+  createSession,
+  getSessionFromToken,
+  deleteSession,
+  setSessionCookie,
+  getSessionFromCookie,
+  clearSessionCookie,
+  getCurrentUser,
+  generatePasswordResetToken,
+  createPasswordResetToken,
+  verifyPasswordResetToken,
+  usePasswordResetToken,
 };
