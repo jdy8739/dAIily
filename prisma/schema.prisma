@@ -131,17 +131,23 @@ model PasswordReset {
 }
 
 model Post {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   title     String
   content   String
+  status    PostStatus @default(DRAFT)
   authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   likes     Like[]
   replies   Reply[]
 
   @@map("posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
 }
 
 model Like {
