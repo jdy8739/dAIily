@@ -34,6 +34,9 @@ const envSchema = z.object({
     .string()
     .min(32, "CSRF_SECRET must be at least 32 characters for security"),
 
+  // OpenAI
+  OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required"),
+
   // Node Environment
   NODE_ENV: z
     .enum(["development", "production", "test"])

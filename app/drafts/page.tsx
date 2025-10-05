@@ -28,22 +28,7 @@ const DraftsPage = async () => {
           </div>
 
           <div className="space-y-6">
-            {drafts.length === 0 ? (
-              <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8 text-center">
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  No drafts yet
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Start writing and save as draft to continue later!
-                </p>
-                <Link
-                  href="/write"
-                  className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  Write New Entry
-                </Link>
-              </div>
-            ) : (
+            {drafts.length !== 0 &&
               drafts.map(draft => (
                 <div
                   key={draft.id}
@@ -74,8 +59,7 @@ const DraftsPage = async () => {
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
 
             <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
               <h3 className="text-lg font-medium text-foreground mb-2">
