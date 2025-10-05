@@ -22,17 +22,11 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-8">
-              <Link href="/dashboard" className="flex items-center">
+              <Link href="/feed" className="flex items-center">
                 <h1 className="text-2xl font-bold text-foreground">Daiily</h1>
               </Link>
 
               <nav className="flex items-center space-x-6">
-                <Link
-                  href="/dashboard"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Dashboard
-                </Link>
                 <NavDropdown
                   label="Posts"
                   items={[

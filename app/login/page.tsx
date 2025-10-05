@@ -7,7 +7,7 @@ const LoginPage = async () => {
   const user = await getCurrentUser();
 
   if (user) {
-    redirect("/dashboard");
+    redirect("/feed");
   }
 
   const csrfToken = generateCsrfToken();

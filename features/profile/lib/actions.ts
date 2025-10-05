@@ -72,7 +72,6 @@ export const updateProfile = async (data: UpdateProfileData) => {
     });
 
     revalidatePath("/profile");
-    revalidatePath("/dashboard");
 
     return { success: true };
   } catch (error) {

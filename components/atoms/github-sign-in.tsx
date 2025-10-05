@@ -9,7 +9,7 @@ interface GitHubSignInProps {
 }
 
 const GitHubSignIn = ({
-  callbackUrl = "/dashboard",
+  callbackUrl = "/feed",
   text = "Continue with GitHub",
 }: GitHubSignInProps) => {
   const [loading, setLoading] = useState(false);

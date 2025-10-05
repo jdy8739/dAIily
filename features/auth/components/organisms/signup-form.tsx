@@ -73,8 +73,8 @@ const SignupForm = ({ csrfToken }: SignupFormProps) => {
 
         <div className="space-y-6">
           <div className="space-y-3">
-            <GoogleSignIn callbackUrl="/dashboard" text="Sign up with Google" />
-            <GitHubSignIn callbackUrl="/dashboard" text="Sign up with GitHub" />
+            <GoogleSignIn callbackUrl="/feed" text="Sign up with Google" />
+            <GitHubSignIn callbackUrl="/feed" text="Sign up with GitHub" />
           </div>
 
           <div className="relative">

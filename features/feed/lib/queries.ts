@@ -2,7 +2,7 @@ import { prisma } from "../../../lib/prisma";
 
 /**
  * Get all posts for the feed page with author, likes, and reply counts
- * Ordered by creation date (newest first)
+ * Ordered by creation date (oldest first)
  * Only shows published posts
  */
 export const getFeedPosts = async () => {
@@ -29,7 +29,7 @@ export const getFeedPosts = async () => {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   });
 };

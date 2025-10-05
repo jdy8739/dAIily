@@ -9,7 +9,7 @@ interface GoogleSignInProps {
 }
 
 const GoogleSignIn = ({
-  callbackUrl = "/dashboard",
+  callbackUrl = "/feed",
   text = "Continue with Google",
 }: GoogleSignInProps) => {
   const [loading, setLoading] = useState(false);

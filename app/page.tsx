@@ -7,7 +7,7 @@ const Home = async () => {
   const user = await getCurrentUser();
 
   if (user) {
-    redirect("/dashboard");
+    redirect("/feed");
   }
 
   return (
@@ -40,16 +40,16 @@ const Home = async () => {
                 Sign Up
               </Link>
               <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover-accent transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
                 href="/write"
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-primary transition-colors"
               >
                 Write Entry
+              </Link>
+              <Link
+                href="/feed"
+                className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover-accent transition-colors"
+              >
+                Feed
               </Link>
             </div>
           </div>

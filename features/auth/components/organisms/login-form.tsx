@@ -53,7 +53,7 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
           }
         } else {
           // Success - redirect client-side
-          router.push("/dashboard");
+          router.push("/feed");
         }
       } catch (err) {
         setServerError("An unexpected error occurred. Please try again.");
@@ -81,8 +81,8 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
 
         <div className="space-y-6">
           <div className="space-y-3">
-            <GoogleSignIn callbackUrl="/dashboard" />
-            <GitHubSignIn callbackUrl="/dashboard" />
+            <GoogleSignIn callbackUrl="/feed" />
+            <GitHubSignIn callbackUrl="/feed" />
           </div>
 
           <div className="relative">
