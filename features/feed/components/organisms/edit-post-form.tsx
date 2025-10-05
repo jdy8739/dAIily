@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { editPost } from "../../lib/actions";
+import { editPost, deletePost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
 
 interface EditPostFormProps {
   postId: string;
   initialTitle: string;
   initialContent: string;
+  isDraft?: boolean;
 }
 
 const EditPostForm = ({
   postId,
   initialTitle,
   initialContent,
+  isDraft = false,
 }: EditPostFormProps) => {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
@@ -48,14 +50,17 @@ const EditPostForm = ({
     setError(null);
 
     try {
-      const result = await editPost({
-        postId,
-        title: title.trim(),
-        content: content.trim(),
-      });
+      const result = await editPost(
+        {
+          postId,
+          title: title.trim(),
+          content: content.trim(),
+        },
+        "PUBLISHED"
+      );
 
       if (result.success) {
-        router.push(`/feed/${postId}`);
+        router.push("/feed");
         router.refresh();
       } else {
         setError(result.error || "Failed to update post");
@@ -68,8 +73,67 @@ const EditPostForm = ({
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!title.trim() || !content.trim()) {
+      setError("Title and content are required to save draft");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const result = await editPost(
+        {
+          postId,
+          title: title.trim(),
+          content: content.trim(),
+        },
+        "DRAFT"
+      );
+
+      if (result.success) {
+        router.push("/drafts");
+        router.refresh();
+      } else {
+        setError(result.error || "Failed to save draft");
+      }
+    } catch (error) {
+      console.error("Draft save error:", error);
+      setError("Failed to save draft");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleCancel = () => {
-    router.push(`/feed/${postId}`);
+    router.push(isDraft ? "/drafts" : `/feed/${postId}`);
+  };
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this draft? This action cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await deletePost(postId);
+
+      if (result.success) {
+        router.push("/drafts");
+        router.refresh();
+      } else {
+        setError(result.error || "Failed to delete draft");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      setError("Failed to delete draft");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -128,9 +192,16 @@ const EditPostForm = ({
 
       <div className="flex items-center justify-between pt-4">
         <div className="flex items-center space-x-4">
-          <Button type="button" variant="outline" disabled={isSubmitting}>
-            Save Draft
-          </Button>
+          {isDraft && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={handleSaveDraft}
+            >
+              Save Draft
+            </Button>
+          )}
 
           <Button type="button" variant="ai" disabled={isSubmitting}>
             ✨ AI Correct
@@ -138,6 +209,16 @@ const EditPostForm = ({
         </div>
 
         <div className="flex space-x-4">
+          {isDraft && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              Delete
+            </Button>
+          )}
           <Button
             type="button"
             variant="outline"
@@ -154,7 +235,13 @@ const EditPostForm = ({
               isSubmitting || !title.trim() || !content.trim() || !hasChanges
             }
           >
-            {isSubmitting ? "Updating..." : "Update Post"}
+            {isSubmitting
+              ? isDraft
+                ? "Publishing..."
+                : "Updating..."
+              : isDraft
+                ? "Publish"
+                : "Update Post"}
           </Button>
         </div>
       </div>

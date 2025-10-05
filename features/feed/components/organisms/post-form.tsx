@@ -34,7 +34,38 @@ const PostForm = () => {
     setError(null);
 
     try {
-      const result = await createPost(data);
+      const result = await createPost(data, "PUBLISHED");
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.success) {
+        reset();
+        router.push("/feed");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSaveDraft = async () => {
+    const data = {
+      title: (document.getElementById("title") as HTMLInputElement)?.value || "",
+      content:
+        (document.getElementById("content") as HTMLTextAreaElement)?.value ||
+        "",
+    };
+
+    if (!data.title.trim() || !data.content.trim()) {
+      setError("Title and content are required to save draft");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await createPost(data, "DRAFT");
       if (result?.error) {
         setError(result.error);
       } else if (result?.success) {
@@ -58,6 +89,7 @@ const PostForm = () => {
 
       <Input
         {...register("title")}
+        id="title"
         type="text"
         label="Title"
         placeholder="What did you accomplish today?"
@@ -67,6 +99,7 @@ const PostForm = () => {
 
       <Textarea
         {...register("content")}
+        id="content"
         label="Content"
         rows={12}
         placeholder="Share your experiences, learnings, and achievements from today..."
@@ -76,7 +109,12 @@ const PostForm = () => {
 
       <div className="flex items-center justify-between pt-4">
         <div className="flex items-center space-x-4">
-          <Button type="button" variant="outline" disabled={loading}>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={loading}
+            onClick={onSaveDraft}
+          >
             Save Draft
           </Button>
 
