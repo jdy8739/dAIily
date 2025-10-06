@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://apis.google.com;
@@ -13,7 +15,7 @@ const cspHeader = `
   frame-ancestors 'none';
   frame-src 'self' https://accounts.google.com;
   connect-src 'self' https://accounts.google.com;
-  upgrade-insecure-requests;
+  ${!isDevelopment ? "upgrade-insecure-requests;" : ""}
 `
   .replace(/\s{2,}/g, " ")
   .trim();
