@@ -13,24 +13,27 @@ import {
   deleteSession,
   clearSessionCookie,
 } from "../../../lib/auth";
+import { sendPasswordResetEmail } from "../../../lib/email";
 import {
   loginSchema,
   signupSchema,
   passwordResetSchema,
+  newPasswordSchema,
   type LoginFormData,
   type SignupFormData,
   type PasswordResetFormData,
+  type NewPasswordFormData,
 } from "../schemas";
 import { User } from "next-auth";
 
-const loginAction = async (
-  formData: LoginFormData & { csrfToken: string }
-) => {
+const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
   try {
     // Validate CSRF token
     const isValidCsrf = validateCsrf(formData.csrfToken);
     if (!isValidCsrf) {
-      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+      return {
+        error: "Invalid CSRF token. Please refresh the page and try again.",
+      };
     }
 
     const validatedData = loginSchema.parse(formData);
@@ -73,7 +76,9 @@ const signupAction = async (
     // Validate CSRF token
     const isValidCsrf = validateCsrf(formData.csrfToken);
     if (!isValidCsrf) {
-      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+      return {
+        error: "Invalid CSRF token. Please refresh the page and try again.",
+      };
     }
 
     const validatedData = signupSchema.parse(formData);
@@ -117,7 +122,9 @@ const passwordResetAction = async (
     // Validate CSRF token
     const isValidCsrf = validateCsrf(formData.csrfToken);
     if (!isValidCsrf) {
-      return { error: "Invalid CSRF token. Please refresh the page and try again." };
+      return {
+        error: "Invalid CSRF token. Please refresh the page and try again.",
+      };
     }
 
     const validatedData = passwordResetSchema.parse(formData);
@@ -129,11 +136,26 @@ const passwordResetAction = async (
 
     // Always return success message for security (don't reveal if email exists)
     if (user) {
+      // Check if user has a password (not an OAuth-only user)
+      if (!user.password) {
+        // OAuth user - return specific error
+        return {
+          error:
+            "This account uses Google or GitHub sign-in. Please use the social login buttons on the login page.",
+          oauth: true,
+        };
+      }
+
       // Generate and store reset token
       const resetToken = await createPasswordResetToken(user.id);
 
-      // TODO: Send password reset email with resetToken
-      // Token generated but email sending not implemented yet
+      // Send password reset email
+      try {
+        await sendPasswordResetEmail(user.email, resetToken, user.name);
+      } catch (emailError) {
+        console.error("Failed to send password reset email:", emailError);
+        // Don't throw error - still return success to avoid revealing email existence
+      }
     }
 
     return {
@@ -143,6 +165,71 @@ const passwordResetAction = async (
     };
   } catch (error) {
     console.error("Password reset error:", error);
+    return { error: "Password reset failed. Please try again." };
+  }
+};
+
+const resetPasswordWithTokenAction = async (
+  formData: NewPasswordFormData & { csrfToken: string }
+) => {
+  try {
+    // Validate CSRF token
+    const isValidCsrf = validateCsrf(formData.csrfToken);
+    if (!isValidCsrf) {
+      return {
+        error: "Invalid CSRF token. Please refresh the page and try again.",
+      };
+    }
+
+    const validatedData = newPasswordSchema.parse(formData);
+
+    // Find the reset token
+    const resetToken = await prisma.passwordReset.findUnique({
+      where: { token: validatedData.token },
+      include: { user: true },
+    });
+
+    // Validate token
+    if (!resetToken) {
+      return { error: "Invalid or expired reset link." };
+    }
+
+    if (resetToken.used) {
+      return { error: "This reset link has already been used." };
+    }
+
+    if (new Date() > resetToken.expiresAt) {
+      return {
+        error: "This reset link has expired. Please request a new one.",
+      };
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(validatedData.password);
+
+    console.log("hashedPassword", hashedPassword);
+
+    // Update password and mark token as used
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: resetToken.userId },
+        data: { password: hashedPassword },
+      }),
+      prisma.passwordReset.update({
+        where: { id: resetToken.id },
+        data: { used: true },
+      }),
+    ]);
+
+    console.log("password reset successful");
+
+    return {
+      success: true,
+      message:
+        "Password reset successful. You can now log in with your new password.",
+    };
+  } catch (error) {
+    console.error("Password reset with token error:", error);
     return { error: "Password reset failed. Please try again." };
   }
 };
@@ -179,4 +266,10 @@ const logoutAction = async () => {
   }
 };
 
-export { loginAction, signupAction, passwordResetAction, logoutAction };
+export {
+  loginAction,
+  signupAction,
+  passwordResetAction,
+  resetPasswordWithTokenAction,
+  logoutAction,
+};

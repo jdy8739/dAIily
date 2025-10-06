@@ -37,6 +37,9 @@ const envSchema = z.object({
   // OpenAI
   OPENAI_API_KEY: z.string().min(1, "OPENAI_API_KEY is required"),
 
+  // Email
+  RESEND_API_KEY: z.string().min(1, "RESEND_API_KEY is required"),
+
   // Node Environment
   NODE_ENV: z
     .enum(["development", "production", "test"])

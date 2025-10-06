@@ -116,7 +116,7 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
             <div className="flex items-center justify-between">
               <div className="text-sm">
                 <Link
-                  href="/password-reset"
+                  href="/forgot-password"
                   className="font-medium text-primary hover-primary transition-colors"
                 >
                   Forgot your password?

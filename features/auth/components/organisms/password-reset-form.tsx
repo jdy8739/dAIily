@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { passwordResetSchema, type PasswordResetFormData } from "../../schemas";
 import { passwordResetAction } from "../../lib/actions";
@@ -14,6 +15,7 @@ interface PasswordResetFormProps {
 }
 
 const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -35,6 +37,13 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
       const result = await passwordResetAction({ ...data, csrfToken });
       if (result?.error) {
         setError(result.error);
+
+        // If OAuth user, redirect to login after 3 seconds
+        if ((result as any).oauth) {
+          setTimeout(() => {
+            router.push("/login");
+          }, 3000);
+        }
       } else if (result?.success) {
         setSuccess(result.message || "Password reset instructions sent.");
       }
@@ -61,6 +70,11 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
         {error && (
           <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
             <p className="text-sm text-warning font-medium">{error}</p>
+            {error.includes("Google or GitHub") && (
+              <p className="text-xs text-warning/80 mt-2">
+                Redirecting to login page in 3 seconds...
+              </p>
+            )}
           </div>
         )}
 

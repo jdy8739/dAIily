@@ -26,7 +26,7 @@ const PasswordResetPage = async () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           <div className="flex-1 max-w-md">
             <PasswordResetForm csrfToken={csrfToken} />
           </div>

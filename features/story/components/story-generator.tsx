@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
+import { useState } from "react";
 import Button from "../../../components/atoms/button";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
@@ -11,47 +10,14 @@ const StoryGenerator = () => {
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [initialLoad, setInitialLoad] = useState(true);
 
-  const loadExistingStory = async (selectedPeriod: Period) => {
-    try {
-      const response = await fetch(
-        `/api/ai/story?period=${selectedPeriod}`,
-        {
-          method: "GET",
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.story) {
-          setStory(data.story.content);
-          return true;
-        }
-      }
-      return false;
-    } catch (err) {
-      console.error("Story fetch error:", err);
-      return false;
-    }
-  };
-
-  const generateStory = async (selectedPeriod: Period, force = false) => {
+  const generateStory = async (selectedPeriod: Period) => {
     setLoading(true);
     setError(null);
     setStory("");
     setPeriod(selectedPeriod);
 
     try {
-      // Try to load existing story first if not forcing regeneration
-      if (!force) {
-        const hasExisting = await loadExistingStory(selectedPeriod);
-        if (hasExisting) {
-          setLoading(false);
-          return;
-        }
-      }
-
       const response = await fetch("/api/ai/story", {
         method: "POST",
         headers: {
@@ -80,7 +46,8 @@ const StoryGenerator = () => {
 
         const chunk = decoder.decode(value, { stream: true });
         accumulatedStory += chunk;
-        setStory(accumulatedStory);
+
+        accumulatedStory;
       }
     } catch (err) {
       console.error("Story generation error:", err);
@@ -89,17 +56,6 @@ const StoryGenerator = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (initialLoad) {
-      setInitialLoad(false);
-      loadExistingStory("all").then((hasExisting) => {
-        if (hasExisting) {
-          setPeriod("all");
-        }
-      });
-    }
-  }, [initialLoad]);
 
   const periodLabels: Record<Period, string> = {
     daily: "Past 24 Hours",
@@ -117,7 +73,7 @@ const StoryGenerator = () => {
           Choose Time Period
         </h2>
         <div className="flex flex-wrap gap-3">
-          {(Object.keys(periodLabels) as Period[]).map((p) => (
+          {(Object.keys(periodLabels) as Period[]).map(p => (
             <Button
               key={p}
               variant={period === p ? "primary" : "outline"}
@@ -152,16 +108,11 @@ const StoryGenerator = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-muted-foreground">
-                Analyzing your journey...
-              </p>
+              <p className="text-muted-foreground">Analyzing your journey...</p>
             </div>
-            {!story && (
-              <div className="h-96 bg-muted rounded-lg animate-pulse"></div>
-            )}
             {story && (
-              <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-h2:text-lg prose-h2:font-semibold prose-h2:mt-6 prose-h2:mb-3 prose-ul:my-2 prose-li:my-1">
-                <ReactMarkdown>{story}</ReactMarkdown>
+              <div className="prose prose-sm max-w-none text-foreground">
+                <div className="whitespace-pre-wrap">{story}</div>
               </div>
             )}
           </div>
@@ -173,7 +124,7 @@ const StoryGenerator = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => generateStory(period, true)}
+              onClick={() => generateStory(period)}
               className="mt-4"
             >
               Try Again
@@ -195,13 +146,13 @@ const StoryGenerator = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => generateStory(period, true)}
+                onClick={() => generateStory(period)}
               >
                 Regenerate
               </Button>
             </div>
-            <div className="prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-h2:text-lg prose-h2:font-semibold prose-h2:mt-6 prose-h2:mb-3 prose-ul:my-2 prose-li:my-1">
-              <ReactMarkdown>{story}</ReactMarkdown>
+            <div className="prose prose-sm max-w-none text-foreground">
+              <div className="whitespace-pre-wrap leading-relaxed">{story}</div>
             </div>
           </div>
         )}
