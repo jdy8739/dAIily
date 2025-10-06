@@ -207,8 +207,6 @@ const resetPasswordWithTokenAction = async (
     // Hash new password
     const hashedPassword = await hashPassword(validatedData.password);
 
-    console.log("hashedPassword", hashedPassword);
-
     // Update password and mark token as used
     await prisma.$transaction([
       prisma.user.update({
@@ -220,8 +218,6 @@ const resetPasswordWithTokenAction = async (
         data: { used: true },
       }),
     ]);
-
-    console.log("password reset successful");
 
     return {
       success: true,

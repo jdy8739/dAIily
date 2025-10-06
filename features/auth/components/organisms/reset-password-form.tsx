@@ -33,8 +33,6 @@ const ResetPasswordForm = ({
     setError(null);
     const result = await resetPasswordWithTokenAction({ ...data, csrfToken });
 
-    console.log("result", result);
-
     if (result.error) {
       setError(result.error);
     } else if (result.success) {
