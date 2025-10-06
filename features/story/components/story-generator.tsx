@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Button from "../../../components/atoms/button";
 import Skeleton from "../../../components/atoms/skeleton";
@@ -8,18 +9,48 @@ import Skeleton from "../../../components/atoms/skeleton";
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
 const StoryGenerator = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [period, setPeriod] = useState<Period>("all");
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
 
-  const generateStory = async (selectedPeriod: Period) => {
+  // Load period from URL on mount
+  useEffect(() => {
+    const urlPeriod = searchParams.get("period") as Period;
+    if (urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)) {
+      setPeriod(urlPeriod);
+      generateStory(urlPeriod);
+    }
+  }, []);
+
+  const generateStory = async (selectedPeriod: Period, forceRegenerate = false) => {
     setLoading(true);
     setError(null);
     setStory("");
     setPeriod(selectedPeriod);
 
+    // Update URL with selected period
+    router.push(`/story?period=${selectedPeriod}`, { scroll: false });
+
     try {
+      // First, check for cached story if not forcing regeneration
+      if (!forceRegenerate) {
+        const cachedResponse = await fetch(`/api/ai/story?period=${selectedPeriod}`);
+        if (cachedResponse.ok) {
+          const { story } = await cachedResponse.json();
+          if (story) {
+            setStory(story.content);
+            setGeneratedAt(new Date(story.updatedAt));
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
+      // Generate new story via streaming
       const response = await fetch("/api/ai/story", {
         method: "POST",
         headers: {
@@ -55,6 +86,7 @@ const StoryGenerator = () => {
         accumulatedStory += chunk;
         setStory(accumulatedStory);
       }
+      setGeneratedAt(new Date());
     } catch (err) {
       console.error("Story generation error:", err);
       setError("Failed to generate your story. Please try again.");
@@ -153,7 +185,7 @@ const StoryGenerator = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => generateStory(period)}
+              onClick={() => generateStory(period, true)}
               className="mt-4"
             >
               Try Again
@@ -169,13 +201,13 @@ const StoryGenerator = () => {
                   {periodLabels[period]}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Generated on {new Date().toLocaleDateString()}
+                  Generated on {generatedAt?.toLocaleDateString() || new Date().toLocaleDateString()}
                 </p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => generateStory(period)}
+                onClick={() => generateStory(period, true)}
               >
                 Regenerate
               </Button>
