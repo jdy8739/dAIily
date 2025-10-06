@@ -151,6 +151,20 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    // If no posts, return early without calling OpenAI
+    if (posts.length === 0) {
+      return new Response(
+        JSON.stringify({
+          error: "NO_POSTS",
+          message: "No posts found in this period",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Build context for AI
     const profileContext = `
 Profile:

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Button from "../../../components/atoms/button";
+import Skeleton from "../../../components/atoms/skeleton";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
@@ -27,6 +29,11 @@ const StoryGenerator = () => {
       });
 
       if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.error === "NO_POSTS") {
+          setError("NO_POSTS");
+          return;
+        }
         throw new Error("Failed to generate story");
       }
 
@@ -46,8 +53,7 @@ const StoryGenerator = () => {
 
         const chunk = decoder.decode(value, { stream: true });
         accumulatedStory += chunk;
-
-        accumulatedStory;
+        setStory(accumulatedStory);
       }
     } catch (err) {
       console.error("Story generation error:", err);
@@ -106,11 +112,14 @@ const StoryGenerator = () => {
 
         {loading && (
           <div className="space-y-4">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-muted-foreground">Analyzing your journey...</p>
-            </div>
-            {story && (
+            {!story ? (
+              <div className="relative h-96 w-full bg-muted rounded-md animate-pulse flex items-center justify-center">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <p className="text-muted-foreground">Analyzing your journey...</p>
+                </div>
+              </div>
+            ) : (
               <div className="prose prose-sm max-w-none text-foreground">
                 <div className="whitespace-pre-wrap">{story}</div>
               </div>
@@ -118,7 +127,27 @@ const StoryGenerator = () => {
           </div>
         )}
 
-        {error && (
+        {error && error === "NO_POSTS" && (
+          <div className="text-center py-12">
+            <div className="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl">✍️</span>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              No Posts in This Period
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              You haven't written any posts in the {periodLabels[period].toLowerCase()}.
+              Start sharing your daily experiences to generate your growth story!
+            </p>
+            <Link href="/feed">
+              <Button variant="primary">
+                Write Your First Post
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {error && error !== "NO_POSTS" && (
           <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 text-center">
             <p className="text-warning font-medium">{error}</p>
             <Button
