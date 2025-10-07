@@ -104,7 +104,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           <div className="flex gap-2 border-b border-border">
             <button
               onClick={() => setSelectedTab("active")}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
                 selectedTab === "active"
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
@@ -117,7 +117,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
             </button>
             <button
               onClick={() => setSelectedTab("achieved")}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
                 selectedTab === "achieved"
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
