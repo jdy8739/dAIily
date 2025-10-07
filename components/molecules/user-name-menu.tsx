@@ -8,7 +8,11 @@ interface UserNameMenuProps {
   className?: string;
 }
 
-const UserNameMenu = ({ userId, userName, className = "" }: UserNameMenuProps) => {
+const UserNameMenu = ({
+  userId,
+  userName,
+  className = "",
+}: UserNameMenuProps) => {
   const menuItems = [
     {
       label: "View Feed",
@@ -25,7 +29,9 @@ const UserNameMenu = ({ userId, userName, className = "" }: UserNameMenuProps) =
   return (
     <PopupMenu
       trigger={
-        <span className={`text-blue-500 hover:text-blue-400 font-semibold ${className}`}>
+        <span
+          className={`text-blue-500 hover:text-blue-400 font-semibold ${className}`}
+        >
           {userName}
         </span>
       }

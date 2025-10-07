@@ -48,22 +48,29 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
         setTitle("");
       }
     } catch (err: any) {
-      setError(err.message || `Failed to ${isEditMode ? "update" : "create"} goal`);
+      setError(
+        err.message || `Failed to ${isEditMode ? "update" : "create"} goal`
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border border-border rounded-lg p-4 bg-card">
+    <form
+      onSubmit={handleSubmit}
+      className="border border-border rounded-lg p-4 bg-card"
+    >
       <h4 className="text-foreground font-medium mb-3">
-        {isEditMode ? `Edit ${periodLabels[period]} Goal` : `Set ${periodLabels[period]} Goal`}
+        {isEditMode
+          ? `Edit ${periodLabels[period]} Goal`
+          : `Set ${periodLabels[period]} Goal`}
       </h4>
 
       <div className="space-y-3">
         <textarea
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           placeholder="What do you want to achieve?"
           className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
           disabled={loading}
@@ -71,18 +78,17 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
           rows={4}
         />
 
-        {error && (
-          <p className="text-warning text-sm">{error}</p>
-        )}
+        {error && <p className="text-warning text-sm">{error}</p>}
 
         <div className="flex gap-2">
-          <Button
-            type="submit"
-            variant="primary"
-            size="sm"
-            disabled={loading}
-          >
-            {loading ? (isEditMode ? "Updating..." : "Setting...") : (isEditMode ? "Update Goal" : "Set Goal")}
+          <Button type="submit" variant="primary" size="sm" disabled={loading}>
+            {loading
+              ? isEditMode
+                ? "Updating..."
+                : "Setting..."
+              : isEditMode
+                ? "Update Goal"
+                : "Set Goal"}
           </Button>
           <Button
             type="button"

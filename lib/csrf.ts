@@ -1,4 +1,8 @@
-import { randomBytes, createHmac, timingSafeEqual as cryptoTimingSafeEqual } from "crypto";
+import {
+  randomBytes,
+  createHmac,
+  timingSafeEqual as cryptoTimingSafeEqual,
+} from "crypto";
 import { env } from "./env";
 
 const CSRF_SECRET = env.CSRF_SECRET;

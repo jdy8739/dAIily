@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Button from "../../../components/atoms/button";
+import { getGoals, createGoal, updateGoal } from "../lib/actions";
 
 type Goal = {
   id: string;
@@ -34,15 +35,14 @@ const GoalsSection = () => {
 
   // Fetch goals on mount
   useEffect(() => {
-    fetchGoals();
+    loadGoals();
   }, []);
 
-  const fetchGoals = async () => {
+  const loadGoals = async () => {
     try {
-      const response = await fetch("/api/goals?status=ACTIVE");
-      if (response.ok) {
-        const data = await response.json();
-        setGoals(data.goals);
+      const result = await getGoals("ACTIVE");
+      if ("goals" in result) {
+        setGoals(result.goals);
       }
     } catch (error) {
       console.error("Failed to fetch goals:", error);
@@ -51,52 +51,42 @@ const GoalsSection = () => {
     }
   };
 
-  const createOrUpdateGoal = async (title: string, period: string, goalId?: string) => {
+  const createOrUpdateGoal = async (
+    title: string,
+    period: string,
+    goalId?: string
+  ) => {
     if (goalId) {
       // Edit existing goal
-      const response = await fetch(`/api/goals/${goalId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      });
+      const result = await updateGoal(goalId, { title });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update goal");
+      if (!result.success) {
+        throw new Error(result.error);
       }
     } else {
       // Create new goal
-      const response = await fetch("/api/goals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, period }),
-      });
+      const result = await createGoal(title, period);
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create goal");
+      if (!result.success) {
+        throw new Error(result.error);
       }
     }
 
     // Refresh goals and close form
-    await fetchGoals();
+    await loadGoals();
     setShowForm(false);
     setEditingGoalId(null);
   };
 
   const updateGoalStatus = async (id: string, status: string) => {
-    const response = await fetch(`/api/goals/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
+    const result = await updateGoal(id, { status });
 
-    if (!response.ok) {
-      throw new Error("Failed to update goal");
+    if (!result.success) {
+      throw new Error(result.error);
     }
 
     // Refresh goals
-    await fetchGoals();
+    await loadGoals();
   };
 
   const handleComplete = async (id: string) => {
@@ -113,7 +103,7 @@ const GoalsSection = () => {
   };
 
   const getGoalForPeriod = (period: string) => {
-    return goals.find((g) => g.period === period && g.status === "ACTIVE");
+    return goals.find(g => g.period === period && g.status === "ACTIVE");
   };
 
   if (loading) {
@@ -149,14 +139,14 @@ const GoalsSection = () => {
             </label>
             <select
               value={selectedPeriod}
-              onChange={(e) => {
+              onChange={e => {
                 setSelectedPeriod(e.target.value);
                 setShowForm(false);
                 setEditingGoalId(null);
               }}
               className="flex-1 px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {PERIODS.map((period) => (
+              {PERIODS.map(period => (
                 <option key={period} value={period}>
                   {periodLabels[period]}
                 </option>

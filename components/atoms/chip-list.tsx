@@ -82,7 +82,7 @@ const ChipList = ({
           ${error ? "border-warning" : "border-border"}
           ${disabled ? "bg-muted cursor-not-allowed" : "cursor-text"}
         `}
-        onClick={(e) => {
+        onClick={e => {
           if (!disabled) {
             const input = e.currentTarget.querySelector("input");
             input?.focus();
@@ -108,7 +108,7 @@ const ChipList = ({
               id={inputId}
               type="text"
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={e => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={handleInputBlur}
               placeholder={items.length === 0 ? placeholder : ""}

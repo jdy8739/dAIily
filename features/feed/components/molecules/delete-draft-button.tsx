@@ -10,7 +10,10 @@ interface DeleteDraftButtonProps {
   variant?: "outline";
 }
 
-const DeleteDraftButton = ({ postId, variant = "outline" }: DeleteDraftButtonProps) => {
+const DeleteDraftButton = ({
+  postId,
+  variant = "outline",
+}: DeleteDraftButtonProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 

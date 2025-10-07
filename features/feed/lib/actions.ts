@@ -51,10 +51,7 @@ const createPost = async (
   }
 };
 
-const editPost = async (
-  data: EditPostData,
-  status?: "DRAFT" | "PUBLISHED"
-) => {
+const editPost = async (data: EditPostData, status?: "DRAFT" | "PUBLISHED") => {
   const user = await getCurrentUser();
 
   if (!user) {

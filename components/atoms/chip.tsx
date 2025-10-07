@@ -21,14 +21,16 @@ const Chip = ({
   disabled = false,
   className = "",
 }: ChipProps) => {
-  const baseClasses = "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors";
+  const baseClasses =
+    "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors";
 
   const variantClasses = {
     default: "bg-muted text-muted-foreground hover:bg-muted/80",
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     accent: "bg-accent text-accent-foreground hover:bg-accent/80",
-    outline: "border border-border bg-background text-foreground hover:bg-muted/50",
+    outline:
+      "border border-border bg-background text-foreground hover:bg-muted/50",
   };
 
   const sizeClasses = {

@@ -1,0 +1,256 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
+
+type Goal = {
+  id: string;
+  title: string;
+  period: string;
+  startDate: Date;
+  deadline: Date;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// Helper function to calculate deadline based on period
+const calculateDeadline = (period: string): Date => {
+  const now = new Date();
+
+  switch (period) {
+    case "DAILY":
+      return new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59
+      );
+    case "WEEKLY":
+      const daysUntilSunday = 7 - now.getDay();
+      const sunday = new Date(now);
+      sunday.setDate(now.getDate() + daysUntilSunday);
+      return new Date(
+        sunday.getFullYear(),
+        sunday.getMonth(),
+        sunday.getDate(),
+        23,
+        59,
+        59
+      );
+    case "MONTHLY":
+      return new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    case "QUARTERLY":
+      const currentQuarter = Math.floor(now.getMonth() / 3);
+      const quarterEndMonth = (currentQuarter + 1) * 3;
+      return new Date(now.getFullYear(), quarterEndMonth, 0, 23, 59, 59);
+    case "YEARLY":
+      return new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+    default:
+      throw new Error("Invalid period");
+  }
+};
+
+// Fetch goals for authenticated user
+const getGoals = async (
+  status?: string,
+  period?: string
+): Promise<{ goals: Goal[] } | { error: string }> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return { error: "Unauthorized" };
+    }
+
+    const goals = await prisma.goal.findMany({
+      where: {
+        userId: currentUser.id,
+        ...(status && { status: status as any }),
+        ...(period && { period: period as any }),
+      },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    });
+
+    return { goals };
+  } catch (error) {
+    console.error("Goals fetch error:", error);
+    return { error: "Failed to fetch goals" };
+  }
+};
+
+// Create a new goal
+const createGoal = async (
+  title: string,
+  period: string
+): Promise<
+  { success: true; goal: Goal } | { success: false; error: string }
+> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    if (!title || !period) {
+      return { success: false, error: "Title and period are required" };
+    }
+
+    if (
+      !["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"].includes(period)
+    ) {
+      return { success: false, error: "Invalid period" };
+    }
+
+    // Check if user already has an ACTIVE goal for this period
+    const existingGoal = await prisma.goal.findFirst({
+      where: {
+        userId: currentUser.id,
+        period: period,
+        status: "ACTIVE",
+      },
+    });
+
+    if (existingGoal) {
+      return {
+        success: false,
+        error: `You already have an active ${period.toLowerCase()} goal. Complete or abandon it first.`,
+      };
+    }
+
+    // Calculate deadline
+    const deadline = calculateDeadline(period);
+
+    // Create goal
+    const goal = await prisma.goal.create({
+      data: {
+        userId: currentUser.id,
+        title,
+        period,
+        deadline,
+        status: "ACTIVE",
+      },
+    });
+
+    revalidatePath("/goals");
+    revalidatePath("/feed");
+
+    return { success: true, goal };
+  } catch (error) {
+    console.error("Goal creation error:", error);
+    return { success: false, error: "Failed to create goal" };
+  }
+};
+
+// Update a goal (title or status)
+const updateGoal = async (
+  id: string,
+  updates: { title?: string; status?: string }
+): Promise<
+  { success: true; goal: Goal } | { success: false; error: string }
+> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    // Check goal exists and belongs to user
+    const goal = await prisma.goal.findUnique({
+      where: { id },
+    });
+
+    if (!goal) {
+      return { success: false, error: "Goal not found" };
+    }
+
+    if (goal.userId !== currentUser.id) {
+      return { success: false, error: "Forbidden" };
+    }
+
+    if (goal.status !== "ACTIVE") {
+      return { success: false, error: "Can only update ACTIVE goals" };
+    }
+
+    // Build update data
+    const updateData: any = {};
+
+    if (updates.status) {
+      if (!["COMPLETED", "ABANDONED"].includes(updates.status)) {
+        return {
+          success: false,
+          error: "Status must be COMPLETED or ABANDONED",
+        };
+      }
+      updateData.status = updates.status;
+      updateData.completedAt = new Date();
+    }
+
+    if (updates.title !== undefined) {
+      if (!updates.title.trim()) {
+        return { success: false, error: "Title cannot be empty" };
+      }
+      updateData.title = updates.title.trim();
+    }
+
+    // Update goal
+    const updatedGoal = await prisma.goal.update({
+      where: { id },
+      data: updateData,
+    });
+
+    revalidatePath("/goals");
+    revalidatePath("/feed");
+
+    return { success: true, goal: updatedGoal };
+  } catch (error) {
+    console.error("Goal update error:", error);
+    return { success: false, error: "Failed to update goal" };
+  }
+};
+
+// Delete a goal
+const deleteGoal = async (
+  id: string
+): Promise<{ success: true } | { success: false; error: string }> => {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    // Check goal exists and belongs to user
+    const goal = await prisma.goal.findUnique({
+      where: { id },
+    });
+
+    if (!goal) {
+      return { success: false, error: "Goal not found" };
+    }
+
+    if (goal.userId !== currentUser.id) {
+      return { success: false, error: "Forbidden" };
+    }
+
+    // Delete goal
+    await prisma.goal.delete({
+      where: { id },
+    });
+
+    revalidatePath("/goals");
+    revalidatePath("/feed");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Goal deletion error:", error);
+    return { success: false, error: "Failed to delete goal" };
+  }
+};
+
+export { getGoals, createGoal, updateGoal, deleteGoal };

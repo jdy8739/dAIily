@@ -148,34 +148,17 @@ const EditPostForm = ({
     setError(null);
 
     try {
-      const response = await fetch("/api/ai/proofread", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, content }),
-      });
+      // Dynamically import to avoid bundling on server
+      const { proofreadContent } = await import("../../../../ai/lib/actions");
+      const result = await proofreadContent(title, content);
 
-      if (!response.ok) {
-        throw new Error("Failed to proofread content");
+      if (!result.success) {
+        throw new Error(result.error);
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let result = "";
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          result += decoder.decode(value, { stream: true });
-        }
-      }
-
-      const parsed = JSON.parse(result);
-      if (parsed.title && parsed.content) {
-        setTitle(parsed.title);
-        setContent(parsed.content);
+      if (result.result.title && result.result.content) {
+        setTitle(result.result.title);
+        setContent(result.result.content);
       }
     } catch (err) {
       setError("AI correction failed. Please try again.");
@@ -190,7 +173,9 @@ const EditPostForm = ({
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg">
           <div className="flex flex-col items-center space-y-4">
             <StreamingDots />
-            <p className="text-sm text-muted-foreground">AI is correcting your post...</p>
+            <p className="text-sm text-muted-foreground">
+              AI is correcting your post...
+            </p>
           </div>
         </div>
       )}
@@ -295,7 +280,11 @@ const EditPostForm = ({
               variant="primary"
               size="lg"
               disabled={
-                isSubmitting || aiLoading || !title.trim() || !content.trim() || !hasChanges
+                isSubmitting ||
+                aiLoading ||
+                !title.trim() ||
+                !content.trim() ||
+                !hasChanges
               }
             >
               {isSubmitting

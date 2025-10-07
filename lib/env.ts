@@ -5,7 +5,10 @@ const envSchema = z.object({
   DATABASE_URL: z
     .string()
     .url("DATABASE_URL must be a valid URL")
-    .startsWith("postgresql://", "DATABASE_URL must be a PostgreSQL connection string"),
+    .startsWith(
+      "postgresql://",
+      "DATABASE_URL must be a PostgreSQL connection string"
+    ),
 
   // Authentication
   JWT_SECRET: z
@@ -53,7 +56,7 @@ const parseEnv = () => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errorMessages = error.issues
-        .map((err) => `  ❌ ${err.path.join(".")}: ${err.message}`)
+        .map(err => `  ❌ ${err.path.join(".")}: ${err.message}`)
         .join("\n");
 
       throw new Error(

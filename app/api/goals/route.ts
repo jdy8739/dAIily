@@ -9,14 +9,28 @@ const calculateDeadline = (period: string): Date => {
   switch (period) {
     case "DAILY":
       // End of today
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      return new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59
+      );
 
     case "WEEKLY":
       // End of this Sunday
       const daysUntilSunday = 7 - now.getDay();
       const sunday = new Date(now);
       sunday.setDate(now.getDate() + daysUntilSunday);
-      return new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate(), 23, 59, 59);
+      return new Date(
+        sunday.getFullYear(),
+        sunday.getMonth(),
+        sunday.getDate(),
+        23,
+        59,
+        59
+      );
 
     case "MONTHLY":
       // End of this month
@@ -91,11 +105,10 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    if (!["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"].includes(period)) {
-      return NextResponse.json(
-        { error: "Invalid period" },
-        { status: 400 }
-      );
+    if (
+      !["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"].includes(period)
+    ) {
+      return NextResponse.json({ error: "Invalid period" }, { status: 400 });
     }
 
     // Check if user already has an ACTIVE goal for this period
@@ -109,7 +122,9 @@ export const POST = async (req: NextRequest) => {
 
     if (existingGoal) {
       return NextResponse.json(
-        { error: `You already have an active ${period.toLowerCase()} goal. Complete or abandon it first.` },
+        {
+          error: `You already have an active ${period.toLowerCase()} goal. Complete or abandon it first.`,
+        },
         { status: 400 }
       );
     }

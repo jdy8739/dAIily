@@ -85,9 +85,7 @@ const Tabs = ({ items, defaultTab, className = "", queryParam }: TabsProps) => {
       </div>
 
       {/* Tab Content */}
-      <div className="mt-6">
-        {activeContent}
-      </div>
+      <div className="mt-6">{activeContent}</div>
     </div>
   );
 };

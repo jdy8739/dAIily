@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getUserGoals, getUserStory } from "../lib/actions";
 
 type Goal = {
   id: string;
@@ -33,7 +34,9 @@ const periodLabels: Record<string, string> = {
 
 const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState("daily");
-  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">("active");
+  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">(
+    "active"
+  );
   const [story, setStory] = useState<string | null>(null);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(false);
@@ -41,19 +44,18 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchGoals();
+    loadGoals();
   }, [userId]);
 
   useEffect(() => {
-    fetchStory();
+    loadStory();
   }, [selectedPeriod, userId]);
 
-  const fetchGoals = async () => {
+  const loadGoals = async () => {
     try {
-      const response = await fetch(`/api/goals/user/${userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setGoals(data.goals);
+      const result = await getUserGoals(userId);
+      if ("goals" in result) {
+        setGoals(result.goals);
       }
     } catch (error) {
       console.error("Failed to fetch goals:", error);
@@ -62,24 +64,20 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
     }
   };
 
-  const fetchStory = async () => {
+  const loadStory = async () => {
     setLoading(true);
     setError(null);
     setStory(null);
 
     try {
-      const response = await fetch(`/api/ai/story/user/${userId}?period=${selectedPeriod}`);
+      const result = await getUserStory(userId, selectedPeriod);
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.story) {
-          setStory(data.story.content);
-        } else {
-          setStory(null);
-        }
+      if ("error" in result) {
+        setError(result.error);
+      } else if (result.story) {
+        setStory(result.story.content);
       } else {
-        const data = await response.json();
-        setError(data.error || "Failed to load story");
+        setStory(null);
       }
     } catch (err) {
       setError("Failed to load story");
@@ -88,7 +86,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
     }
   };
 
-  const filteredGoals = goals.filter((goal) => {
+  const filteredGoals = goals.filter(goal => {
     if (selectedTab === "active") {
       return goal.status === "ACTIVE" || goal.status === "IN_PROGRESS";
     } else {
@@ -136,7 +134,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           <p className="text-muted-foreground">Loading goals...</p>
         ) : filteredGoals.length > 0 ? (
           <div className="space-y-3">
-            {filteredGoals.map((goal) => (
+            {filteredGoals.map(goal => (
               <div
                 key={goal.id}
                 className="border border-border rounded-lg p-4 bg-background"
@@ -159,7 +157,9 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           </div>
         ) : (
           <p className="text-muted-foreground text-sm">
-            {selectedTab === "active" ? "No active goals yet" : "No achieved goals yet"}
+            {selectedTab === "active"
+              ? "No active goals yet"
+              : "No achieved goals yet"}
           </p>
         )}
       </div>
@@ -172,7 +172,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
             Select Period
           </label>
           <div className="flex gap-2 flex-wrap">
-            {periodOptions.map((option) => (
+            {periodOptions.map(option => (
               <button
                 key={option.value}
                 onClick={() => setSelectedPeriod(option.value)}
@@ -188,39 +188,39 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           </div>
         </div>
 
-      {/* Story Display */}
-      <div className="border-t border-border pt-6">
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-warning">{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && !story && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">📝</span>
+        {/* Story Display */}
+        <div className="border-t border-border pt-6">
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-            <p className="text-muted-foreground">
-              No story available for this period yet
-            </p>
-          </div>
-        )}
+          )}
 
-        {!loading && !error && story && (
-          <div className="prose prose-sm max-w-none">
-            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
-              {story}
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-warning">{error}</p>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+
+          {!loading && !error && !story && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">📝</span>
+              </div>
+              <p className="text-muted-foreground">
+                No story available for this period yet
+              </p>
+            </div>
+          )}
+
+          {!loading && !error && story && (
+            <div className="prose prose-sm max-w-none">
+              <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+                {story}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

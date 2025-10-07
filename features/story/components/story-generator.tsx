@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "../../../components/atoms/button";
+import {
+  getCachedStory,
+  generateStory as generateStoryAction,
+} from "../lib/actions";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
@@ -47,57 +51,29 @@ const StoryGenerator = () => {
     try {
       // First, check for cached story if not forcing regeneration
       if (!forceRegenerate) {
-        const cachedResponse = await fetch(
-          `/api/ai/story?period=${selectedPeriod}`
-        );
-        if (cachedResponse.ok) {
-          const { story } = await cachedResponse.json();
-          if (story) {
-            setStory(story.content);
-            setGeneratedAt(new Date(story.updatedAt));
-            setLoading(false);
-            return;
-          }
-        }
-      }
-
-      // Generate new story via streaming
-      const response = await fetch("/api/ai/story", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ period: selectedPeriod }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (errorData.error === "NO_POSTS") {
-          setError("NO_POSTS");
+        const cachedResult = await getCachedStory(selectedPeriod);
+        if ("story" in cachedResult && cachedResult.story) {
+          setStory(cachedResult.story.content);
+          setGeneratedAt(new Date(cachedResult.story.updatedAt));
+          setLoading(false);
           return;
         }
-        throw new Error("Failed to generate story");
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
+      // Generate new story
+      const result = await generateStoryAction(selectedPeriod);
 
-      if (!reader) {
-        throw new Error("No response body");
+      if (!result.success) {
+        if (result.error === "NO_POSTS") {
+          setError("NO_POSTS");
+        } else {
+          throw new Error(result.error);
+        }
+        return;
       }
 
-      let accumulatedStory = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedStory += chunk;
-        setStory(accumulatedStory);
-      }
-      setGeneratedAt(new Date());
+      setStory(result.content);
+      setGeneratedAt(new Date(result.updatedAt));
     } catch (err) {
       console.error("Story generation error:", err);
       setError("Failed to generate your story. Please try again.");
@@ -154,21 +130,11 @@ const StoryGenerator = () => {
         )}
 
         {loading && (
-          <div className="space-y-4">
-            {!story ? (
-              <div className="relative h-96 w-full bg-muted rounded-md animate-pulse flex items-center justify-center">
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-muted-foreground">
-                    Analyzing your journey...
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="prose prose-sm max-w-none text-foreground">
-                <div className="whitespace-pre-wrap">{story}</div>
-              </div>
-            )}
+          <div className="relative h-96 w-full bg-muted rounded-md animate-pulse flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-muted-foreground">Analyzing your journey...</p>
+            </div>
           </div>
         )}
 

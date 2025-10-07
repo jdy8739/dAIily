@@ -1,32 +1,92 @@
-import { NextRequest } from "next/server";
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 import OpenAI from "openai";
-import { getCurrentUser } from "../../../../lib/auth";
-import { prisma } from "../../../../lib/prisma";
-import { env } from "../../../../lib/env";
+import { env } from "@/lib/env";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
 });
 
-export const GET = async (req: NextRequest) => {
+type Goal = {
+  id: string;
+  title: string;
+  period: string;
+  startDate: Date;
+  deadline: Date;
+  status: string;
+};
+
+type Story = {
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+} | null;
+
+// Fetch goals for a specific user (public)
+const getUserGoals = async (
+  userId: string
+): Promise<{ goals: Goal[] } | { error: string }> => {
+  try {
+    const goals = await prisma.goal.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: [{ createdAt: "desc" }],
+      select: {
+        id: true,
+        title: true,
+        period: true,
+        startDate: true,
+        deadline: true,
+        status: true,
+      },
+    });
+
+    return { goals };
+  } catch (error) {
+    console.error("Goals fetch error:", error);
+    return { error: "Failed to fetch goals" };
+  }
+};
+
+// Fetch story for a specific user and period (public)
+const getUserStory = async (
+  userId: string,
+  period: string
+): Promise<{ story: Story } | { error: string }> => {
+  try {
+    const story = await prisma.story.findUnique({
+      where: {
+        userId_period: {
+          userId: userId,
+          period: period,
+        },
+      },
+      select: {
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return { story: story || null };
+  } catch (error) {
+    console.error("Story fetch error:", error);
+    return { error: "Failed to fetch story" };
+  }
+};
+
+// Get cached story for authenticated user
+const getCachedStory = async (
+  period: string
+): Promise<{ story: Story } | { error: string }> => {
   try {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const { searchParams } = new URL(req.url);
-    const period = searchParams.get("period");
-
-    if (!period) {
-      return new Response(JSON.stringify({ error: "Period is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return { error: "Unauthorized" };
     }
 
     const story = await prisma.story.findUnique({
@@ -36,49 +96,34 @@ export const GET = async (req: NextRequest) => {
           period: period,
         },
       },
+      select: {
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
-    if (!story) {
-      return new Response(JSON.stringify({ story: null }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(
-      JSON.stringify({
-        story: {
-          content: story.content,
-          createdAt: story.createdAt,
-          updatedAt: story.updatedAt,
-        },
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return { story: story || null };
   } catch (error) {
     console.error("Story fetch error:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch story" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return { error: "Failed to fetch story" };
   }
 };
 
-export const POST = async (req: NextRequest) => {
+// Generate story for authenticated user (streaming not supported in Server Actions)
+// Returns the complete story after generation
+const generateStory = async (
+  period: string
+): Promise<
+  | { success: true; content: string; updatedAt: Date }
+  | { success: false; error: string }
+> => {
   try {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return { success: false, error: "Unauthorized" };
     }
-
-    const { period } = await req.json();
 
     // Fetch user profile and posts
     const user = await prisma.user.findUnique({
@@ -97,10 +142,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return { success: false, error: "User not found" };
     }
 
     // Calculate date range based on period
@@ -165,18 +207,9 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    // If no posts, return early without calling OpenAI
+    // If no posts, return early
     if (posts.length === 0) {
-      return new Response(
-        JSON.stringify({
-          error: "NO_POSTS",
-          message: "No posts found in this period",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return { success: false, error: "NO_POSTS" };
     }
 
     // Build context for AI
@@ -223,8 +256,8 @@ Content: ${p.content}
         ? "entire journey"
         : `${period.replace("ly", "")} period`;
 
-    // Generate story with streaming
-    const stream = await openai.chat.completions.create({
+    // Generate story (non-streaming)
+    const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -274,63 +307,43 @@ ${postsContext}
 **중요: 반드시 한국어로 응답하세요.**`,
         },
       ],
-      stream: true,
       temperature: 0.7,
       max_tokens: 300,
     });
 
-    // Create streaming response and accumulate content
-    const encoder = new TextEncoder();
-    let accumulatedContent = "";
+    const content = completion.choices[0]?.message?.content || "";
 
-    const customStream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-              accumulatedContent += content;
-              controller.enqueue(encoder.encode(content));
-            }
-          }
-          controller.close();
+    if (!content) {
+      return { success: false, error: "Failed to generate story" };
+    }
 
-          // Save story to database after streaming completes
-          await prisma.story.upsert({
-            where: {
-              userId_period: {
-                userId: currentUser.id,
-                period: period,
-              },
-            },
-            update: {
-              content: accumulatedContent,
-            },
-            create: {
-              userId: currentUser.id,
-              period: period,
-              content: accumulatedContent,
-            },
-          });
-        } catch (error) {
-          console.error("Streaming error:", error);
-          controller.error(error);
-        }
+    // Save story to database
+    const story = await prisma.story.upsert({
+      where: {
+        userId_period: {
+          userId: currentUser.id,
+          period: period,
+        },
+      },
+      update: {
+        content: content,
+      },
+      create: {
+        userId: currentUser.id,
+        period: period,
+        content: content,
       },
     });
 
-    return new Response(customStream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
-    });
+    return {
+      success: true,
+      content: story.content,
+      updatedAt: story.updatedAt,
+    };
   } catch (error) {
     console.error("Story generation error:", error);
-    return new Response(JSON.stringify({ error: "Failed to generate story" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return { success: false, error: "Failed to generate story" };
   }
 };
+
+export { getUserGoals, getUserStory, getCachedStory, generateStory };

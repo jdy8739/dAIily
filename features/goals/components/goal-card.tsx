@@ -99,15 +99,11 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
         )}
 
         {goal.status === "COMPLETED" && (
-          <span className="text-success text-sm font-medium">
-            ✓ Completed
-          </span>
+          <span className="text-success text-sm font-medium">✓ Completed</span>
         )}
 
         {goal.status === "ABANDONED" && (
-          <span className="text-muted-foreground text-sm">
-            ✕ Abandoned
-          </span>
+          <span className="text-muted-foreground text-sm">✕ Abandoned</span>
         )}
       </div>
     </div>

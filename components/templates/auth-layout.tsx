@@ -49,7 +49,7 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
                 href="/profile"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-{user.name}
+                {user.name}
               </Link>
               <LogoutButton />
               <ThemeToggle />

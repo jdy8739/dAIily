@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../../components/templates/auth-layout";
 import Tabs from "../../../../components/atoms/tabs";
-import { getUserById, getUserPosts } from "../../../../features/feed/lib/queries";
+import {
+  getUserById,
+  getUserPosts,
+} from "../../../../features/feed/lib/queries";
 
 interface UserProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -65,7 +68,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
           </div>
         ) : (
           <div className="space-y-4">
-            {posts.map((post) => (
+            {posts.map(post => (
               <Link
                 key={post.id}
                 href={`/feed/${post.id}`}
@@ -78,9 +81,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                   {post.content}
                 </p>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <span>
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </span>
+                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                   <span>❤️ {post._count.likes}</span>
                   <span>💬 {post._count.replies}</span>
                 </div>
@@ -163,7 +164,10 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-primary-foreground font-semibold text-xl">
-                    {user.name?.split(" ").map((n) => n[0]).join("") || "??"}
+                    {user.name
+                      ?.split(" ")
+                      .map(n => n[0])
+                      .join("") || "??"}
                   </span>
                 </div>
                 <div>

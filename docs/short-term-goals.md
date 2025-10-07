@@ -35,6 +35,7 @@ model Goal {
 ## UI Location
 
 **Story page** - Goals section above AI analysis (collapsible)
+
 - Set goals → review progress in one flow
 - AI analysis references your active goals
 

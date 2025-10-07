@@ -13,9 +13,7 @@ const Skeleton = ({
   };
 
   return (
-    <div
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-    />
+    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`} />
   );
 };
 

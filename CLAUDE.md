@@ -23,6 +23,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Server Actions**: Use for all data mutations and form submissions
 - **Minimal Client Components**: Only for event handlers, browser APIs, state, effects
 
+### Data Fetching Rules
+
+- **fetch in Server Components Only**: Use `fetch` API only in Server Components for data fetching
+- **Server Actions in Client Components**: Use Server Actions for all data mutations in Client Components
+- **Props for Data**: Pass server-fetched data to Client Components via props
+- **No Direct API Calls**: Client Components should never fetch from API routes directly
+
 ### FSD & Component Rules
 
 - **Feature Independence**: No direct imports between features

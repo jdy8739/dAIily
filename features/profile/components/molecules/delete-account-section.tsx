@@ -33,8 +33,8 @@ const DeleteAccountSection = () => {
           Danger Zone
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Once you delete your account, there is no going back. All your
-          posts, replies, and likes will be permanently deleted.
+          Once you delete your account, there is no going back. All your posts,
+          replies, and likes will be permanently deleted.
         </p>
         <button
           type="button"

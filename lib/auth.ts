@@ -29,7 +29,7 @@ const generateToken = (payload: object): string => {
 const verifyToken = (token: string): object | null => {
   try {
     const result = jwt.verify(token, JWT_SECRET);
-    return typeof result === 'object' ? result : null;
+    return typeof result === "object" ? result : null;
   } catch {
     return null;
   }
@@ -138,9 +138,7 @@ const generatePasswordResetToken = (): string => {
   );
 };
 
-const createPasswordResetToken = async (
-  userId: string
-): Promise<string> => {
+const createPasswordResetToken = async (userId: string): Promise<string> => {
   const token = generatePasswordResetToken();
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
@@ -163,7 +161,12 @@ const createPasswordResetToken = async (
 
 const verifyPasswordResetToken = async (token: string) => {
   try {
-    const decoded = jwt.verify(token, SESSION_SECRET) as { type: string; timestamp: number; iat: number; exp: number; };
+    const decoded = jwt.verify(token, SESSION_SECRET) as {
+      type: string;
+      timestamp: number;
+      iat: number;
+      exp: number;
+    };
     if (decoded.type !== "password_reset") {
       return null;
     }

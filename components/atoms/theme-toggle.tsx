@@ -96,7 +96,6 @@ const ThemeToggle = () => {
     }
   };
 
-
   return (
     <button
       onClick={handleThemeChange}
