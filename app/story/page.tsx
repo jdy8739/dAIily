@@ -1,5 +1,6 @@
 import AuthLayout from "../../components/templates/auth-layout";
 import StoryGenerator from "../../features/story/components/story-generator";
+import GoalsSection from "../../features/goals/components/goals-section";
 
 const StoryPage = async () => {
   return (
@@ -18,6 +19,12 @@ const StoryPage = async () => {
             </div>
           </div>
 
+          {/* Goals Section */}
+          <div className="mb-6">
+            <GoalsSection />
+          </div>
+
+          {/* Story Generator */}
           <StoryGenerator />
         </div>
       </div>

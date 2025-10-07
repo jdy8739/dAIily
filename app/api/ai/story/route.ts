@@ -151,6 +151,23 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    // Fetch active goals
+    const activeGoals = await prisma.goal.findMany({
+      where: {
+        userId: currentUser.id,
+        status: "ACTIVE",
+      },
+      select: {
+        title: true,
+        period: true,
+        startDate: true,
+        deadline: true,
+      },
+      orderBy: {
+        startDate: "desc",
+      },
+    });
+
     // If no posts, return early without calling OpenAI
     if (posts.length === 0) {
       return new Response(
@@ -190,6 +207,19 @@ Content: ${p.content}
             )
             .join("\n\n")
         : "No posts in this period.";
+
+    const goalsContext =
+      activeGoals.length > 0
+        ? activeGoals
+            .map(
+              (g) => `
+- ${g.period} Goal: "${g.title}"
+  Started: ${new Date(g.startDate).toLocaleDateString()}
+  Deadline: ${new Date(g.deadline).toLocaleDateString()}
+`.trim()
+            )
+            .join("\n")
+        : "No active goals set.";
 
     const periodLabel =
       period === "all"
@@ -237,9 +267,13 @@ Content: ${p.content}
 
 ${profileContext}
 
+현재 활성 목표:
+${goalsContext}
+
 이 기간의 게시물:
 ${postsContext}
 
+**중요: 각 목표와 연관된 게시물 개수를 세고, 목표 달성 여부를 분석하세요.**
 **중요: 반드시 한국어로 응답하세요.**`,
         },
       ],
