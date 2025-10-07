@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "../../../components/atoms/button";
-import Skeleton from "../../../components/atoms/skeleton";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
 const StoryGenerator = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [period, setPeriod] = useState<Period>("all");
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,25 +20,36 @@ const StoryGenerator = () => {
   // Load period from URL on mount
   useEffect(() => {
     const urlPeriod = searchParams.get("period") as Period;
-    if (urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)) {
+    if (
+      urlPeriod &&
+      ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
+    ) {
       setPeriod(urlPeriod);
       generateStory(urlPeriod);
     }
   }, []);
 
-  const generateStory = async (selectedPeriod: Period, forceRegenerate = false) => {
+  const generateStory = async (
+    selectedPeriod: Period,
+    forceRegenerate = false
+  ) => {
     setLoading(true);
     setError(null);
     setStory("");
     setPeriod(selectedPeriod);
 
-    // Update URL with selected period
-    router.push(`/story?period=${selectedPeriod}`, { scroll: false });
+    // Update URL with selected period, preserving current pathname and query params
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    current.set("period", selectedPeriod);
+    const query = current.toString();
+    router.push(`${pathname}?${query}`, { scroll: false });
 
     try {
       // First, check for cached story if not forcing regeneration
       if (!forceRegenerate) {
-        const cachedResponse = await fetch(`/api/ai/story?period=${selectedPeriod}`);
+        const cachedResponse = await fetch(
+          `/api/ai/story?period=${selectedPeriod}`
+        );
         if (cachedResponse.ok) {
           const { story } = await cachedResponse.json();
           if (story) {
@@ -148,7 +159,9 @@ const StoryGenerator = () => {
               <div className="relative h-96 w-full bg-muted rounded-md animate-pulse flex items-center justify-center">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-muted-foreground">Analyzing your journey...</p>
+                  <p className="text-muted-foreground">
+                    Analyzing your journey...
+                  </p>
                 </div>
               </div>
             ) : (
@@ -168,13 +181,12 @@ const StoryGenerator = () => {
               No Posts in This Period
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              You haven't written any posts in the {periodLabels[period].toLowerCase()}.
-              Start sharing your daily experiences to generate your growth story!
+              You haven't written any posts in the{" "}
+              {periodLabels[period].toLowerCase()}. Start sharing your daily
+              experiences to generate your growth story!
             </p>
             <Link href="/feed">
-              <Button variant="primary">
-                Write Your First Post
-              </Button>
+              <Button variant="primary">Write Your First Post</Button>
             </Link>
           </div>
         )}
@@ -201,7 +213,9 @@ const StoryGenerator = () => {
                   {periodLabels[period]}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Generated on {generatedAt?.toLocaleDateString() || new Date().toLocaleDateString()}
+                  Generated on{" "}
+                  {generatedAt?.toLocaleDateString() ||
+                    new Date().toLocaleDateString()}
                 </p>
               </div>
               <Button
