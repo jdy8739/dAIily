@@ -4,38 +4,49 @@
 
 When committing changes:
 
-1. **Review all local changes**: Run `git status` and `git diff` to see
-   everything that changed
-2. **Divide commits by logical flow**: Group related changes together
-3. **Commit step-by-step by files**: Make separate commits for different
-   files/features
-4. **NO single large commits**: Break up changes into small, focused
-   commits
-5. **Each commit should represent one logical unit of work**
+1. **Review all local changes**: Run `git status` and `git diff` to see everything that changed
+2. **Group by feature/interest**: Combine related changes into meaningful commits
+3. **Not too micro**: Don't commit file-by-file - group related files that serve the same feature
+4. **Not too large**: Don't bundle unrelated changes together
+5. **Each commit = one logical feature or fix**
+
+## Commit Grouping Guidelines
+
+**Good grouping examples:**
+- `feat: add user story viewing` - includes API endpoints, components, and page changes for one feature
+- `fix: goals API issues` - combines schema fix + route fix for related bug
+- `docs: add commit guidelines` - standalone documentation change
+
+**Bad grouping examples:**
+- ❌ Too micro: separate commits for each file in same feature
+- ❌ Too large: combining multiple unrelated features in one commit
 
 ## Commit Message Format
 
-:
+```
+<type>: <short summary>
 
-Types
+<optional detailed description>
+```
 
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation changes
-- refactor: Code refactoring
-- test: Adding or updating tests
-- chore: Maintenance tasks
+### Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
 
-Example Workflow
+### Example
+```
+feat: add user authentication
 
-# Instead of one commit with all changes:
+Implemented JWT-based authentication with login and logout endpoints.
+Added middleware for protecting routes.
+```
 
-git add file1.ts && git commit -m "feat: add user model"
-git add file2.ts && git commit -m "feat: add user controller"
-git add file3.ts && git commit -m "test: add user tests"
-
-Guidelines
-
+## Guidelines
 - Keep the summary line under 50 characters
 - Use imperative mood ("add" not "added")
 - Explain the "why" not the "what" in the description
+- Group related changes by feature interest, not by file
