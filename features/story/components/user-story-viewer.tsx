@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getUserGoals, getUserStory } from "../lib/actions";
 import { GoalStatus } from "@prisma/client";
+import Skeleton from "../../../components/atoms/skeleton";
 
 type Goal = {
   id: string;
@@ -191,11 +192,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
 
         {/* Story Display */}
         <div className="border-t border-border pt-6">
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          )}
+          {loading && <Skeleton className="h-96" />}
 
           {error && (
             <div className="text-center py-12">

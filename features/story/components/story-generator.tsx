@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "../../../components/atoms/button";
+import Skeleton from "../../../components/atoms/skeleton";
 import {
   getCachedStory,
   generateStory as generateStoryAction,
@@ -129,14 +130,7 @@ const StoryGenerator = () => {
           </div>
         )}
 
-        {loading && (
-          <div className="relative h-96 w-full bg-muted rounded-md animate-pulse flex items-center justify-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-muted-foreground">Analyzing your journey...</p>
-            </div>
-          </div>
-        )}
+        {loading && <Skeleton className="h-96" />}
 
         {error && error === "NO_POSTS" && (
           <div className="text-center py-12">
