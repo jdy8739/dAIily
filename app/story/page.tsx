@@ -1,35 +1,15 @@
-import AuthLayout from "../../components/templates/auth-layout";
-import StoryGenerator from "../../features/story/components/story-generator";
-import GoalsSection from "../../features/goals/components/goals-section";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "../../lib/auth";
 
 const StoryPage = async () => {
-  return (
-    <AuthLayout>
-      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-screen">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl">
-              <h1 className="text-3xl font-bold text-accent-foreground mb-2">
-                Your Growth Story
-              </h1>
-              <p className="text-accent-foreground/90">
-                AI-powered insights into your professional growth journey
-              </p>
-            </div>
-          </div>
+  const currentUser = await getCurrentUser();
 
-          {/* Goals Section */}
-          <div className="mb-6">
-            <GoalsSection />
-          </div>
+  if (!currentUser) {
+    redirect("/login");
+  }
 
-          {/* Story Generator */}
-          <StoryGenerator />
-        </div>
-      </div>
-    </AuthLayout>
-  );
+  // Redirect to user's own story page
+  redirect(`/story/${currentUser.id}`);
 };
 
 export default StoryPage;
