@@ -89,7 +89,7 @@ const GoalsSection = () => {
     await updateGoalStatus(id, "COMPLETED");
   };
 
-  const handleAbandon = async (id: string) => {
+  const handleRemove = async (id: string) => {
     await updateGoalStatus(id, "ABANDONED");
   };
 
@@ -201,7 +201,7 @@ const GoalsSection = () => {
                     <GoalCard
                       goal={existingGoal}
                       onComplete={handleComplete}
-                      onAbandon={handleAbandon}
+                      onRemove={handleRemove}
                       onEdit={handleEdit}
                     />
                   );
@@ -235,7 +235,7 @@ const GoalsSection = () => {
                   <GoalCard
                     goal={existingGoal}
                     onComplete={handleComplete}
-                    onAbandon={handleAbandon}
+                    onRemove={handleRemove}
                     onEdit={handleEdit}
                   />
                 );

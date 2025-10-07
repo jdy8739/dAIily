@@ -9,11 +9,11 @@ type Goal = PrismaGoal;
 type GoalCardProps = {
   goal: Goal;
   onComplete: (id: string) => Promise<void>;
-  onAbandon: (id: string) => Promise<void>;
+  onRemove: (id: string) => Promise<void>;
   onEdit: (id: string) => void;
 };
 
-const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
+const GoalCard = ({ goal, onComplete, onRemove, onEdit }: GoalCardProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -25,9 +25,9 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
     }
   };
 
-  const handleAbandon = async () => {
+  const handleRemove = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to abandon this goal? This action cannot be undone."
+      "Are you sure you want to remove this goal? This action cannot be undone."
     );
 
     if (!confirmed) {
@@ -36,7 +36,7 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
 
     setLoading(true);
     try {
-      await onAbandon(goal.id);
+      await onRemove(goal.id);
     } finally {
       setLoading(false);
     }
@@ -91,11 +91,11 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleAbandon}
+              onClick={handleRemove}
               disabled={loading}
               className="text-warning border-warning hover:bg-warning/10"
             >
-              ✕ Abandon
+              ✕ Remove
             </Button>
           </div>
         )}
@@ -106,7 +106,7 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handleAbandon}
+              onClick={handleRemove}
               disabled={loading}
               className="text-warning border-warning hover:bg-warning/10"
             >
