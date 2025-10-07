@@ -26,6 +26,14 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
   };
 
   const handleAbandon = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to abandon this goal? This action cannot be undone."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     setLoading(true);
     try {
       await onAbandon(goal.id);
@@ -93,7 +101,18 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
         )}
 
         {goal.status === "COMPLETED" && (
-          <span className="text-success text-sm font-medium">✓ Completed</span>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-success text-sm font-medium">✓ Completed</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAbandon}
+              disabled={loading}
+              className="text-warning border-warning hover:bg-warning/10"
+            >
+              ✕ Remove
+            </Button>
+          </div>
         )}
 
         {goal.status === "ABANDONED" && (

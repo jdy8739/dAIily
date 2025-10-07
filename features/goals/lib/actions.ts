@@ -165,28 +165,50 @@ const updateGoal = async (
       return { success: false, error: "Forbidden" };
     }
 
-    if (goal.status !== GoalStatus.ACTIVE) {
-      return { success: false, error: "Can only update ACTIVE goals" };
+    // Check if update is allowed based on current status
+    if (goal.status === GoalStatus.ABANDONED) {
+      return { success: false, error: "Cannot update abandoned goals" };
+    }
+
+    if (goal.status === GoalStatus.COMPLETED && !updates.status) {
+      return { success: false, error: "Cannot edit completed goals" };
     }
 
     // Build update data
     const updateData: Partial<Goal> = {};
 
     if (updates.status) {
-      if (
-        updates.status !== GoalStatus.COMPLETED &&
-        updates.status !== GoalStatus.ABANDONED
-      ) {
-        return {
-          success: false,
-          error: "Status must be COMPLETED or ABANDONED",
-        };
+      // ACTIVE goals can be marked as COMPLETED or ABANDONED
+      if (goal.status === GoalStatus.ACTIVE) {
+        if (
+          updates.status !== GoalStatus.COMPLETED &&
+          updates.status !== GoalStatus.ABANDONED
+        ) {
+          return {
+            success: false,
+            error: "Status must be COMPLETED or ABANDONED",
+          };
+        }
+        updateData.status = updates.status as GoalStatus;
+        updateData.completedAt = new Date();
       }
-      updateData.status = updates.status as GoalStatus;
-      updateData.completedAt = new Date();
+      // COMPLETED goals can only be marked as ABANDONED
+      else if (goal.status === GoalStatus.COMPLETED) {
+        if (updates.status !== GoalStatus.ABANDONED) {
+          return {
+            success: false,
+            error: "Completed goals can only be abandoned",
+          };
+        }
+        updateData.status = GoalStatus.ABANDONED;
+      }
     }
 
     if (updates.title !== undefined) {
+      // Only allow title updates for ACTIVE goals
+      if (goal.status !== GoalStatus.ACTIVE) {
+        return { success: false, error: "Can only edit title of active goals" };
+      }
       if (!updates.title.trim()) {
         return { success: false, error: "Title cannot be empty" };
       }
