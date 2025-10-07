@@ -5,7 +5,7 @@ import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Button from "../../../components/atoms/button";
 import { getGoals, createGoal, updateGoal } from "../lib/actions";
-import { Goal as PrismaGoal } from "@prisma/client";
+import { Goal as PrismaGoal, GoalStatus } from "@prisma/client";
 
 type Goal = PrismaGoal;
 
@@ -23,18 +23,20 @@ const GoalsSection = () => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">("active");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("DAILY");
   const [showForm, setShowForm] = useState(false);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
 
-  // Fetch goals on mount
+  // Fetch goals on mount and when tab changes
   useEffect(() => {
     loadGoals();
-  }, []);
+  }, [selectedTab]);
 
   const loadGoals = async () => {
     try {
-      const result = await getGoals("ACTIVE");
+      const status = selectedTab === "active" ? "ACTIVE" : "COMPLETED";
+      const result = await getGoals(status);
       if ("goals" in result) {
         setGoals(result.goals);
       }
@@ -97,7 +99,8 @@ const GoalsSection = () => {
   };
 
   const getGoalForPeriod = (period: string) => {
-    return goals.find(g => g.period === period && g.status === "ACTIVE");
+    const status = selectedTab === "active" ? GoalStatus.ACTIVE : GoalStatus.COMPLETED;
+    return goals.find(g => g.period === period && g.status === status);
   };
 
   if (loading) {
@@ -110,13 +113,13 @@ const GoalsSection = () => {
 
   return (
     <div className="bg-card rounded-lg shadow-sm border border-accent/30 overflow-hidden">
-      {/* Header */}
+      {/* Header with Collapse */}
       <div
         className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
         onClick={() => setCollapsed(!collapsed)}
       >
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          🎯 Your Active Goals
+          🎯 Your Goals
         </h2>
         <button className="text-muted-foreground hover:text-foreground">
           {collapsed ? "▼" : "▲"}
@@ -126,6 +129,44 @@ const GoalsSection = () => {
       {/* Content */}
       {!collapsed && (
         <div className="px-6 pb-6 space-y-4">
+          {/* Tab Switcher */}
+          <div className="flex gap-2 border-b border-border">
+            <button
+              onClick={() => {
+                setSelectedTab("active");
+                setShowForm(false);
+                setEditingGoalId(null);
+              }}
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
+                selectedTab === "active"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🎯 Active Goals
+              {selectedTab === "active" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+            <button
+              onClick={() => {
+                setSelectedTab("achieved");
+                setShowForm(false);
+                setEditingGoalId(null);
+              }}
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
+                selectedTab === "achieved"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🏆 Achieved Goals
+              {selectedTab === "achieved" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+          </div>
+
           {/* Period Selector */}
           <div className="flex items-center gap-3">
             <label className="text-sm font-medium text-foreground">
@@ -153,6 +194,26 @@ const GoalsSection = () => {
             {(() => {
               const existingGoal = getGoalForPeriod(selectedPeriod);
 
+              // Achieved tab: read-only view
+              if (selectedTab === "achieved") {
+                if (existingGoal) {
+                  return (
+                    <GoalCard
+                      goal={existingGoal}
+                      onComplete={handleComplete}
+                      onAbandon={handleAbandon}
+                      onEdit={handleEdit}
+                    />
+                  );
+                }
+                return (
+                  <p className="text-muted-foreground text-sm text-center py-4">
+                    No achieved {periodLabels[selectedPeriod].toLowerCase()} goals yet
+                  </p>
+                );
+              }
+
+              // Active tab: editable view
               // Show form for editing
               if (showForm && editingGoalId) {
                 return (
