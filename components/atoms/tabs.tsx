@@ -52,7 +52,7 @@ const Tabs = ({ items, defaultTab, className = "", queryParam }: TabsProps) => {
       current.set(queryParam, tabId);
       const search = current.toString();
       const query = search ? `?${search}` : "";
-      router.push(`${window.location.pathname}${query}`);
+      router.replace(`${window.location.pathname}${query}`);
     }
   };
 
