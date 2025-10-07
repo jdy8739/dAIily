@@ -14,9 +14,10 @@ export const PATCH = async (
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await params;
     const body = await req.json();
     const { status, title } = body;
+
+    const { id } = await params;
 
     // Check goal exists and belongs to user
     const goal = await prisma.goal.findUnique({
