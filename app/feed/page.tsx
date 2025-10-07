@@ -94,21 +94,19 @@ const FeedPage = async () => {
               ))
             )}
 
-            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
-              <h3 className="text-lg font-medium text-foreground mb-2">
-                Ready to share your growth story?
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Join the conversation and inspire others with your professional
-                journey
-              </p>
-              <Link
-                href="/write"
-                className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              >
-                Write Your Entry
-              </Link>
-            </div>
+            {currentUser && (
+              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Check out your own posts and activity
+                </p>
+                <Link
+                  href={`/feed/user/${currentUser.id}?tab=feed`}
+                  className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  View My Posts
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
