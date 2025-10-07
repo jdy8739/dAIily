@@ -1,0 +1,189 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+type Goal = {
+  id: string;
+  title: string;
+  period: string;
+  startDate: string;
+  deadline: string;
+  status: string;
+};
+
+type UserStoryViewerProps = {
+  userId: string;
+};
+
+const periodOptions = [
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly" },
+  { value: "all", label: "All Time" },
+];
+
+const periodLabels: Record<string, string> = {
+  DAILY: "Daily",
+  WEEKLY: "Weekly",
+  MONTHLY: "Monthly",
+  QUARTERLY: "Quarterly",
+  YEARLY: "Yearly",
+};
+
+const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
+  const [selectedPeriod, setSelectedPeriod] = useState("daily");
+  const [story, setStory] = useState<string | null>(null);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [goalsLoading, setGoalsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchGoals();
+  }, [userId]);
+
+  useEffect(() => {
+    fetchStory();
+  }, [selectedPeriod, userId]);
+
+  const fetchGoals = async () => {
+    try {
+      const response = await fetch(`/api/goals/user/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setGoals(data.goals);
+      }
+    } catch (error) {
+      console.error("Failed to fetch goals:", error);
+    } finally {
+      setGoalsLoading(false);
+    }
+  };
+
+  const fetchStory = async () => {
+    setLoading(true);
+    setError(null);
+    setStory(null);
+
+    try {
+      const response = await fetch(`/api/ai/story/user/${userId}?period=${selectedPeriod}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.story) {
+          setStory(data.story.content);
+        } else {
+          setStory(null);
+        }
+      } else {
+        const data = await response.json();
+        setError(data.error || "Failed to load story");
+      }
+    } catch (err) {
+      setError("Failed to load story");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Goals Section */}
+      <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          🎯 Active Goals
+        </h2>
+        {goalsLoading ? (
+          <p className="text-muted-foreground">Loading goals...</p>
+        ) : goals.length > 0 ? (
+          <div className="space-y-3">
+            {goals.map((goal) => (
+              <div
+                key={goal.id}
+                className="border border-border rounded-lg p-4 bg-background"
+              >
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+                    {periodLabels[goal.period]}
+                  </span>
+                </div>
+                <h4 className="text-foreground font-medium mb-2 whitespace-pre-wrap break-words">
+                  {goal.title}
+                </h4>
+                <div className="text-xs text-muted-foreground">
+                  <span>
+                    Deadline: {new Date(goal.deadline).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">No active goals yet</p>
+        )}
+      </div>
+
+      {/* Story Section */}
+      <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
+        {/* Period Selector */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-foreground mb-2">
+            Select Period
+          </label>
+          <div className="flex gap-2 flex-wrap">
+            {periodOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setSelectedPeriod(option.value)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedPeriod === option.value
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+      {/* Story Display */}
+      <div className="border-t border-border pt-6">
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-warning">{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && !story && (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">📝</span>
+            </div>
+            <p className="text-muted-foreground">
+              No story available for this period yet
+            </p>
+          </div>
+        )}
+
+        {!loading && !error && story && (
+          <div className="prose prose-sm max-w-none">
+            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+              {story}
+            </div>
+          </div>
+        )}
+      </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserStoryViewer;
