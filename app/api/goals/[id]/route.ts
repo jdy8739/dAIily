@@ -40,7 +40,7 @@ export const PATCH = async (
     }
 
     // Build update data based on what's provided
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     if (status) {
       // Status update (complete/abandon)

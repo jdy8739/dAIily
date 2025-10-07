@@ -9,7 +9,7 @@ const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
 });
 
-type Goal = {
+type GoalSelect = {
   id: string;
   title: string;
   period: string;
@@ -27,7 +27,7 @@ type Story = {
 // Fetch goals for a specific user (public)
 const getUserGoals = async (
   userId: string
-): Promise<{ goals: Goal[] } | { error: string }> => {
+): Promise<{ goals: GoalSelect[] } | { error: string }> => {
   try {
     const goals = await prisma.goal.findMany({
       where: {

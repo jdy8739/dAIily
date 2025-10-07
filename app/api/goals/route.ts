@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
+import { GoalPeriod, GoalStatus } from "@prisma/client";
 
 // Helper function to calculate deadline based on period
 const calculateDeadline = (period: string): Date => {
@@ -67,8 +68,8 @@ export const GET = async (req: NextRequest) => {
     const goals = await prisma.goal.findMany({
       where: {
         userId: currentUser.id,
-        ...(status && { status: status as any }),
-        ...(period && { period: period as any }),
+        ...(status && { status: status as unknown as GoalStatus }),
+        ...(period && { period: period as unknown as GoalPeriod }),
       },
       orderBy: [
         { status: "asc" }, // ACTIVE first

@@ -2,15 +2,9 @@
 
 import { useState } from "react";
 import Button from "../../../components/atoms/button";
+import { Goal as PrismaGoal } from "@prisma/client";
 
-type Goal = {
-  id: string;
-  title: string;
-  period: string;
-  startDate: string;
-  deadline: string;
-  status: string;
-};
+type Goal = PrismaGoal;
 
 type GoalCardProps = {
   goal: Goal;
@@ -40,7 +34,7 @@ const GoalCard = ({ goal, onComplete, onAbandon, onEdit }: GoalCardProps) => {
     }
   };
 
-  const formatDate = (date: string) => {
+  const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",

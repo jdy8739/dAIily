@@ -98,7 +98,9 @@ const PostForm = () => {
 
     try {
       // Dynamically import to avoid bundling on server
-      const { proofreadContent } = await import("../../../../ai/lib/actions");
+      const { proofreadContent } = await import(
+        "../../../../features/ai/lib/actions"
+      );
       const result = await proofreadContent(title, content);
 
       if (!result.success) {

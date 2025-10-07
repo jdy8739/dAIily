@@ -5,15 +5,9 @@ import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Button from "../../../components/atoms/button";
 import { getGoals, createGoal, updateGoal } from "../lib/actions";
+import { Goal as PrismaGoal } from "@prisma/client";
 
-type Goal = {
-  id: string;
-  title: string;
-  period: string;
-  startDate: string;
-  deadline: string;
-  status: string;
-};
+type Goal = PrismaGoal;
 
 const PERIODS = ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"];
 

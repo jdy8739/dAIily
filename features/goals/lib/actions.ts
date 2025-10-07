@@ -3,17 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { GoalPeriod, GoalStatus, Goal as PrismaGoal } from "@prisma/client";
 
-type Goal = {
-  id: string;
-  title: string;
-  period: string;
-  startDate: Date;
-  deadline: Date;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+type Goal = PrismaGoal;
 
 // Helper function to calculate deadline based on period
 const calculateDeadline = (period: string): Date => {
@@ -69,8 +61,8 @@ const getGoals = async (
     const goals = await prisma.goal.findMany({
       where: {
         userId: currentUser.id,
-        ...(status && { status: status as any }),
-        ...(period && { period: period as any }),
+        ...(status && { status: status as GoalStatus }),
+        ...(period && { period: period as GoalPeriod }),
       },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     });
@@ -110,8 +102,8 @@ const createGoal = async (
     const existingGoal = await prisma.goal.findFirst({
       where: {
         userId: currentUser.id,
-        period: period,
-        status: "ACTIVE",
+        period: period as GoalPeriod,
+        status: GoalStatus.ACTIVE,
       },
     });
 
@@ -130,9 +122,9 @@ const createGoal = async (
       data: {
         userId: currentUser.id,
         title,
-        period,
+        period: period as GoalPeriod,
         deadline,
-        status: "ACTIVE",
+        status: GoalStatus.ACTIVE,
       },
     });
 
@@ -173,21 +165,24 @@ const updateGoal = async (
       return { success: false, error: "Forbidden" };
     }
 
-    if (goal.status !== "ACTIVE") {
+    if (goal.status !== GoalStatus.ACTIVE) {
       return { success: false, error: "Can only update ACTIVE goals" };
     }
 
     // Build update data
-    const updateData: any = {};
+    const updateData: Partial<Goal> = {};
 
     if (updates.status) {
-      if (!["COMPLETED", "ABANDONED"].includes(updates.status)) {
+      if (
+        updates.status !== GoalStatus.COMPLETED &&
+        updates.status !== GoalStatus.ABANDONED
+      ) {
         return {
           success: false,
           error: "Status must be COMPLETED or ABANDONED",
         };
       }
-      updateData.status = updates.status;
+      updateData.status = updates.status as GoalStatus;
       updateData.completedAt = new Date();
     }
 

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { getUserGoals, getUserStory } from "../lib/actions";
+import { GoalStatus } from "@prisma/client";
 
 type Goal = {
   id: string;
   title: string;
   period: string;
-  startDate: string;
-  deadline: string;
+  startDate: Date;
+  deadline: Date;
   status: string;
 };
 
@@ -88,9 +89,9 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
 
   const filteredGoals = goals.filter(goal => {
     if (selectedTab === "active") {
-      return goal.status === "ACTIVE" || goal.status === "IN_PROGRESS";
+      return goal.status === GoalStatus.ACTIVE;
     } else {
-      return goal.status === "ACHIEVED";
+      return goal.status === GoalStatus.COMPLETED;
     }
   });
 
