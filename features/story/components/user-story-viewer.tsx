@@ -33,6 +33,7 @@ const periodLabels: Record<string, string> = {
 
 const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState("daily");
+  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">("active");
   const [story, setStory] = useState<string | null>(null);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(false);
@@ -87,18 +88,55 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
     }
   };
 
+  const filteredGoals = goals.filter((goal) => {
+    if (selectedTab === "active") {
+      return goal.status === "ACTIVE" || goal.status === "IN_PROGRESS";
+    } else {
+      return goal.status === "ACHIEVED";
+    }
+  });
+
   return (
     <div className="space-y-6">
       {/* Goals Section */}
       <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-          🎯 Active Goals
-        </h2>
+        {/* Tab Switcher */}
+        <div className="mb-6">
+          <div className="flex gap-2 border-b border-border">
+            <button
+              onClick={() => setSelectedTab("active")}
+              className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+                selectedTab === "active"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🎯 Active Goals
+              {selectedTab === "active" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+            <button
+              onClick={() => setSelectedTab("achieved")}
+              className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+                selectedTab === "achieved"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🏆 Achieved Goals
+              {selectedTab === "achieved" && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+          </div>
+        </div>
+
         {goalsLoading ? (
           <p className="text-muted-foreground">Loading goals...</p>
-        ) : goals.length > 0 ? (
+        ) : filteredGoals.length > 0 ? (
           <div className="space-y-3">
-            {goals.map((goal) => (
+            {filteredGoals.map((goal) => (
               <div
                 key={goal.id}
                 className="border border-border rounded-lg p-4 bg-background"
@@ -120,7 +158,9 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground text-sm">No active goals yet</p>
+          <p className="text-muted-foreground text-sm">
+            {selectedTab === "active" ? "No active goals yet" : "No achieved goals yet"}
+          </p>
         )}
       </div>
 
