@@ -123,6 +123,32 @@ AI story analyzes posts against active goals only:
 - Start with system design fundamentals
 ```
 
+### Story Caching & Freshness
+
+**User Flow:**
+1. User clicks period button → Check for cached story
+2. If cached story exists → Load immediately and check if outdated
+3. If no cached story → Show "Generate Story?" confirmation prompt
+4. User clicks "Generate Story" → Actually generate with AI
+
+**Outdated Story Detection:**
+
+Stories are marked as outdated when they're older than the period they represent:
+
+| Period | Outdated After | Warning Shown |
+|--------|----------------|---------------|
+| Past 24 Hours (daily) | > 1 day old | ✅ Yes |
+| Past Week (weekly) | > 7 days old | ✅ Yes |
+| Past Month (monthly) | > 30 days old | ✅ Yes |
+| Past Year (yearly) | > 365 days old | ✅ Yes |
+| Entire Journey (all) | Never outdated | ❌ No |
+
+**Rationale:**
+- Outdated stories still shown (not hidden) with small warning text
+- Users can click "Regenerate" to get fresh analysis
+- "Entire Journey" never marked outdated (too expensive to regenerate frequently)
+- Warning: "⚠️ This story is outdated. Recent posts and goals aren't included."
+
 ### Goal Schema
 
 ```typescript

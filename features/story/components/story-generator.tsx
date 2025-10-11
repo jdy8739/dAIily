@@ -22,6 +22,7 @@ const StoryGenerator = () => {
   const [error, setError] = useState<string | null>(null);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
   const [showGeneratePrompt, setShowGeneratePrompt] = useState(false);
+  const [isOutdated, setIsOutdated] = useState(false);
 
   // Load period from URL on mount and check for cached story
   useEffect(() => {
@@ -36,13 +37,37 @@ const StoryGenerator = () => {
     }
   }, []);
 
+  // Check if story is outdated based on period
+  const checkIfOutdated = (updatedAt: Date, selectedPeriod: Period): boolean => {
+    if (selectedPeriod === "all") return false; // Never outdated for "Entire Journey"
+
+    const now = new Date();
+    const storyAge = now.getTime() - updatedAt.getTime();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    switch (selectedPeriod) {
+      case "daily":
+        return storyAge > oneDayMs; // > 1 day old
+      case "weekly":
+        return storyAge > 7 * oneDayMs; // > 7 days old
+      case "monthly":
+        return storyAge > 30 * oneDayMs; // > 30 days old
+      case "yearly":
+        return storyAge > 365 * oneDayMs; // > 365 days old
+      default:
+        return false;
+    }
+  };
+
   const loadCachedStory = async (selectedPeriod: Period) => {
     setLoading(true);
     try {
       const cachedResult = await getCachedStory(selectedPeriod);
       if ("story" in cachedResult && cachedResult.story) {
+        const updatedAt = new Date(cachedResult.story.updatedAt);
         setStory(cachedResult.story.content);
-        setGeneratedAt(new Date(cachedResult.story.updatedAt));
+        setGeneratedAt(updatedAt);
+        setIsOutdated(checkIfOutdated(updatedAt, selectedPeriod));
       }
     } catch (err) {
       console.error("Failed to load cached story:", err);
@@ -57,6 +82,7 @@ const StoryGenerator = () => {
     setStory("");
     setPeriod(selectedPeriod);
     setShowGeneratePrompt(false);
+    setIsOutdated(false);
 
     // Update URL with selected period, preserving current pathname and query params
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -68,8 +94,10 @@ const StoryGenerator = () => {
       // Check for cached story
       const cachedResult = await getCachedStory(selectedPeriod);
       if ("story" in cachedResult && cachedResult.story) {
+        const updatedAt = new Date(cachedResult.story.updatedAt);
         setStory(cachedResult.story.content);
-        setGeneratedAt(new Date(cachedResult.story.updatedAt));
+        setGeneratedAt(updatedAt);
+        setIsOutdated(checkIfOutdated(updatedAt, selectedPeriod));
       } else {
         // No cached story - show generation prompt
         setShowGeneratePrompt(true);
@@ -102,6 +130,7 @@ const StoryGenerator = () => {
 
       setStory(result.content);
       setGeneratedAt(new Date(result.updatedAt));
+      setIsOutdated(false); // New story is fresh
     } catch (err) {
       console.error("Story generation error:", err);
       setError("Failed to generate your story. Please try again.");
@@ -129,6 +158,7 @@ const StoryGenerator = () => {
 
       setStory(result.content);
       setGeneratedAt(new Date(result.updatedAt));
+      setIsOutdated(false); // New story is fresh
     } catch (err) {
       console.error("Story generation error:", err);
       setError("Failed to generate your story. Please try again.");
@@ -252,6 +282,12 @@ const StoryGenerator = () => {
                   {generatedAt?.toLocaleDateString() ||
                     new Date().toLocaleDateString()}
                 </p>
+                {isOutdated && (
+                  <p className="text-xs text-warning mt-1 flex items-center gap-1">
+                    <span>⚠️</span>
+                    <span>This story is outdated. Recent posts and goals aren't included.</span>
+                  </p>
+                )}
               </div>
               <Button
                 variant="outline"
