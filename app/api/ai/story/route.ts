@@ -216,7 +216,7 @@ Content: ${p.content}
 `.trim()
             )
             .join("\n")
-        : "No goals set.";
+        : "No active goals set.";
 
     const periodLabel =
       period === "all"
@@ -264,7 +264,7 @@ Content: ${p.content}
 - 실행 가능한 행동 1-2개
 
 **중요:**
-- "No goals set." 메시지를 받으면 목표 관련 섹션을 절대 포함하지 말 것
+- "No active goals set." 메시지를 받으면 목표 관련 섹션을 절대 포함하지 말 것
 - 목표가 없으면 활동 중심으로만 분석
 - 목표가 없다고 명시적으로 언급하지 말 것, 자연스럽게 활동에 집중
 
