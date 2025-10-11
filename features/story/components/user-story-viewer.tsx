@@ -19,7 +19,7 @@ type UserStoryViewerProps = {
   userId: string;
 };
 
-const periodOptions = [
+const STORY_PERIOD_OPTIONS = [
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
@@ -27,7 +27,7 @@ const periodOptions = [
   { value: "all", label: "All Time" },
 ];
 
-const periodLabels: Record<string, string> = {
+const GOAL_PERIOD_LABELS: Record<string, string> = {
   DAILY: "Daily",
   WEEKLY: "Weekly",
   MONTHLY: "Monthly",
@@ -41,7 +41,8 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
   const pathname = usePathname();
   const [selectedPeriod, setSelectedPeriod] = useState(() => {
     const urlPeriod = searchParams.get("period");
-    return urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
+    return urlPeriod &&
+      ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
       ? urlPeriod
       : "all";
   });
@@ -162,7 +163,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                    {periodLabels[goal.period]}
+                    {GOAL_PERIOD_LABELS[goal.period]}
                   </span>
                 </div>
                 <h4 className="text-foreground font-medium mb-2 whitespace-pre-wrap break-words">
@@ -193,11 +194,11 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
             Select Period
           </label>
           <div className="flex gap-2 flex-wrap">
-            {periodOptions.map(option => (
+            {STORY_PERIOD_OPTIONS.map(option => (
               <button
                 key={option.value}
                 onClick={() => handlePeriodChange(option.value)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                   selectedPeriod === option.value
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"

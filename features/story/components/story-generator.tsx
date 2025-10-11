@@ -18,7 +18,8 @@ const StoryGenerator = () => {
   const pathname = usePathname();
   const [period, setPeriod] = useState<Period>(() => {
     const urlPeriod = searchParams.get("period") as Period;
-    return urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
+    return urlPeriod &&
+      ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
       ? urlPeriod
       : "all";
   });
@@ -35,7 +36,10 @@ const StoryGenerator = () => {
   }, []);
 
   // Check if story is outdated based on period
-  const checkIfOutdated = (updatedAt: Date, selectedPeriod: Period): boolean => {
+  const checkIfOutdated = (
+    updatedAt: Date,
+    selectedPeriod: Period
+  ): boolean => {
     if (selectedPeriod === "all") return false; // Never outdated for "Entire Journey"
 
     const now = new Date();
@@ -164,7 +168,7 @@ const StoryGenerator = () => {
     }
   };
 
-  const periodLabels: Record<Period, string> = {
+  const STORY_PERIOD_LABELS: Record<Period, string> = {
     daily: "Past 24 Hours",
     weekly: "Past Week",
     monthly: "Past Month",
@@ -180,7 +184,7 @@ const StoryGenerator = () => {
           Choose Time Period
         </h2>
         <div className="flex flex-wrap gap-3">
-          {(Object.keys(periodLabels) as Period[]).map(p => (
+          {(Object.keys(STORY_PERIOD_LABELS) as Period[]).map(p => (
             <Button
               key={p}
               variant={period === p ? "primary" : "outline"}
@@ -188,7 +192,7 @@ const StoryGenerator = () => {
               onClick={() => selectPeriod(p)}
               disabled={loading}
             >
-              {periodLabels[p]}
+              {STORY_PERIOD_LABELS[p]}
             </Button>
           ))}
         </div>
@@ -217,16 +221,14 @@ const StoryGenerator = () => {
               <span className="text-4xl">✨</span>
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">
-              Generate {periodLabels[period]} Story?
+              Generate {STORY_PERIOD_LABELS[period]} Story?
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              AI will analyze your posts and goals from {periodLabels[period].toLowerCase()} to create personalized insights about your growth.
+              AI will analyze your posts and goals from{" "}
+              {STORY_PERIOD_LABELS[period].toLowerCase()} to create personalized
+              insights about your growth.
             </p>
-            <Button
-              variant="primary"
-              size="md"
-              onClick={confirmGenerate}
-            >
+            <Button variant="primary" size="md" onClick={confirmGenerate}>
               Generate Story
             </Button>
           </div>
@@ -244,8 +246,8 @@ const StoryGenerator = () => {
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               You haven't written any posts in the{" "}
-              {periodLabels[period].toLowerCase()}. Start sharing your daily
-              experiences to generate your growth story!
+              {STORY_PERIOD_LABELS[period].toLowerCase()}. Start sharing your
+              daily experiences to generate your growth story!
             </p>
             <Link href="/feed">
               <Button variant="primary">Write Your First Post</Button>
@@ -272,7 +274,7 @@ const StoryGenerator = () => {
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div>
                 <h3 className="text-xl font-semibold text-foreground">
-                  {periodLabels[period]}
+                  {STORY_PERIOD_LABELS[period]}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Generated on{" "}
@@ -282,15 +284,14 @@ const StoryGenerator = () => {
                 {isOutdated && (
                   <p className="text-xs text-warning mt-1 flex items-center gap-1">
                     <span>⚠️</span>
-                    <span>This story is outdated. Recent posts and goals aren't included.</span>
+                    <span>
+                      This story is outdated. Recent posts and goals aren't
+                      included.
+                    </span>
                   </p>
                 )}
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={regenerateStory}
-              >
+              <Button variant="outline" size="sm" onClick={regenerateStory}>
                 Regenerate
               </Button>
             </div>

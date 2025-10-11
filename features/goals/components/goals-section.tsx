@@ -9,9 +9,9 @@ import { Goal as PrismaGoal, GoalStatus } from "@prisma/client";
 
 type Goal = PrismaGoal;
 
-const PERIODS = ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"];
+const GOAL_PERIODS = ["DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"];
 
-const periodLabels: Record<string, string> = {
+const GOAL_PERIOD_LABELS: Record<string, string> = {
   DAILY: "Daily",
   WEEKLY: "Weekly",
   MONTHLY: "Monthly",
@@ -188,9 +188,9 @@ const GoalsSection = () => {
               }}
               className="flex-1 px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {PERIODS.map(period => (
+              {GOAL_PERIODS.map(period => (
                 <option key={period} value={period}>
-                  {periodLabels[period]}
+                  {GOAL_PERIOD_LABELS[period]}
                 </option>
               ))}
             </select>
@@ -254,8 +254,8 @@ const GoalsSection = () => {
                   ) : (
                     <p className="text-muted-foreground text-sm text-center py-4">
                       {selectedTab === "active"
-                        ? `No active ${periodLabels[selectedPeriod].toLowerCase()} goals yet`
-                        : `No achieved ${periodLabels[selectedPeriod].toLowerCase()} goals yet`}
+                        ? `No active ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`
+                        : `No achieved ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`}
                     </p>
                   )}
 
@@ -265,7 +265,7 @@ const GoalsSection = () => {
                       onClick={() => setShowForm(true)}
                       className="w-full border border-dashed border-border rounded-lg p-4 text-muted-foreground hover:text-foreground hover:border-accent transition-colors text-sm cursor-pointer"
                     >
-                      + Add {periodLabels[selectedPeriod]} Goal
+                      + Add {GOAL_PERIOD_LABELS[selectedPeriod]} Goal
                     </button>
                   )}
                 </div>

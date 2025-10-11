@@ -16,7 +16,7 @@ type GoalFormProps = {
   onCancel: () => void;
 };
 
-const periodLabels: Record<string, string> = {
+const GOAL_PERIOD_LABELS: Record<string, string> = {
   DAILY: "Daily",
   WEEKLY: "Weekly",
   MONTHLY: "Monthly",
@@ -63,8 +63,8 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
     >
       <h4 className="text-foreground font-medium mb-3">
         {isEditMode
-          ? `Edit ${periodLabels[period]} Goal`
-          : `Set ${periodLabels[period]} Goal`}
+          ? `Edit ${GOAL_PERIOD_LABELS[period]} Goal`
+          : `Set ${GOAL_PERIOD_LABELS[period]} Goal`}
       </h4>
 
       <div className="space-y-3">
