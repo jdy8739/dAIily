@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Skeleton from "../../../components/atoms/skeleton";
-import { getGoals, createGoal, updateGoal } from "../lib/actions";
+import { getGoals, createGoal, updateGoal, deleteGoal } from "../lib/actions";
 import { Goal as PrismaGoal, GoalStatus } from "@prisma/client";
 
 type Goal = PrismaGoal;
@@ -92,7 +92,14 @@ const GoalsSection = () => {
   };
 
   const handleRemove = async (id: string) => {
-    await updateGoalStatus(id, "ABANDONED");
+    const result = await deleteGoal(id);
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    // Refresh goals
+    await loadGoals();
   };
 
   const handleReactivate = async (id: string) => {

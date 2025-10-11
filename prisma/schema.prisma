@@ -85,7 +85,6 @@ enum GoalPeriod {
 enum GoalStatus {
   ACTIVE
   COMPLETED
-  ABANDONED
 }
 
 model Account {

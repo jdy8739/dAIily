@@ -150,10 +150,6 @@ const updateGoal = async (
     }
 
     // Check if update is allowed based on current status
-    if (goal.status === GoalStatus.ABANDONED) {
-      return { success: false, error: "Cannot update abandoned goals" };
-    }
-
     if (goal.status === GoalStatus.COMPLETED && !updates.status) {
       return { success: false, error: "Cannot edit completed goals" };
     }
@@ -162,37 +158,29 @@ const updateGoal = async (
     const updateData: Partial<Goal> = {};
 
     if (updates.status) {
-      // ACTIVE goals can be marked as COMPLETED or ABANDONED
+      // ACTIVE goals can be marked as COMPLETED
       if (goal.status === GoalStatus.ACTIVE) {
-        if (
-          updates.status !== GoalStatus.COMPLETED &&
-          updates.status !== GoalStatus.ABANDONED
-        ) {
+        if (updates.status !== GoalStatus.COMPLETED) {
           return {
             success: false,
-            error: "Status must be COMPLETED or ABANDONED",
+            error: "Status must be COMPLETED",
           };
         }
         updateData.status = updates.status as GoalStatus;
         updateData.completedAt = new Date();
       }
-      // COMPLETED goals can be marked as ACTIVE (revert) or ABANDONED
+      // COMPLETED goals can be marked as ACTIVE (reactivate)
       else if (goal.status === GoalStatus.COMPLETED) {
-        if (
-          updates.status !== GoalStatus.ACTIVE &&
-          updates.status !== GoalStatus.ABANDONED
-        ) {
+        if (updates.status !== GoalStatus.ACTIVE) {
           return {
             success: false,
-            error: "Completed goals can be reactivated or abandoned",
+            error: "Completed goals can only be reactivated",
           };
         }
 
         updateData.status = updates.status as GoalStatus;
         // Clear completedAt when reverting to ACTIVE
-        if (updates.status === GoalStatus.ACTIVE) {
-          updateData.completedAt = null;
-        }
+        updateData.completedAt = null;
       }
     }
 

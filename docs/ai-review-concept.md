@@ -55,16 +55,19 @@ Career Management Web App – Feature Plan
 ### Core Features
 
 **Multiple Goals Per Period:**
+
 - Users can set multiple daily/weekly/monthly/quarterly/yearly goals simultaneously
 - No artificial limits - track as many goals as needed
 
 **Flexible Management:**
+
 - Edit goal titles while they're active
-- Mark goals as COMPLETED or ABANDONED
+- Mark goals as COMPLETED when achieved
 - REACTIVATE completed goals back to ACTIVE status
-- Goals remain in system for historical tracking
+- Delete goals permanently with confirmation
 
 **Auto-Calculated Deadlines:**
+
 - DAILY: Today at 23:59:59
 - WEEKLY: End of current week (Sunday)
 - MONTHLY: Last day of current month
@@ -74,26 +77,31 @@ Career Management Web App – Feature Plan
 ### UI Location
 
 **Story Page** - Goals section above AI analysis (collapsible)
+
 - Set goals → review progress in one flow
 - AI analysis references your goals in context
 
 ### ⚠️ Important Concept: Story Period vs Goal Period
 
 **Story Period** (daily, weekly, monthly, yearly):
+
 - Determines **which posts** are analyzed (e.g., "daily" = past 24 hours of posts)
 - Does **NOT** filter which goals are checked
 
 **Goal Period** (DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY):
+
 - Defines the goal's deadline/duration
 - Only active goals are checked regardless of story period (completed goals are not analyzed)
 
 **Example:**
+
 - User generates "Past 24 Hours" review (daily story)
 - AI analyzes: Posts from past 24 hours
 - AI checks: **ALL ACTIVE goals** (daily, weekly, monthly, quarterly, yearly)
 - AI evaluates: "Did today's activities contribute to ANY of your active goals?"
 
 **Rationale:**
+
 - A single day's work can contribute to multiple active goals with different time horizons
 - Progress on a monthly goal should be recognized even in daily reviews
 - Users should see holistic progress tracking, not siloed by period
@@ -126,11 +134,13 @@ AI story analyzes posts against active goals only:
 ### Story Caching & Freshness
 
 **Default Behavior:**
+
 - When visiting story page without query parameter → Automatically fetch 'all' period story
 - Applies to both owner view (StoryGenerator) and visitor view (UserStoryViewer)
 - Ensures users always see content immediately without manual period selection
 
 **User Flow:**
+
 1. User clicks period button → Check for cached story
 2. If cached story exists → Load immediately and check if outdated
 3. If no cached story → Show "Generate Story?" confirmation prompt
@@ -140,15 +150,16 @@ AI story analyzes posts against active goals only:
 
 Stories are marked as outdated when they're older than the period they represent:
 
-| Period | Outdated After | Warning Shown |
-|--------|----------------|---------------|
-| Past 24 Hours (daily) | > 1 day old | ✅ Yes |
-| Past Week (weekly) | > 7 days old | ✅ Yes |
-| Past Month (monthly) | > 30 days old | ✅ Yes |
-| Past Year (yearly) | > 365 days old | ✅ Yes |
-| Entire Journey (all) | Never outdated | ❌ No |
+| Period                | Outdated After | Warning Shown |
+| --------------------- | -------------- | ------------- |
+| Past 24 Hours (daily) | > 1 day old    | ✅ Yes        |
+| Past Week (weekly)    | > 7 days old   | ✅ Yes        |
+| Past Month (monthly)  | > 30 days old  | ✅ Yes        |
+| Past Year (yearly)    | > 365 days old | ✅ Yes        |
+| Entire Journey (all)  | Never outdated | ❌ No         |
 
 **Rationale:**
+
 - Outdated stories still shown (not hidden) with small warning text
 - Users can click "Regenerate" to get fresh analysis
 - "Entire Journey" never marked outdated (too expensive to regenerate frequently)
@@ -164,7 +175,7 @@ model Goal {
   period      GoalPeriod  // DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY
   startDate   DateTime    @default(now())
   deadline    DateTime
-  status      GoalStatus  // ACTIVE, COMPLETED, ABANDONED
+  status      GoalStatus  // ACTIVE, COMPLETED
   completedAt DateTime?
 
   // No unique constraint - multiple goals per period allowed

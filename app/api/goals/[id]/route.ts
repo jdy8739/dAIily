@@ -43,15 +43,22 @@ export const PATCH = async (
     const updateData: Record<string, unknown> = {};
 
     if (status) {
-      // Status update (complete/abandon)
-      if (!["COMPLETED", "ABANDONED"].includes(status)) {
+      // Status update (complete or reactivate)
+      if (!["COMPLETED", "ACTIVE"].includes(status)) {
         return NextResponse.json(
-          { error: "Status must be COMPLETED or ABANDONED" },
+          { error: "Status must be COMPLETED or ACTIVE" },
           { status: 400 }
         );
       }
       updateData.status = status;
-      updateData.completedAt = new Date();
+      // Set completedAt when marking as COMPLETED
+      if (status === "COMPLETED") {
+        updateData.completedAt = new Date();
+      }
+      // Clear completedAt when reactivating
+      if (status === "ACTIVE") {
+        updateData.completedAt = null;
+      }
     }
 
     if (title !== undefined) {

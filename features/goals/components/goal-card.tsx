@@ -14,7 +14,13 @@ type GoalCardProps = {
   onReactivate?: (id: string) => Promise<void>;
 };
 
-const GoalCard = ({ goal, onComplete, onRemove, onEdit, onReactivate }: GoalCardProps) => {
+const GoalCard = ({
+  goal,
+  onComplete,
+  onRemove,
+  onEdit,
+  onReactivate,
+}: GoalCardProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -28,7 +34,7 @@ const GoalCard = ({ goal, onComplete, onRemove, onEdit, onReactivate }: GoalCard
 
   const handleRemove = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to remove this goal? This action cannot be undone."
+      "Are you sure you want to delete this goal? This action cannot be undone."
     );
 
     if (!confirmed) {
@@ -105,14 +111,16 @@ const GoalCard = ({ goal, onComplete, onRemove, onEdit, onReactivate }: GoalCard
               disabled={loading}
               className="text-warning border-warning hover:bg-warning/10"
             >
-              ✕ Remove
+              ✕ Delete
             </Button>
           </div>
         )}
 
         {goal.status === "COMPLETED" && (
           <div className="flex items-center justify-between gap-2">
-            <span className="text-success text-sm font-medium">✓ Completed</span>
+            <span className="text-success text-sm font-medium">
+              ✓ Completed
+            </span>
             <div className="flex gap-2">
               {onReactivate && (
                 <Button
@@ -132,14 +140,10 @@ const GoalCard = ({ goal, onComplete, onRemove, onEdit, onReactivate }: GoalCard
                 disabled={loading}
                 className="text-warning border-warning hover:bg-warning/10"
               >
-                ✕ Remove
+                ✕ Delete
               </Button>
             </div>
           </div>
-        )}
-
-        {goal.status === "ABANDONED" && (
-          <span className="text-muted-foreground text-sm">✕ Abandoned</span>
         )}
       </div>
     </div>
