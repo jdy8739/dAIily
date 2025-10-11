@@ -71,15 +71,11 @@ Career Management Web App – Feature Plan
 - QUARTERLY: Last day of current quarter
 - YEARLY: December 31st
 
-### UI Locations
+### UI Location
 
 **Story Page** - Goals section above AI analysis (collapsible)
 - Set goals → review progress in one flow
 - AI analysis references your goals in context
-
-**Feed Sidebar** - Show active goals for motivation
-- Always visible while browsing feed
-- Quick motivation and progress awareness
 
 ### ⚠️ Important Concept: Story Period vs Goal Period
 
