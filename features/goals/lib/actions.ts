@@ -98,22 +98,6 @@ const createGoal = async (
       return { success: false, error: "Invalid period" };
     }
 
-    // Check if user already has an ACTIVE goal for this period
-    const existingGoal = await prisma.goal.findFirst({
-      where: {
-        userId: currentUser.id,
-        period: period as GoalPeriod,
-        status: GoalStatus.ACTIVE,
-      },
-    });
-
-    if (existingGoal) {
-      return {
-        success: false,
-        error: `You already have an active ${period.toLowerCase()} goal. Complete or abandon it first.`,
-      };
-    }
-
     // Calculate deadline
     const deadline = calculateDeadline(period);
 
@@ -192,15 +176,23 @@ const updateGoal = async (
         updateData.status = updates.status as GoalStatus;
         updateData.completedAt = new Date();
       }
-      // COMPLETED goals can only be marked as ABANDONED
+      // COMPLETED goals can be marked as ACTIVE (revert) or ABANDONED
       else if (goal.status === GoalStatus.COMPLETED) {
-        if (updates.status !== GoalStatus.ABANDONED) {
+        if (
+          updates.status !== GoalStatus.ACTIVE &&
+          updates.status !== GoalStatus.ABANDONED
+        ) {
           return {
             success: false,
-            error: "Completed goals can only be abandoned",
+            error: "Completed goals can be reactivated or abandoned",
           };
         }
-        updateData.status = GoalStatus.ABANDONED;
+
+        updateData.status = updates.status as GoalStatus;
+        // Clear completedAt when reverting to ACTIVE
+        if (updates.status === GoalStatus.ACTIVE) {
+          updateData.completedAt = null;
+        }
       }
     }
 

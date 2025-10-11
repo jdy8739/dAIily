@@ -93,14 +93,18 @@ const GoalsSection = () => {
     await updateGoalStatus(id, "ABANDONED");
   };
 
+  const handleReactivate = async (id: string) => {
+    await updateGoalStatus(id, "ACTIVE");
+  };
+
   const handleEdit = (id: string) => {
     setEditingGoalId(id);
     setShowForm(true);
   };
 
-  const getGoalForPeriod = (period: string) => {
+  const getGoalsForPeriod = (period: string) => {
     const status = selectedTab === "active" ? GoalStatus.ACTIVE : GoalStatus.COMPLETED;
-    return goals.find(g => g.period === period && g.status === status);
+    return goals.filter(g => g.period === period && g.status === status);
   };
 
   if (loading) {
@@ -192,34 +196,17 @@ const GoalsSection = () => {
           {/* Goal Display or Form */}
           <div>
             {(() => {
-              const existingGoal = getGoalForPeriod(selectedPeriod);
+              const existingGoals = getGoalsForPeriod(selectedPeriod);
+              const editingGoal = editingGoalId
+                ? goals.find(g => g.id === editingGoalId)
+                : undefined;
 
-              // Achieved tab: read-only view
-              if (selectedTab === "achieved") {
-                if (existingGoal) {
-                  return (
-                    <GoalCard
-                      goal={existingGoal}
-                      onComplete={handleComplete}
-                      onRemove={handleRemove}
-                      onEdit={handleEdit}
-                    />
-                  );
-                }
-                return (
-                  <p className="text-muted-foreground text-sm text-center py-4">
-                    No achieved {periodLabels[selectedPeriod].toLowerCase()} goals yet
-                  </p>
-                );
-              }
-
-              // Active tab: editable view
               // Show form for editing
               if (showForm && editingGoalId) {
                 return (
                   <GoalForm
                     period={selectedPeriod}
-                    goal={existingGoal}
+                    goal={editingGoal}
                     onSubmit={createOrUpdateGoal}
                     onCancel={() => {
                       setShowForm(false);
@@ -229,20 +216,8 @@ const GoalsSection = () => {
                 );
               }
 
-              // Show existing goal
-              if (existingGoal && !showForm) {
-                return (
-                  <GoalCard
-                    goal={existingGoal}
-                    onComplete={handleComplete}
-                    onRemove={handleRemove}
-                    onEdit={handleEdit}
-                  />
-                );
-              }
-
               // Show form for creating new goal
-              if (showForm) {
+              if (showForm && !editingGoalId) {
                 return (
                   <GoalForm
                     period={selectedPeriod}
@@ -255,14 +230,38 @@ const GoalsSection = () => {
                 );
               }
 
-              // Show "Set Goal" button
+              // Show existing goals
               return (
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="w-full border border-dashed border-border rounded-lg p-4 text-muted-foreground hover:text-foreground hover:border-accent transition-colors text-sm"
-                >
-                  + Set Goal for {periodLabels[selectedPeriod]}
-                </button>
+                <div className="space-y-3">
+                  {existingGoals.length > 0 ? (
+                    existingGoals.map(goal => (
+                      <GoalCard
+                        key={goal.id}
+                        goal={goal}
+                        onComplete={handleComplete}
+                        onRemove={handleRemove}
+                        onEdit={handleEdit}
+                        onReactivate={selectedTab === "achieved" ? handleReactivate : undefined}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground text-sm text-center py-4">
+                      {selectedTab === "active"
+                        ? `No active ${periodLabels[selectedPeriod].toLowerCase()} goals yet`
+                        : `No achieved ${periodLabels[selectedPeriod].toLowerCase()} goals yet`}
+                    </p>
+                  )}
+
+                  {/* Add new goal button - only show in active tab when not in form mode */}
+                  {selectedTab === "active" && !showForm && (
+                    <button
+                      onClick={() => setShowForm(true)}
+                      className="w-full border border-dashed border-border rounded-lg p-4 text-muted-foreground hover:text-foreground hover:border-accent transition-colors text-sm cursor-pointer"
+                    >
+                      + Add {periodLabels[selectedPeriod]} Goal
+                    </button>
+                  )}
+                </div>
               );
             })()}
           </div>

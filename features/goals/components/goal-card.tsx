@@ -11,9 +11,10 @@ type GoalCardProps = {
   onComplete: (id: string) => Promise<void>;
   onRemove: (id: string) => Promise<void>;
   onEdit: (id: string) => void;
+  onReactivate?: (id: string) => Promise<void>;
 };
 
-const GoalCard = ({ goal, onComplete, onRemove, onEdit }: GoalCardProps) => {
+const GoalCard = ({ goal, onComplete, onRemove, onEdit, onReactivate }: GoalCardProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -37,6 +38,15 @@ const GoalCard = ({ goal, onComplete, onRemove, onEdit }: GoalCardProps) => {
     setLoading(true);
     try {
       await onRemove(goal.id);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReactivate = async () => {
+    setLoading(true);
+    try {
+      await onReactivate?.(goal.id);
     } finally {
       setLoading(false);
     }
@@ -103,15 +113,28 @@ const GoalCard = ({ goal, onComplete, onRemove, onEdit }: GoalCardProps) => {
         {goal.status === "COMPLETED" && (
           <div className="flex items-center justify-between gap-2">
             <span className="text-success text-sm font-medium">✓ Completed</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRemove}
-              disabled={loading}
-              className="text-warning border-warning hover:bg-warning/10"
-            >
-              ✕ Remove
-            </Button>
+            <div className="flex gap-2">
+              {onReactivate && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReactivate}
+                  disabled={loading}
+                  className="text-primary border-primary hover:bg-primary/10"
+                >
+                  ↻ Reactivate
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRemove}
+                disabled={loading}
+                className="text-warning border-warning hover:bg-warning/10"
+              >
+                ✕ Remove
+              </Button>
+            </div>
           </div>
         )}
 
