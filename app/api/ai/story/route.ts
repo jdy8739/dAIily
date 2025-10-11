@@ -148,19 +148,17 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    // Fetch active and completed goals
+    // Fetch active goals only
     const goals = await prisma.goal.findMany({
       where: {
         userId: currentUser.id,
-        status: { in: ["ACTIVE", "COMPLETED"] },
+        status: "ACTIVE",
       },
       select: {
         title: true,
         period: true,
-        status: true,
         startDate: true,
         deadline: true,
-        completedAt: true,
       },
       orderBy: {
         startDate: "desc",
@@ -210,18 +208,13 @@ Content: ${p.content}
     const goalsContext =
       goals.length > 0
         ? goals
-            .map(g => {
-              const statusLabel = g.status === "COMPLETED" ? "[COMPLETED]" : "[ACTIVE]";
-              const dateInfo = g.status === "COMPLETED" && g.completedAt
-                ? `Completed: ${new Date(g.completedAt).toLocaleDateString()}`
-                : `Deadline: ${new Date(g.deadline).toLocaleDateString()}`;
-
-              return `
-- ${statusLabel} ${g.period} Goal: "${g.title}"
+            .map(g =>
+              `
+- ${g.period} Goal: "${g.title}"
   Started: ${new Date(g.startDate).toLocaleDateString()}
-  ${dateInfo}
-`.trim();
-            })
+  Deadline: ${new Date(g.deadline).toLocaleDateString()}
+`.trim()
+            )
             .join("\n")
         : "No goals set.";
 
@@ -244,21 +237,13 @@ Content: ${p.content}
 - 구체적 수치로 근거 제시
 - 솔직하고 직설적
 
-**목표 상태 이해:**
-- [ACTIVE]: 진행 중인 목표 - 게시물과 매칭하여 진척도 평가
-- [COMPLETED]: 완료된 목표 - 성취로 축하, 게시물과의 연관성은 참고만
-
 **필수 구조 (목표가 있는 경우):**
 
-## 🏆 성취
-- [COMPLETED] 목표가 있으면 먼저 축하 (1줄씩)
-(이 섹션은 완료된 목표가 있을 때만 표시)
-
 ## 🎯 목표 vs 현실
-- [ACTIVE] [목표명]: [게시물 수]개 활동 - [평가]
-(활성 목표만 분석, 최대 3개)
+- [목표명]: [게시물 수]개 활동 - [평가]
+(목표당 1줄, 최대 3개 목표만)
 
-## 📊 주요 활동
+## 🏆 주요 성과
 - 구체적 결과물 2개만
 - 게시물에서 직접 인용
 
@@ -270,7 +255,7 @@ Content: ${p.content}
 
 **필수 구조 (목표가 없는 경우):**
 
-## 📊 주요 활동
+## 🏆 주요 활동
 - 구체적 활동 2-3개만
 - 게시물에서 직접 인용
 
@@ -282,10 +267,8 @@ Content: ${p.content}
 - "No goals set." 메시지를 받으면 목표 관련 섹션을 절대 포함하지 말 것
 - 목표가 없으면 활동 중심으로만 분석
 - 목표가 없다고 명시적으로 언급하지 말 것, 자연스럽게 활동에 집중
-- [COMPLETED] 목표는 "성취" 섹션에서만 언급, 격차 분석에서 제외
-- [ACTIVE] 목표만 "목표 vs 현실"과 "격차" 섹션에서 분석
 
-**톤:** 친절하지만 솔직. 성취는 축하, 활성 목표는 개선점 중심. 짧고 명확하게.`,
+**톤:** 친절하지만 솔직. 칭찬보다 개선점. 짧고 명확하게.`,
         },
         {
           role: "user",
@@ -293,7 +276,7 @@ Content: ${p.content}
 
 ${profileContext}
 
-목표 (활성 및 완료):
+현재 활성 목표:
 ${goalsContext}
 
 이 기간의 게시물:

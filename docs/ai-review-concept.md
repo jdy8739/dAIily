@@ -89,38 +89,42 @@ Career Management Web App – Feature Plan
 
 **Goal Period** (DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY):
 - Defines the goal's deadline/duration
-- All active and completed goals are checked regardless of story period
+- Only active goals are checked regardless of story period (completed goals are not analyzed)
 
 **Example:**
 - User generates "Past 24 Hours" review (daily story)
 - AI analyzes: Posts from past 24 hours
-- AI checks: **ALL goals** (daily, weekly, monthly, quarterly, yearly)
-- AI evaluates: "Did today's activities contribute to ANY of your goals?"
+- AI checks: **ALL ACTIVE goals** (daily, weekly, monthly, quarterly, yearly)
+- AI evaluates: "Did today's activities contribute to ANY of your active goals?"
 
 **Rationale:**
-- A single day's work can contribute to multiple goals with different time horizons
+- A single day's work can contribute to multiple active goals with different time horizons
 - Progress on a monthly goal should be recognized even in daily reviews
 - Users should see holistic progress tracking, not siloed by period
+- Completed goals are not analyzed to reduce context volume and keep focus on current objectives
 
 ### AI Integration & Analysis
 
-AI story analyzes posts against all goals with clear status indicators:
+AI story analyzes posts against active goals only:
 
 ```
 🎯 Goal vs Reality
-- [ACTIVE] Weekly "Ship auth system": 8 posts - ✅ Strong progress
-- [COMPLETED] Daily "Review PRs": Finished! ✨
-- [ACTIVE] Monthly "Learn React hooks": 2 posts - ⚠️ Needs focus
-- [ACTIVE] Quarterly "System design study": 0 posts - ❌ Neglected
+- Weekly "Ship auth system": 8 posts - ✅ Strong progress
+- Monthly "Learn React hooks": 2 posts - ⚠️ Needs focus
+- Quarterly "System design study": 0 posts - ❌ Neglected
 
-🏆 Achievements
-- Completed daily PR review goal on time
-- Strong momentum on weekly shipping goal
+🏆 Key Achievements
+- Shipped authentication flow
+- Completed 3 code reviews
 
 ⚠️ Gap Analysis
 - 70% time on auth system (aligned with weekly goal)
 - React learning stalled - schedule dedicated sessions
 - System design completely ignored - carve out time
+
+💡 Next Actions
+- Block 2h daily for React study
+- Start with system design fundamentals
 ```
 
 ### Goal Schema
