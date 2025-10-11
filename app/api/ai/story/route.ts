@@ -4,7 +4,11 @@ import { getCurrentUser } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 import { env } from "../../../../lib/env";
 import { logger } from "../../../../lib/logger";
-import { sanitizeContent, sanitizeGoalTitle } from "../../../../lib/sanitize";
+import {
+  sanitizeContent,
+  sanitizeGoalTitle,
+  sanitizePeriod,
+} from "../../../../lib/sanitize";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -22,13 +26,21 @@ export const GET = async (req: NextRequest) => {
     }
 
     const { searchParams } = new URL(req.url);
-    const period = searchParams.get("period");
+    const rawPeriod = searchParams.get("period");
+
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
 
     if (!period) {
-      return new Response(JSON.stringify({ error: "Period is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const story = await prisma.story.findUnique({
@@ -83,7 +95,22 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    const { period } = await req.json();
+    const { period: rawPeriod } = await req.json();
+
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
+
+    if (!period) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Fetch user profile and posts
     const user = await prisma.user.findUnique({

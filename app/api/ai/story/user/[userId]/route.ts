@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "../../../../../../lib/prisma";
 import { getCurrentUser } from "../../../../../../lib/auth";
 import { logger } from "../../../../../../lib/logger";
+import { sanitizePeriod } from "../../../../../../lib/sanitize";
 
 export const GET = async (
   req: NextRequest,
@@ -25,13 +26,21 @@ export const GET = async (
 
     const { userId } = await params;
     const { searchParams } = new URL(req.url);
-    const period = searchParams.get("period");
+    const rawPeriod = searchParams.get("period");
+
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
 
     if (!period) {
-      return new Response(JSON.stringify({ error: "Period is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Verify the user exists
