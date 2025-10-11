@@ -5,6 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Button from "../../../components/atoms/button";
 import Skeleton from "../../../components/atoms/skeleton";
+import { useCsrf } from "../../../components/providers/csrf-provider";
 import {
   getCachedStory,
   generateStory as generateStoryAction,
@@ -13,6 +14,7 @@ import {
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
 const StoryGenerator = () => {
+  const { token: csrfToken } = useCsrf();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -118,11 +120,19 @@ const StoryGenerator = () => {
 
     try {
       // Generate new story
-      const result = await generateStoryAction(period);
+      const result = await generateStoryAction(period, csrfToken ?? undefined);
 
       if (!result.success) {
         if (result.error === "NO_POSTS") {
           setError("NO_POSTS");
+        } else if (result.error === "RATE_LIMIT_EXCEEDED") {
+          setError(
+            "You've reached the daily limit of 10 story generations. Please try again tomorrow."
+          );
+        } else if (result.error === "Invalid CSRF token") {
+          setError(
+            "Security token expired. Please refresh the page and try again."
+          );
         } else {
           throw new Error(result.error);
         }
@@ -146,11 +156,19 @@ const StoryGenerator = () => {
     setStory("");
 
     try {
-      const result = await generateStoryAction(period);
+      const result = await generateStoryAction(period, csrfToken ?? undefined);
 
       if (!result.success) {
         if (result.error === "NO_POSTS") {
           setError("NO_POSTS");
+        } else if (result.error === "RATE_LIMIT_EXCEEDED") {
+          setError(
+            "You've reached the daily limit of 10 story generations. Please try again tomorrow."
+          );
+        } else if (result.error === "Invalid CSRF token") {
+          setError(
+            "Security token expired. Please refresh the page and try again."
+          );
         } else {
           throw new Error(result.error);
         }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCsrf } from "../../../../components/providers/csrf-provider";
 import { deletePost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
 
@@ -14,6 +15,7 @@ const DeleteDraftButton = ({
   postId,
   variant = "outline",
 }: DeleteDraftButtonProps) => {
+  const { token: csrfToken } = useCsrf();
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -30,7 +32,7 @@ const DeleteDraftButton = ({
     setIsDeleting(true);
 
     try {
-      const result = await deletePost(postId);
+      const result = await deletePost(postId, csrfToken ?? undefined);
 
       if (result.success) {
         router.refresh();

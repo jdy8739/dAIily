@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useCsrf } from "../../../components/providers/csrf-provider";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Skeleton from "../../../components/atoms/skeleton";
@@ -20,6 +21,7 @@ const GOAL_PERIOD_LABELS: Record<string, string> = {
 };
 
 const GoalsSection = () => {
+  const { token: csrfToken } = useCsrf();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -92,7 +94,7 @@ const GoalsSection = () => {
   };
 
   const handleRemove = async (id: string) => {
-    const result = await deleteGoal(id);
+    const result = await deleteGoal(id, csrfToken ?? undefined);
 
     if (!result.success) {
       throw new Error(result.error);

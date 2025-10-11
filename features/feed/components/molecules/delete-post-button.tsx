@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCsrf } from "../../../../components/providers/csrf-provider";
 import { deletePost } from "../../lib/actions";
 
 interface DeletePostButtonProps {
@@ -9,6 +10,7 @@ interface DeletePostButtonProps {
 }
 
 const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
+  const { token: csrfToken } = useCsrf();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const router = useRouter();
@@ -17,7 +19,7 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
     setIsDeleting(true);
 
     try {
-      const result = await deletePost(postId);
+      const result = await deletePost(postId, csrfToken ?? undefined);
 
       if (result.success) {
         router.push("/feed");
