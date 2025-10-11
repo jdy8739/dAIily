@@ -45,12 +45,22 @@ const validateCsrfToken = (token: string | null | undefined): boolean => {
     .update(`${randomValue}.${timestamp}`)
     .digest("hex");
 
-  const signaturesMatch = cryptoTimingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
+  // Check lengths match before timing-safe comparison
+  if (signature.length !== expectedSignature.length) {
+    return false;
+  }
 
-  if (!signaturesMatch) {
+  try {
+    const signaturesMatch = cryptoTimingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+
+    if (!signaturesMatch) {
+      return false;
+    }
+  } catch {
+    // Buffer length mismatch or other error
     return false;
   }
 
