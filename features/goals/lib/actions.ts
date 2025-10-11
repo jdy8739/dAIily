@@ -213,13 +213,20 @@ const updateGoal = async (
 
 // Delete a goal
 const deleteGoal = async (
-  id: string
+  id: string,
+  csrfToken?: string
 ): Promise<{ success: true } | { success: false; error: string }> => {
   try {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return { success: false, error: "Unauthorized" };
+    }
+
+    // CSRF Protection
+    const { validateCsrf } = await import("@/lib/csrf-middleware");
+    if (!validateCsrf(csrfToken)) {
+      return { success: false, error: "Invalid CSRF token" };
     }
 
     // Check goal exists and belongs to user

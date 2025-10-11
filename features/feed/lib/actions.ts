@@ -100,11 +100,17 @@ const editPost = async (data: EditPostData, status?: "DRAFT" | "PUBLISHED") => {
   }
 };
 
-const deletePost = async (postId: string) => {
+const deletePost = async (postId: string, csrfToken?: string) => {
   const user = await getCurrentUser();
 
   if (!user) {
     return { error: "You must be logged in to delete a post" };
+  }
+
+  // CSRF Protection
+  const { validateCsrf } = await import("@/lib/csrf-middleware");
+  if (!validateCsrf(csrfToken)) {
+    return { error: "Invalid CSRF token" };
   }
 
   try {

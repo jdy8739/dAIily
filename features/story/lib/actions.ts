@@ -114,7 +114,8 @@ const getCachedStory = async (
 // Generate story for authenticated user (streaming not supported in Server Actions)
 // Returns the complete story after generation
 const generateStory = async (
-  period: string
+  period: string,
+  csrfToken?: string
 ): Promise<
   | { success: true; content: string; updatedAt: Date }
   | { success: false; error: string }
@@ -125,6 +126,59 @@ const generateStory = async (
     if (!currentUser) {
       return { success: false, error: "Unauthorized" };
     }
+
+    // CSRF Protection - validate token
+    const { validateCsrf } = await import("@/lib/csrf-middleware");
+    if (!validateCsrf(csrfToken)) {
+      return { success: false, error: "Invalid CSRF token" };
+    }
+
+    // Rate Limiting - Check daily generation limit (10 per day)
+    const rateLimitCheck = await prisma.user.findUnique({
+      where: { id: currentUser.id },
+      select: {
+        dailyGenerationCount: true,
+        lastGenerationDate: true,
+      },
+    });
+
+    if (!rateLimitCheck) {
+      return { success: false, error: "User not found" };
+    }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const lastGenDate = rateLimitCheck.lastGenerationDate
+      ? new Date(
+          rateLimitCheck.lastGenerationDate.getFullYear(),
+          rateLimitCheck.lastGenerationDate.getMonth(),
+          rateLimitCheck.lastGenerationDate.getDate()
+        )
+      : null;
+
+    let currentCount = rateLimitCheck.dailyGenerationCount;
+
+    // Reset count if it's a new day
+    if (!lastGenDate || lastGenDate.getTime() !== today.getTime()) {
+      currentCount = 0;
+    }
+
+    // Check if user has exceeded daily limit
+    if (currentCount >= 10) {
+      return {
+        success: false,
+        error: "RATE_LIMIT_EXCEEDED",
+      };
+    }
+
+    // Increment the generation count
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: {
+        dailyGenerationCount: currentCount + 1,
+        lastGenerationDate: now,
+      },
+    });
 
     // Fetch user profile and posts
     const user = await prisma.user.findUnique({
@@ -147,7 +201,6 @@ const generateStory = async (
     }
 
     // Calculate date range based on period
-    const now = new Date();
     let startDate: Date;
 
     switch (period) {
