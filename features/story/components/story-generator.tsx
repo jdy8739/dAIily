@@ -21,8 +21,9 @@ const StoryGenerator = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
+  const [showGeneratePrompt, setShowGeneratePrompt] = useState(false);
 
-  // Load period from URL on mount
+  // Load period from URL on mount and check for cached story
   useEffect(() => {
     const urlPeriod = searchParams.get("period") as Period;
     if (
@@ -30,18 +31,32 @@ const StoryGenerator = () => {
       ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
     ) {
       setPeriod(urlPeriod);
-      generateStory(urlPeriod);
+      // Check if cached story exists, but don't generate new one
+      loadCachedStory(urlPeriod);
     }
   }, []);
 
-  const generateStory = async (
-    selectedPeriod: Period,
-    forceRegenerate = false
-  ) => {
+  const loadCachedStory = async (selectedPeriod: Period) => {
+    setLoading(true);
+    try {
+      const cachedResult = await getCachedStory(selectedPeriod);
+      if ("story" in cachedResult && cachedResult.story) {
+        setStory(cachedResult.story.content);
+        setGeneratedAt(new Date(cachedResult.story.updatedAt));
+      }
+    } catch (err) {
+      console.error("Failed to load cached story:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectPeriod = async (selectedPeriod: Period) => {
     setLoading(true);
     setError(null);
     setStory("");
     setPeriod(selectedPeriod);
+    setShowGeneratePrompt(false);
 
     // Update URL with selected period, preserving current pathname and query params
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -50,19 +65,58 @@ const StoryGenerator = () => {
     router.push(`${pathname}?${query}`, { scroll: false });
 
     try {
-      // First, check for cached story if not forcing regeneration
-      if (!forceRegenerate) {
-        const cachedResult = await getCachedStory(selectedPeriod);
-        if ("story" in cachedResult && cachedResult.story) {
-          setStory(cachedResult.story.content);
-          setGeneratedAt(new Date(cachedResult.story.updatedAt));
-          setLoading(false);
-          return;
+      // Check for cached story
+      const cachedResult = await getCachedStory(selectedPeriod);
+      if ("story" in cachedResult && cachedResult.story) {
+        setStory(cachedResult.story.content);
+        setGeneratedAt(new Date(cachedResult.story.updatedAt));
+      } else {
+        // No cached story - show generation prompt
+        setShowGeneratePrompt(true);
+      }
+    } catch (err) {
+      console.error("Failed to check cached story:", err);
+      setShowGeneratePrompt(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmGenerate = async () => {
+    setLoading(true);
+    setError(null);
+    setShowGeneratePrompt(false);
+
+    try {
+      // Generate new story
+      const result = await generateStoryAction(period);
+
+      if (!result.success) {
+        if (result.error === "NO_POSTS") {
+          setError("NO_POSTS");
+        } else {
+          throw new Error(result.error);
         }
+        return;
       }
 
-      // Generate new story
-      const result = await generateStoryAction(selectedPeriod);
+      setStory(result.content);
+      setGeneratedAt(new Date(result.updatedAt));
+    } catch (err) {
+      console.error("Story generation error:", err);
+      setError("Failed to generate your story. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const regenerateStory = async () => {
+    setLoading(true);
+    setError(null);
+    setStory("");
+
+    try {
+      const result = await generateStoryAction(period);
 
       if (!result.success) {
         if (result.error === "NO_POSTS") {
@@ -104,7 +158,7 @@ const StoryGenerator = () => {
               key={p}
               variant={period === p ? "primary" : "outline"}
               size="sm"
-              onClick={() => generateStory(p)}
+              onClick={() => selectPeriod(p)}
               disabled={loading}
             >
               {periodLabels[p]}
@@ -115,7 +169,7 @@ const StoryGenerator = () => {
 
       {/* Story Content */}
       <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8">
-        {!story && !loading && !error && (
+        {!story && !loading && !error && !showGeneratePrompt && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">📊</span>
@@ -127,6 +181,27 @@ const StoryGenerator = () => {
               Select a time period above to see AI-powered insights into your
               professional growth, achievements, and goals.
             </p>
+          </div>
+        )}
+
+        {showGeneratePrompt && !loading && (
+          <div className="text-center py-12">
+            <div className="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-4xl">✨</span>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Generate {periodLabels[period]} Story?
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              AI will analyze your posts and goals from {periodLabels[period].toLowerCase()} to create personalized insights about your growth.
+            </p>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={confirmGenerate}
+            >
+              Generate Story
+            </Button>
           </div>
         )}
 
@@ -157,7 +232,7 @@ const StoryGenerator = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => generateStory(period, true)}
+              onClick={regenerateStory}
               className="mt-4"
             >
               Try Again
@@ -181,7 +256,7 @@ const StoryGenerator = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => generateStory(period, true)}
+                onClick={regenerateStory}
               >
                 Regenerate
               </Button>
@@ -194,7 +269,7 @@ const StoryGenerator = () => {
       </div>
 
       {/* Tips */}
-      {!story && !loading && (
+      {!story && !loading && !showGeneratePrompt && (
         <div className="bg-info/10 border border-info/30 rounded-lg p-6">
           <h3 className="font-semibold text-foreground mb-3 flex items-center">
             <span className="mr-2">💡</span>
