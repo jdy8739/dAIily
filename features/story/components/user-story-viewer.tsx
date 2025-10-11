@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getUserGoals, getUserStory } from "../lib/actions";
 import { GoalStatus } from "@prisma/client";
 import Skeleton from "../../../components/atoms/skeleton";
@@ -35,7 +36,15 @@ const periodLabels: Record<string, string> = {
 };
 
 const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
-  const [selectedPeriod, setSelectedPeriod] = useState("all");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const [selectedPeriod, setSelectedPeriod] = useState(() => {
+    const urlPeriod = searchParams.get("period");
+    return urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
+      ? urlPeriod
+      : "all";
+  });
   const [selectedTab, setSelectedTab] = useState<"active" | "achieved">(
     "active"
   );
@@ -86,6 +95,16 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+
+    // Update URL with selected period
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    current.set("period", period);
+    const query = current.toString();
+    router.push(`${pathname}?${query}`, { scroll: false });
   };
 
   const filteredGoals = goals.filter(goal => {
@@ -177,7 +196,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
             {periodOptions.map(option => (
               <button
                 key={option.value}
-                onClick={() => setSelectedPeriod(option.value)}
+                onClick={() => handlePeriodChange(option.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   selectedPeriod === option.value
                     ? "bg-primary text-primary-foreground"

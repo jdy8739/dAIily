@@ -16,7 +16,12 @@ const StoryGenerator = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [period, setPeriod] = useState<Period>("all");
+  const [period, setPeriod] = useState<Period>(() => {
+    const urlPeriod = searchParams.get("period") as Period;
+    return urlPeriod && ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
+      ? urlPeriod
+      : "all";
+  });
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,20 +29,9 @@ const StoryGenerator = () => {
   const [showGeneratePrompt, setShowGeneratePrompt] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
 
-  // Load period from URL on mount and check for cached story
+  // Load cached story on mount
   useEffect(() => {
-    const urlPeriod = searchParams.get("period") as Period;
-    if (
-      urlPeriod &&
-      ["daily", "weekly", "monthly", "yearly", "all"].includes(urlPeriod)
-    ) {
-      setPeriod(urlPeriod);
-      // Check if cached story exists, but don't generate new one
-      loadCachedStory(urlPeriod);
-    } else {
-      // No period parameter - automatically load with 'all'
-      loadCachedStory("all");
-    }
+    loadCachedStory(period);
   }, []);
 
   // Check if story is outdated based on period
