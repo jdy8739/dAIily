@@ -4,7 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import OpenAI from "openai";
 import { env } from "@/lib/env";
-import { sanitizeContent, sanitizeGoalTitle } from "@/lib/sanitize";
+import {
+  sanitizeContent,
+  sanitizeGoalTitle,
+  sanitizePeriod,
+} from "@/lib/sanitize";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -25,14 +29,37 @@ type Story = {
   updatedAt: Date;
 } | null;
 
-// Fetch goals for a specific user (public)
+// Fetch goals for a specific user (requires authentication)
 const getUserGoals = async (
   userId: string
 ): Promise<{ goals: GoalSelect[] } | { error: string }> => {
   try {
+    // Require authentication to view any profile
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return { error: "Unauthorized - Please log in to view profiles" };
+    }
+
+    // Verify the user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    // Determine what goals to show based on ownership
+    const isOwnProfile = currentUser.id === userId;
+
     const goals = await prisma.goal.findMany({
       where: {
         userId: userId,
+        // Privacy: Show all goals to owner, only COMPLETED goals to others
+        // (ACTIVE goals are private planning, not for public viewing)
+        ...(isOwnProfile ? {} : { status: "COMPLETED" }),
       },
       orderBy: [{ createdAt: "desc" }],
       select: {
@@ -55,9 +82,18 @@ const getUserGoals = async (
 // Fetch story for a specific user and period (public)
 const getUserStory = async (
   userId: string,
-  period: string
+  rawPeriod: string
 ): Promise<{ story: Story } | { error: string }> => {
   try {
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
+
+    if (!period) {
+      return {
+        error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+      };
+    }
+
     const story = await prisma.story.findUnique({
       where: {
         userId_period: {
@@ -81,13 +117,22 @@ const getUserStory = async (
 
 // Get cached story for authenticated user
 const getCachedStory = async (
-  period: string
+  rawPeriod: string
 ): Promise<{ story: Story } | { error: string }> => {
   try {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return { error: "Unauthorized" };
+    }
+
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
+
+    if (!period) {
+      return {
+        error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+      };
     }
 
     const story = await prisma.story.findUnique({
@@ -114,7 +159,7 @@ const getCachedStory = async (
 // Generate story for authenticated user (streaming not supported in Server Actions)
 // Returns the complete story after generation
 const generateStory = async (
-  period: string,
+  rawPeriod: string,
   csrfToken?: string
 ): Promise<
   | { success: true; content: string; updatedAt: Date }
@@ -127,14 +172,28 @@ const generateStory = async (
       return { success: false, error: "Unauthorized" };
     }
 
+    // Validate and sanitize period parameter
+    const period = sanitizePeriod(rawPeriod);
+
+    if (!period) {
+      return {
+        success: false,
+        error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+      };
+    }
+
     // CSRF Protection - validate token
     const { validateCsrf } = await import("@/lib/csrf-middleware");
     if (!validateCsrf(csrfToken)) {
       return { success: false, error: "Invalid CSRF token" };
     }
 
-    // Rate Limiting - Check daily generation limit (10 per day)
-    const rateLimitCheck = await prisma.user.findUnique({
+    // Rate Limiting - Atomic check and increment (prevents race conditions)
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // First, get current user state to determine if we need to reset
+    const currentUser_state = await prisma.user.findUnique({
       where: { id: currentUser.id },
       select: {
         dailyGenerationCount: true,
@@ -142,43 +201,43 @@ const generateStory = async (
       },
     });
 
-    if (!rateLimitCheck) {
+    if (!currentUser_state) {
       return { success: false, error: "User not found" };
     }
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const lastGenDate = rateLimitCheck.lastGenerationDate
+    // Determine if we need to reset the count (new day)
+    const lastGenDate = currentUser_state.lastGenerationDate
       ? new Date(
-          rateLimitCheck.lastGenerationDate.getFullYear(),
-          rateLimitCheck.lastGenerationDate.getMonth(),
-          rateLimitCheck.lastGenerationDate.getDate()
+          currentUser_state.lastGenerationDate.getFullYear(),
+          currentUser_state.lastGenerationDate.getMonth(),
+          currentUser_state.lastGenerationDate.getDate()
         )
       : null;
 
-    let currentCount = rateLimitCheck.dailyGenerationCount;
+    const isNewDay = !lastGenDate || lastGenDate.getTime() !== today.getTime();
 
-    // Reset count if it's a new day
-    if (!lastGenDate || lastGenDate.getTime() !== today.getTime()) {
-      currentCount = 0;
-    }
+    // Atomic operation: Update only if count is below limit
+    // This prevents race conditions by doing check and increment in one operation
+    const updateResult = await prisma.user.updateMany({
+      where: {
+        id: currentUser.id,
+        ...(isNewDay
+          ? {} // If new day, no count check needed (will be reset)
+          : { dailyGenerationCount: { lt: 10 } }), // Same day: only update if count < 10
+      },
+      data: {
+        dailyGenerationCount: isNewDay ? 1 : { increment: 1 },
+        lastGenerationDate: now,
+      },
+    });
 
-    // Check if user has exceeded daily limit
-    if (currentCount >= 10) {
+    // If no rows were updated, the limit was exceeded
+    if (updateResult.count === 0) {
       return {
         success: false,
         error: "RATE_LIMIT_EXCEEDED",
       };
     }
-
-    // Increment the generation count
-    await prisma.user.update({
-      where: { id: currentUser.id },
-      data: {
-        dailyGenerationCount: currentCount + 1,
-        lastGenerationDate: now,
-      },
-    });
 
     // Fetch user profile and posts
     const user = await prisma.user.findUnique({
