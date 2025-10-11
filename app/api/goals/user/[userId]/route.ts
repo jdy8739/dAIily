@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
 import { getCurrentUser } from "../../../../../lib/auth";
+import { logger } from "../../../../../lib/logger";
 
 // GET /api/goals/user/[userId] - Get user's goals (requires authentication)
 export const GET = async (
@@ -10,7 +11,7 @@ export const GET = async (
   try {
     // Require authentication to view any profile
     const currentUser = await getCurrentUser();
-    
+
     if (!currentUser) {
       return NextResponse.json(
         { error: "Unauthorized - Please log in to view profiles" },
@@ -27,10 +28,7 @@ export const GET = async (
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Determine what goals to show based on ownership
@@ -56,7 +54,10 @@ export const GET = async (
 
     return NextResponse.json({ goals }, { status: 200 });
   } catch (error) {
-    console.error("Goals fetch error:", error);
+    logger.error(
+      { err: error, userId: (await params).userId },
+      "Public goals fetch error"
+    );
     return NextResponse.json(
       { error: "Failed to fetch goals" },
       { status: 500 }

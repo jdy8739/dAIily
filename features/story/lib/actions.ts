@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import OpenAI from "openai";
 import { env } from "@/lib/env";
+import { sanitizeContent, sanitizeGoalTitle } from "@/lib/sanitize";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -231,8 +232,8 @@ Profile:
             .map((p, i) =>
               `
 Post ${i + 1} (${new Date(p.createdAt).toLocaleDateString()}):
-Title: ${p.title}
-Content: ${p.content}
+Title: ${sanitizeContent(p.title, 200)}
+Content: ${sanitizeContent(p.content, 2000)}
 `.trim()
             )
             .join("\n\n")
@@ -243,7 +244,7 @@ Content: ${p.content}
         ? activeGoals
             .map(g =>
               `
-- ${g.period} Goal: "${g.title}"
+- ${g.period} Goal: "${sanitizeGoalTitle(g.title)}"
   Started: ${new Date(g.startDate).toLocaleDateString()}
   Deadline: ${new Date(g.deadline).toLocaleDateString()}
 `.trim()

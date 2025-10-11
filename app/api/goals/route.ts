@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { GoalPeriod, GoalStatus } from "@prisma/client";
+import { logger } from "../../../lib/logger";
 
 // Helper function to calculate deadline based on period
 const calculateDeadline = (period: string): Date => {
@@ -79,7 +80,7 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.json({ goals }, { status: 200 });
   } catch (error) {
-    console.error("Goals fetch error:", error);
+    logger.error({ err: error }, "Goals fetch error");
     return NextResponse.json(
       { error: "Failed to fetch goals" },
       { status: 500 }
@@ -146,7 +147,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ goal }, { status: 201 });
   } catch (error) {
-    console.error("Goal creation error:", error);
+    logger.error({ err: error }, "Goal creation error");
     return NextResponse.json(
       { error: "Failed to create goal" },
       { status: 500 }

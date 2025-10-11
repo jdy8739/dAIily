@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "../../../../../../lib/prisma";
 import { getCurrentUser } from "../../../../../../lib/auth";
+import { logger } from "../../../../../../lib/logger";
 
 export const GET = async (
   req: NextRequest,
@@ -9,12 +10,17 @@ export const GET = async (
   try {
     // Require authentication to view any profile
     const currentUser = await getCurrentUser();
-    
+
     if (!currentUser) {
-      return new Response(JSON.stringify({ error: "Unauthorized - Please log in to view profiles" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized - Please log in to view profiles",
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const { userId } = await params;
@@ -72,7 +78,10 @@ export const GET = async (
       }
     );
   } catch (error) {
-    console.error("Story fetch error:", error);
+    logger.error(
+      { err: error, userId: (await params).userId },
+      "Public story fetch error"
+    );
     return new Response(JSON.stringify({ error: "Failed to fetch story" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

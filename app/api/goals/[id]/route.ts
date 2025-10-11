@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
+import { logger } from "../../../../lib/logger";
 
 // PATCH /api/goals/[id] - Update goal (status or title)
 export const PATCH = async (
@@ -80,7 +81,10 @@ export const PATCH = async (
 
     return NextResponse.json({ goal: updatedGoal }, { status: 200 });
   } catch (error) {
-    console.error("Goal update error:", error);
+    logger.error(
+      { err: error, goalId: (await params).id },
+      "Goal update error"
+    );
     return NextResponse.json(
       { error: "Failed to update goal" },
       { status: 500 }
@@ -122,7 +126,10 @@ export const DELETE = async (
 
     return NextResponse.json({ message: "Goal deleted" }, { status: 200 });
   } catch (error) {
-    console.error("Goal deletion error:", error);
+    logger.error(
+      { err: error, goalId: (await params).id },
+      "Goal deletion error"
+    );
     return NextResponse.json(
       { error: "Failed to delete goal" },
       { status: 500 }

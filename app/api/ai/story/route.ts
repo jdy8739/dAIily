@@ -3,6 +3,8 @@ import OpenAI from "openai";
 import { getCurrentUser } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
 import { env } from "../../../../lib/env";
+import { logger } from "../../../../lib/logger";
+import { sanitizeContent, sanitizeGoalTitle } from "../../../../lib/sanitize";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -59,7 +61,10 @@ export const GET = async (req: NextRequest) => {
       }
     );
   } catch (error) {
-    console.error("Story fetch error:", error);
+    logger.error(
+      { err: error, userId: (await getCurrentUser())?.id },
+      "Story fetch error"
+    );
     return new Response(JSON.stringify({ error: "Failed to fetch story" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -198,8 +203,8 @@ Profile:
             .map((p, i) =>
               `
 Post ${i + 1} (${new Date(p.createdAt).toLocaleDateString()}):
-Title: ${p.title}
-Content: ${p.content}
+Title: ${sanitizeContent(p.title, 200)}
+Content: ${sanitizeContent(p.content, 2000)}
 `.trim()
             )
             .join("\n\n")
@@ -210,7 +215,7 @@ Content: ${p.content}
         ? goals
             .map(g =>
               `
-- ${g.period} Goal: "${g.title}"
+- ${g.period} Goal: "${sanitizeGoalTitle(g.title)}"
   Started: ${new Date(g.startDate).toLocaleDateString()}
   Deadline: ${new Date(g.deadline).toLocaleDateString()}
 `.trim()
@@ -325,7 +330,7 @@ ${postsContext}
             },
           });
         } catch (error) {
-          console.error("Streaming error:", error);
+          logger.error({ err: error }, "Story streaming error");
           controller.error(error);
         }
       },
@@ -339,7 +344,7 @@ ${postsContext}
       },
     });
   } catch (error) {
-    console.error("Story generation error:", error);
+    logger.error({ err: error }, "Story generation error");
     return new Response(JSON.stringify({ error: "Failed to generate story" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

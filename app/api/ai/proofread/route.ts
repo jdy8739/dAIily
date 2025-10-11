@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 import { openai, agent } from "../../../../features/ai/lib/agent";
+import { logger } from "../../../../lib/logger";
+import { sanitizeContent } from "../../../../lib/sanitize";
 
 const runtime = "edge";
 
@@ -11,12 +13,16 @@ async function POST(req: NextRequest) {
       return new Response("Title and content are required", { status: 400 });
     }
 
+    // Sanitize inputs to prevent prompt injection
+    const sanitizedTitle = sanitizeContent(title, 200);
+    const sanitizedContent = sanitizeContent(content, 5000);
+
     const prompt = `You are a ${agent.name}. ${agent.instructions}
 
 Transform this work log into a professional career development record:
 
-Title: ${title}
-Content: ${content}
+Title: ${sanitizedTitle}
+Content: ${sanitizedContent}
 
 STRICT FORMATTING RULES:
 1. Use the EXACT SAME LANGUAGE as input (Korean→Korean, English→English)
@@ -82,7 +88,7 @@ Respond in JSON format:
       },
     });
   } catch (error) {
-    console.error("AI proofread streaming error:", error);
+    logger.error({ err: error }, "AI proofread streaming error");
     return new Response("Failed to proofread content", { status: 500 });
   }
 }
