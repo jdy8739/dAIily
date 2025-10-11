@@ -32,6 +32,10 @@ model User {
   achievementScore  Int             @default(0)
   goals             Goal[]
 
+  // Story Generation Rate Limiting
+  dailyGenerationCount Int      @default(0)
+  lastGenerationDate   DateTime?
+
   // Relations
   accounts      Account[]
   passwordReset PasswordReset[]
