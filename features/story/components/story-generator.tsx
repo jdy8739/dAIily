@@ -34,6 +34,9 @@ const StoryGenerator = () => {
       setPeriod(urlPeriod);
       // Check if cached story exists, but don't generate new one
       loadCachedStory(urlPeriod);
+    } else {
+      // No period parameter - automatically load with 'all'
+      loadCachedStory("all");
     }
   }, []);
 

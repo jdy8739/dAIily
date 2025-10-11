@@ -125,6 +125,11 @@ AI story analyzes posts against active goals only:
 
 ### Story Caching & Freshness
 
+**Default Behavior:**
+- When visiting story page without query parameter → Automatically fetch 'all' period story
+- Applies to both owner view (StoryGenerator) and visitor view (UserStoryViewer)
+- Ensures users always see content immediately without manual period selection
+
 **User Flow:**
 1. User clicks period button → Check for cached story
 2. If cached story exists → Load immediately and check if outdated

@@ -35,7 +35,7 @@ const periodLabels: Record<string, string> = {
 };
 
 const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
-  const [selectedPeriod, setSelectedPeriod] = useState("daily");
+  const [selectedPeriod, setSelectedPeriod] = useState("all");
   const [selectedTab, setSelectedTab] = useState<"active" | "achieved">(
     "active"
   );
