@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
-import Button from "../../../components/atoms/button";
+import Skeleton from "../../../components/atoms/skeleton";
 import { getGoals, createGoal, updateGoal } from "../lib/actions";
 import { Goal as PrismaGoal, GoalStatus } from "@prisma/client";
 
@@ -23,7 +23,9 @@ const GoalsSection = () => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">("active");
+  const [selectedTab, setSelectedTab] = useState<"active" | "achieved">(
+    "active"
+  );
   const [selectedPeriod, setSelectedPeriod] = useState<string>("DAILY");
   const [showForm, setShowForm] = useState(false);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
@@ -103,14 +105,15 @@ const GoalsSection = () => {
   };
 
   const getGoalsForPeriod = (period: string) => {
-    const status = selectedTab === "active" ? GoalStatus.ACTIVE : GoalStatus.COMPLETED;
+    const status =
+      selectedTab === "active" ? GoalStatus.ACTIVE : GoalStatus.COMPLETED;
     return goals.filter(g => g.period === period && g.status === status);
   };
 
   if (loading) {
     return (
       <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
-        <p className="text-muted-foreground">Loading goals...</p>
+        <Skeleton className="h-48 w-full" />
       </div>
     );
   }
@@ -241,7 +244,11 @@ const GoalsSection = () => {
                         onComplete={handleComplete}
                         onRemove={handleRemove}
                         onEdit={handleEdit}
-                        onReactivate={selectedTab === "achieved" ? handleReactivate : undefined}
+                        onReactivate={
+                          selectedTab === "achieved"
+                            ? handleReactivate
+                            : undefined
+                        }
                       />
                     ))
                   ) : (
