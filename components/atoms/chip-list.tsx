@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, ChangeEvent } from "react";
 import Chip from "./chip";
 
 interface ChipListProps {
@@ -29,6 +29,7 @@ const ChipList = ({
   error,
 }: ChipListProps) => {
   const [inputValue, setInputValue] = useState("");
+  const [isComposing, setIsComposing] = useState(false);
 
   const addItem = (value: string) => {
     const trimmedValue = value.trim();
@@ -48,7 +49,7 @@ const ChipList = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
       addItem(inputValue);
     } else if (e.key === "Backspace" && !inputValue && items.length > 0) {
@@ -60,6 +61,18 @@ const ChipList = ({
     if (inputValue.trim()) {
       addItem(inputValue);
     }
+  };
+
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
 
   const inputId = label?.toLowerCase().replace(/\s+/g, "-");
@@ -108,7 +121,9 @@ const ChipList = ({
               id={inputId}
               type="text"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={handleChange}
+              onCompositionStart={handleCompositionStart}
+              onCompositionEnd={handleCompositionEnd}
               onKeyDown={handleKeyDown}
               onBlur={handleInputBlur}
               placeholder={items.length === 0 ? placeholder : ""}
