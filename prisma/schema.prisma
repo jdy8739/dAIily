@@ -153,6 +153,10 @@ model Post {
   likes     Like[]
   replies   Reply[]
 
+  @@index([status])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([status, createdAt])
   @@map("posts")
 }
 
@@ -183,6 +187,8 @@ model Reply {
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  @@index([postId])
+  @@index([authorId])
   @@map("replies")
 }
 
