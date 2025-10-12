@@ -489,6 +489,60 @@ const loadMoreDraftPosts = async (page: number, itemsPerPage: number = 10) => {
   }
 };
 
+/**
+ * Load more user posts for infinite scroll
+ * @param userId - User ID
+ * @param page - Page number (1-indexed)
+ * @param itemsPerPage - Number of items per page (default: 10)
+ */
+const loadMoreUserPosts = async (
+  userId: string,
+  page: number,
+  itemsPerPage: number = 10
+) => {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            replies: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * itemsPerPage,
+      take: itemsPerPage,
+    });
+
+    return {
+      items: posts,
+      hasMore: posts.length === itemsPerPage,
+    };
+  } catch (error) {
+    console.error("Error loading more user posts:", error);
+    return {
+      items: [],
+      hasMore: false,
+    };
+  }
+};
+
 export {
   createPost,
   editPost,
@@ -500,4 +554,5 @@ export {
   deleteReply,
   loadMoreFeedPosts,
   loadMoreDraftPosts,
+  loadMoreUserPosts,
 };

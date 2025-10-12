@@ -98,8 +98,10 @@ const getPostForEdit = async (id: string) => {
 /**
  * Get all posts by a specific user
  * Ordered by creation date (newest first)
+ * @param userId - User ID
+ * @param limit - Number of posts to fetch (default: 10)
  */
-const getUserPosts = async (userId: string) => {
+const getUserPosts = async (userId: string, limit: number = 10) => {
   return prisma.post.findMany({
     where: { authorId: userId },
     include: {
@@ -123,6 +125,7 @@ const getUserPosts = async (userId: string) => {
     orderBy: {
       createdAt: "desc",
     },
+    take: limit,
   });
 };
 
