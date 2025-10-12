@@ -132,9 +132,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
   └── seed.ts            # Database seeding script
 
 /docs/                   # Documentation
-  ├── ai-review-concept.md
-  ├── rate-limit-and-csrf-implementation.md
-  └── git-commit-guide.md
+  ├── ai-review-concept.md       # AI story generation & security features
+  ├── db.md                      # Database schema & migration guide
+  └── git-commit-guide.md        # Commit message conventions
 
 /.claude/                # Claude Code configuration
 /scripts/                # Utility scripts

@@ -165,6 +165,33 @@ Stories are marked as outdated when they're older than the period they represent
 - "Entire Journey" never marked outdated (too expensive to regenerate frequently)
 - Warning: "⚠️ This story is outdated. Recent posts and goals aren't included."
 
+### Security & Rate Limiting
+
+**Rate Limiting:**
+
+- **Database Fields**: `User.dailyGenerationCount`, `User.lastGenerationDate`
+- **Limit**: 10 story generations per day per user
+- **Reset**: Automatic daily reset when new day begins
+- **Implementation**: Simple counter approach with date tracking
+- **Error**: `"You've reached the daily limit of 10 story generations. Please try again tomorrow."`
+
+**CSRF Protection:**
+
+- **Protected Actions**: `generateStory()`, `deletePost()`, `deleteGoal()`
+- **Token Type**: HMAC-SHA256 based stateless tokens
+- **Expiry**: 1-hour token lifetime
+- **Auto-Refresh**: Client auto-refreshes every 50 minutes
+- **Validation**: Timing-safe comparison to prevent timing attacks
+- **Error**: `"Security token expired. Please refresh the page and try again."`
+
+**Implementation Details:**
+
+- CSRF Provider wraps entire app (`app/layout.tsx`)
+- `useCsrf()` hook provides tokens to protected components
+- Server actions validate CSRF tokens before executing
+- Rate limit checked before AI generation to prevent abuse
+- Both features provide clear, user-friendly error messages
+
 ### Goal Schema
 
 ```typescript
