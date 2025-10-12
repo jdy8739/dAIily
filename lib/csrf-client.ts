@@ -7,6 +7,8 @@ import { generateCsrfToken } from "./csrf";
  * This is called from the client to get a fresh token
  * @returns The CSRF token string
  */
-export const getNewCsrfToken = async (): Promise<string> => {
+const getNewCsrfToken = async (): Promise<string> => {
   return generateCsrfToken();
 };
+
+export { getNewCsrfToken };

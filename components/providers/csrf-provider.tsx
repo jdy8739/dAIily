@@ -15,7 +15,7 @@ const CsrfContext = createContext<CsrfContextType>({
   refreshToken: async () => {},
 });
 
-export const useCsrf = () => {
+const useCsrf = () => {
   const context = useContext(CsrfContext);
   if (!context) {
     throw new Error("useCsrf must be used within CsrfProvider");
@@ -27,7 +27,7 @@ interface CsrfProviderProps {
   children: React.ReactNode;
 }
 
-export const CsrfProvider = ({ children }: CsrfProviderProps) => {
+const CsrfProvider = ({ children }: CsrfProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,3 +66,5 @@ export const CsrfProvider = ({ children }: CsrfProviderProps) => {
     </CsrfContext.Provider>
   );
 };
+
+export { CsrfProvider, useCsrf };
