@@ -404,11 +404,6 @@ const loadMoreFeedPosts = async (page: number, itemsPerPage: number = 10) => {
             name: true,
           },
         },
-        likes: {
-          select: {
-            userId: true,
-          },
-        },
         _count: {
           select: {
             likes: true,
@@ -510,11 +505,6 @@ const loadMoreUserPosts = async (
         author: {
           select: {
             name: true,
-          },
-        },
-        likes: {
-          select: {
-            userId: true,
           },
         },
         _count: {
