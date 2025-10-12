@@ -6,6 +6,8 @@ import {
   getUserById,
   getUserPosts,
 } from "../../../../features/feed/lib/queries";
+import { loadMoreUserPosts } from "../../../../features/feed/lib/actions";
+import UserFeedList from "../../../../features/feed/components/organisms/user-feed-list";
 
 interface UserProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -63,31 +65,36 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
           All Posts
         </h3>
         {posts.length === 0 ? (
-          <div className="text-center py-12 bg-muted/30 rounded-lg">
-            <p className="text-muted-foreground">No posts yet</p>
+          <div className="space-y-6">
+            <div className="text-center py-12 bg-muted/30 rounded-lg">
+              <p className="text-muted-foreground text-lg">No posts yet</p>
+            </div>
+
+            {/* Write CTA */}
+            <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-info/10 border-2 border-primary/20 rounded-xl p-6 hover:border-primary/40 transition-all">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-center md:text-left">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    Share Your Professional Journey
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Document your growth, insights, and achievements. Your story inspires others!
+                  </p>
+                </div>
+                <Link
+                  href="/write"
+                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap"
+                >
+                  ✍️ Write New Entry
+                </Link>
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            {posts.map(post => (
-              <Link
-                key={post.id}
-                href={`/feed/${post.id}`}
-                className="block p-4 border border-border rounded-lg hover:border-primary/50 hover:bg-accent/5 transition-all"
-              >
-                <h4 className="font-semibold text-foreground mb-2">
-                  {post.title}
-                </h4>
-                <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
-                  {post.content}
-                </p>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                  <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                  <span>❤️ {post._count.likes}</span>
-                  <span>💬 {post._count.replies}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <UserFeedList
+            initialPosts={posts}
+            loadMore={async (page) => await loadMoreUserPosts(userId, page)}
+          />
         )}
       </div>
     </div>
