@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../../components/atoms/button";
 import { Goal as PrismaGoal } from "@prisma/client";
 
@@ -22,6 +22,11 @@ const GoalCard = ({
   onReactivate,
 }: GoalCardProps) => {
   const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleComplete = async () => {
     setLoading(true);
@@ -74,14 +79,16 @@ const GoalCard = ({
           <h4 className="text-foreground font-medium mb-2 whitespace-pre-wrap break-words">
             {goal.title}
           </h4>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span>Started: {formatDate(goal.startDate)}</span>
-            <span>•</span>
-            <span className={isOverdue ? "text-warning" : ""}>
-              Due: {formatDate(goal.deadline)}
-              {isOverdue && " (Overdue)"}
-            </span>
-          </div>
+          {isClient && (
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>Started: {formatDate(goal.startDate)}</span>
+              <span>•</span>
+              <span className={isOverdue ? "text-warning" : ""}>
+                Due: {formatDate(goal.deadline)}
+                {isOverdue && " (Overdue)"}
+              </span>
+            </div>
+          )}
         </div>
 
         {goal.status === "ACTIVE" && (

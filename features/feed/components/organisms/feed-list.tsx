@@ -3,6 +3,7 @@
 import Link from "next/link";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
 import LikeButton from "../molecules/like-button";
+import ClientDate from "../../../../components/atoms/client-date";
 
 type FeedPost = {
   id: string;
@@ -20,11 +21,10 @@ type FeedPost = {
 
 type FeedListProps = {
   initialPosts: FeedPost[];
-  currentUserId: string | null;
   loadMore: (page: number) => Promise<{ items: FeedPost[]; hasMore: boolean }>;
 };
 
-const FeedList = ({ initialPosts, currentUserId, loadMore }: FeedListProps) => {
+const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
   return (
     <InfiniteScroll
       items={initialPosts}
@@ -46,9 +46,7 @@ const FeedList = ({ initialPosts, currentUserId, loadMore }: FeedListProps) => {
                     {post.author.name}
                   </h3>
                   <span className="text-sm text-muted-foreground">•</span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </span>
+                  <ClientDate date={post.createdAt} className="text-sm text-muted-foreground" />
                 </div>
                 <h4 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
                   {post.title}

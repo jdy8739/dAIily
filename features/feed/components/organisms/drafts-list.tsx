@@ -3,6 +3,7 @@
 import Link from "next/link";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
 import DeleteDraftButton from "../molecules/delete-draft-button";
+import ClientDate from "../../../../components/atoms/client-date";
 
 type DraftPost = {
   id: string;
@@ -39,7 +40,7 @@ const DraftsList = ({ initialDrafts, loadMore }: DraftsListProps) => {
                   DRAFT
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {new Date(draft.createdAt).toLocaleDateString()}
+                  <ClientDate date={draft.createdAt} />
                 </span>
               </div>
               <h4 className="font-medium text-foreground mb-2 hover:text-primary transition-colors">

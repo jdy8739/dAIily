@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DeleteReplyButton from "./delete-reply-button";
 import EditReplyForm from "./edit-reply-form";
+import ClientDate from "../../../../components/atoms/client-date";
 
 interface Reply {
   id: string;
@@ -93,16 +94,14 @@ const ReplyList = ({
                       </span>
                     )}
                   </h4>
-                  {isClient && (
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(reply.createdAt).toLocaleString()}
-                      {reply.updatedAt !== reply.createdAt && (
-                        <span className="ml-1 text-muted-foreground/70">
-                          (edited)
-                        </span>
-                      )}
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    <ClientDate date={reply.createdAt} />
+                    {reply.updatedAt !== reply.createdAt && (
+                      <span className="ml-1 text-muted-foreground/70">
+                        (edited)
+                      </span>
+                    )}
+                  </p>
                 </div>
               </div>
 

@@ -10,6 +10,7 @@ import {
   getCachedStory,
   generateStory as generateStoryAction,
 } from "../lib/actions";
+import ClientDate from "../../../components/atoms/client-date";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
 
@@ -296,8 +297,7 @@ const StoryGenerator = () => {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Generated on{" "}
-                  {generatedAt?.toLocaleDateString() ||
-                    new Date().toLocaleDateString()}
+                  {generatedAt && <ClientDate date={generatedAt} />}
                 </p>
                 {isOutdated && (
                   <p className="text-xs text-warning mt-1 flex items-center gap-1">

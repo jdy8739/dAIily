@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
+import ClientDate from "../../../../components/atoms/client-date";
 
 type UserPost = {
   id: string;
@@ -37,7 +38,7 @@ const UserFeedList = ({ initialPosts, loadMore }: UserFeedListProps) => {
             {post.content}
           </p>
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+            <ClientDate date={post.createdAt} />
             <span>❤️ {post._count.likes}</span>
             <span>💬 {post._count.replies}</span>
           </div>

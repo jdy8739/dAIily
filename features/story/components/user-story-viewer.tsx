@@ -5,6 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { getUserGoals, getUserStory } from "../lib/actions";
 import { GoalStatus } from "@prisma/client";
 import Skeleton from "../../../components/atoms/skeleton";
+import ClientDate from "../../../components/atoms/client-date";
 
 type Goal = {
   id: string;
@@ -171,7 +172,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
                 </h4>
                 <div className="text-xs text-muted-foreground">
                   <span>
-                    Deadline: {new Date(goal.deadline).toLocaleDateString()}
+                    Deadline: <ClientDate date={goal.deadline} />
                   </span>
                 </div>
               </div>
