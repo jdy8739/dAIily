@@ -8,6 +8,7 @@ import ReplyForm from "../../../features/feed/components/molecules/reply-form";
 import ReplyList from "../../../features/feed/components/molecules/reply-list";
 import UserNameMenu from "../../../components/molecules/user-name-menu";
 import { getPostById } from "../../../features/feed/lib/queries";
+import ClientDate from "../../../components/atoms/client-date";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -49,7 +50,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                   />
                 </span>
                 <span>•</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                <ClientDate date={post.createdAt} />
               </div>
             </div>
           </div>
@@ -71,7 +72,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                     {post.author.name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(post.createdAt).toLocaleString()}
+                    <ClientDate date={post.createdAt} />
                     {post.updatedAt.getTime() !== post.createdAt.getTime() && (
                       <span className="ml-2 text-muted-foreground/70">
                         (edited)

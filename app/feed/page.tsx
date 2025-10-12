@@ -41,7 +41,6 @@ const FeedPage = async () => {
             ) : (
               <FeedList
                 initialPosts={posts}
-                currentUserId={currentUser?.id || null}
                 loadMore={loadMoreFeedPosts}
               />
             )}

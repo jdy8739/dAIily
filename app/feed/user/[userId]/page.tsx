@@ -8,6 +8,7 @@ import {
 } from "../../../../features/feed/lib/queries";
 import { loadMoreUserPosts } from "../../../../features/feed/lib/actions";
 import UserFeedList from "../../../../features/feed/components/organisms/user-feed-list";
+import ClientDate from "../../../../components/atoms/client-date";
 
 interface UserProfilePageProps {
   params: Promise<{ userId: string }>;
@@ -110,7 +111,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
         <div className="space-y-3 text-muted-foreground">
           <div>
             <span className="font-medium text-foreground">Member since:</span>{" "}
-            {new Date(user.createdAt).toLocaleDateString()}
+            <ClientDate date={user.createdAt} />
           </div>
           {user.currentRole && (
             <div>
