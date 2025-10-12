@@ -93,7 +93,7 @@ const editPost = async (data: EditPostData, status?: "DRAFT" | "PUBLISHED") => {
 
     return { success: true };
   } catch (error) {
-    logger.error({ err: error, postId: validatedData.postId }, "Post edit error");
+    logger.error({ err: error, postId: data.postId }, "Post edit error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -279,7 +279,7 @@ const createReply = async (data: CreateReplyData) => {
 
     return { success: true, replyId: reply.id };
   } catch (error) {
-    logger.error({ err: error, postId: validatedData.postId }, "Reply creation error");
+    logger.error({ err: error, postId: data.postId }, "Reply creation error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -326,7 +326,7 @@ const editReply = async (data: EditReplyData) => {
 
     return { success: true };
   } catch (error) {
-    logger.error({ err: error, replyId: validatedData.replyId }, "Reply edit error");
+    logger.error({ err: error, replyId: data.replyId }, "Reply edit error");
     if (error instanceof Error) {
       return { error: error.message };
     }

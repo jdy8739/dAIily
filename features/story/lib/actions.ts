@@ -111,7 +111,7 @@ const getUserStory = async (
 
     return { story: story || null };
   } catch (error) {
-    logger.error({ err: error, userId, period }, "Story fetch error");
+    logger.error({ err: error, userId, period: rawPeriod }, "Story fetch error");
     return { error: "Failed to fetch story" };
   }
 };
@@ -152,7 +152,7 @@ const getCachedStory = async (
 
     return { story: story || null };
   } catch (error) {
-    logger.error({ err: error, period }, "Story fetch error");
+    logger.error({ err: error, period: rawPeriod }, "Story fetch error");
     return { error: "Failed to fetch story" };
   }
 };
@@ -467,7 +467,7 @@ ${postsContext}
       updatedAt: story.updatedAt,
     };
   } catch (error) {
-    logger.error({ err: error, period }, "Story generation error");
+    logger.error({ err: error, period: rawPeriod }, "Story generation error");
     return { success: false, error: "Failed to generate story" };
   }
 };

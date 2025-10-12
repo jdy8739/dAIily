@@ -17,11 +17,6 @@ const getFeedPosts = async (limit: number = 10) => {
           name: true,
         },
       },
-      likes: {
-        select: {
-          userId: true,
-        },
-      },
       _count: {
         select: {
           likes: true,
@@ -108,11 +103,6 @@ const getUserPosts = async (userId: string, limit: number = 10) => {
       author: {
         select: {
           name: true,
-        },
-      },
-      likes: {
-        select: {
-          userId: true,
         },
       },
       _count: {

@@ -12,9 +12,6 @@ type FeedPost = {
   author: {
     name: string | null;
   };
-  likes: {
-    userId: string;
-  }[];
   _count: {
     likes: number;
     replies: number;
@@ -62,11 +59,7 @@ const FeedList = ({ initialPosts, currentUserId, loadMore }: FeedListProps) => {
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   <LikeButton
                     postId={post.id}
-                    initialLiked={
-                      currentUserId
-                        ? post.likes.some((like) => like.userId === currentUserId)
-                        : false
-                    }
+                    initialLiked={false}
                     initialLikeCount={post._count.likes}
                   />
                   <span className="hover:text-accent transition-colors">
