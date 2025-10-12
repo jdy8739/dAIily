@@ -83,7 +83,7 @@ const GlobalError = ({ error, reset }: GlobalErrorProps) => {
                   fontSize: '0.75rem',
                   fontFamily: 'monospace',
                   color: '#ef4444',
-                  wordBreak: 'break-words',
+                  wordBreak: 'break-word',
                 }}>
                   {error.message}
                 </p>
