@@ -1,8 +1,9 @@
 import Link from "next/link";
 import AuthLayout from "../../components/templates/auth-layout";
 import { getCurrentUser } from "../../lib/auth";
-import LikeButton from "../../features/feed/components/molecules/like-button";
 import { getFeedPosts } from "../../features/feed/lib/queries";
+import { loadMoreFeedPosts } from "../../features/feed/lib/actions";
+import FeedList from "../../features/feed/components/organisms/feed-list";
 
 const FeedPage = async () => {
   const currentUser = await getCurrentUser();
@@ -38,60 +39,11 @@ const FeedPage = async () => {
                 </Link>
               </div>
             ) : (
-              posts.map(post => (
-                <Link key={post.id} href={`/feed/${post.id}`} className="block">
-                  <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 hover:shadow-md hover:border-accent/50 transition-all duration-200 cursor-pointer">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                        <span className="text-primary-foreground font-semibold text-sm">
-                          {post.author.name
-                            ?.split(" ")
-                            .map(n => n[0])
-                            .join("") || "??"}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="font-semibold text-foreground">
-                            {post.author.name}
-                          </h3>
-                          <span className="text-sm text-muted-foreground">
-                            •
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(post.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <h4 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
-                          {post.title}
-                        </h4>
-                        <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
-                          {post.content}
-                        </p>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <LikeButton
-                            postId={post.id}
-                            initialLiked={
-                              currentUser
-                                ? post.likes.some(
-                                    like => like.userId === currentUser.id
-                                  )
-                                : false
-                            }
-                            initialLikeCount={post._count.likes}
-                          />
-                          <span className="hover:text-accent transition-colors">
-                            💬 {post._count.replies}
-                          </span>
-                          <span className="hover:text-accent transition-colors">
-                            🔄 Share
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))
+              <FeedList
+                initialPosts={posts}
+                currentUserId={currentUser?.id || null}
+                loadMore={loadMoreFeedPosts}
+              />
             )}
 
             {currentUser && (

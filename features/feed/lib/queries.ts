@@ -4,8 +4,9 @@ import { prisma } from "../../../lib/prisma";
  * Get all posts for the feed page with author, likes, and reply counts
  * Ordered by creation date (oldest first)
  * Only shows published posts
+ * @param limit - Number of posts to fetch (default: 10)
  */
-const getFeedPosts = async () => {
+const getFeedPosts = async (limit: number = 10) => {
   return prisma.post.findMany({
     where: {
       status: "PUBLISHED",
@@ -31,6 +32,7 @@ const getFeedPosts = async () => {
     orderBy: {
       createdAt: "asc",
     },
+    take: limit,
   });
 };
 
@@ -144,8 +146,10 @@ const getUserById = async (userId: string) => {
 /**
  * Get all draft posts by a specific user
  * Ordered by creation date (newest first)
+ * @param userId - User ID
+ * @param limit - Number of drafts to fetch (default: 10)
  */
-const getUserDraftPosts = async (userId: string) => {
+const getUserDraftPosts = async (userId: string, limit: number = 10) => {
   return prisma.post.findMany({
     where: {
       authorId: userId,
@@ -167,6 +171,7 @@ const getUserDraftPosts = async (userId: string) => {
     orderBy: {
       createdAt: "desc",
     },
+    take: limit,
   });
 };
 

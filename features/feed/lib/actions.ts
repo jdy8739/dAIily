@@ -386,6 +386,109 @@ const deleteReply = async (replyId: string) => {
   }
 };
 
+/**
+ * Load more feed posts for infinite scroll
+ * @param page - Page number (1-indexed)
+ * @param itemsPerPage - Number of items per page (default: 10)
+ */
+const loadMoreFeedPosts = async (page: number, itemsPerPage: number = 10) => {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        status: "PUBLISHED",
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            replies: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      skip: (page - 1) * itemsPerPage,
+      take: itemsPerPage,
+    });
+
+    return {
+      items: posts,
+      hasMore: posts.length === itemsPerPage,
+    };
+  } catch (error) {
+    console.error("Error loading more feed posts:", error);
+    return {
+      items: [],
+      hasMore: false,
+    };
+  }
+};
+
+/**
+ * Load more draft posts for infinite scroll
+ * @param page - Page number (1-indexed)
+ * @param itemsPerPage - Number of items per page (default: 10)
+ */
+const loadMoreDraftPosts = async (page: number, itemsPerPage: number = 10) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return {
+      items: [],
+      hasMore: false,
+    };
+  }
+
+  try {
+    const drafts = await prisma.post.findMany({
+      where: {
+        authorId: user.id,
+        status: "DRAFT",
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            replies: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * itemsPerPage,
+      take: itemsPerPage,
+    });
+
+    return {
+      items: drafts,
+      hasMore: drafts.length === itemsPerPage,
+    };
+  } catch (error) {
+    console.error("Error loading more draft posts:", error);
+    return {
+      items: [],
+      hasMore: false,
+    };
+  }
+};
+
 export {
   createPost,
   editPost,
@@ -395,4 +498,6 @@ export {
   createReply,
   editReply,
   deleteReply,
+  loadMoreFeedPosts,
+  loadMoreDraftPosts,
 };
