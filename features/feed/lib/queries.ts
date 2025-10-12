@@ -2,7 +2,7 @@ import { prisma } from "../../../lib/prisma";
 
 /**
  * Get all posts for the feed page with author, likes, and reply counts
- * Ordered by creation date (oldest first)
+ * Ordered by creation date (newest first)
  * Only shows published posts
  * @param limit - Number of posts to fetch (default: 10)
  */
@@ -25,7 +25,7 @@ const getFeedPosts = async (limit: number = 10) => {
       },
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
     take: limit,
   });
