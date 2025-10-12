@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { GoalPeriod, GoalStatus, Goal as PrismaGoal } from "@prisma/client";
+import { logger } from "@/lib/logger";
 
 type Goal = PrismaGoal;
 
@@ -69,7 +70,7 @@ const getGoals = async (
 
     return { goals };
   } catch (error) {
-    console.error("Goals fetch error:", error);
+    logger.error({ err: error }, "Goals fetch error");
     return { error: "Failed to fetch goals" };
   }
 };
@@ -117,7 +118,7 @@ const createGoal = async (
 
     return { success: true, goal };
   } catch (error) {
-    console.error("Goal creation error:", error);
+    logger.error({ err: error, title, period }, "Goal creation error");
     return { success: false, error: "Failed to create goal" };
   }
 };
@@ -206,7 +207,7 @@ const updateGoal = async (
 
     return { success: true, goal: updatedGoal };
   } catch (error) {
-    console.error("Goal update error:", error);
+    logger.error({ err: error, goalId: id }, "Goal update error");
     return { success: false, error: "Failed to update goal" };
   }
 };
@@ -252,7 +253,7 @@ const deleteGoal = async (
 
     return { success: true };
   } catch (error) {
-    console.error("Goal deletion error:", error);
+    logger.error({ err: error, goalId: id }, "Goal deletion error");
     return { success: false, error: "Failed to delete goal" };
   }
 };

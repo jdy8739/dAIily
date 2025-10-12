@@ -6,6 +6,7 @@ import { updateProfileSchema, type UpdateProfileData } from "../schemas";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { logger } from "../../../lib/logger";
 
 const updateProfile = async (data: UpdateProfileData) => {
   try {
@@ -75,7 +76,7 @@ const updateProfile = async (data: UpdateProfileData) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error({ err: error }, "Profile update error");
     return { success: false, error: "Failed to update profile" };
   }
 };
@@ -99,7 +100,7 @@ const deleteAccount = async () => {
 
     return { success: true };
   } catch (error) {
-    console.error("Account deletion error:", error);
+    logger.error({ err: error }, "Account deletion error");
     return { success: false, error: "Failed to delete account" };
   }
 };

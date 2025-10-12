@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { prisma } from "../../../lib/prisma";
 import { validateCsrf } from "../../../lib/csrf-middleware";
+import { logger } from "../../../lib/logger";
 import {
   hashPassword,
   verifyPassword,
@@ -62,7 +63,7 @@ const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error({ err: error }, "Login error");
     return { error: "Authentication failed. Please try again." };
   }
 };
@@ -106,7 +107,7 @@ const signupAction = async (
 
     // TODO: Send verification email
   } catch (error) {
-    console.error("Signup error:", error);
+    logger.error({ err: error }, "Signup error");
     return { error: "Account creation failed. Please try again." };
   } finally {
     if (user) {
@@ -153,7 +154,7 @@ const passwordResetAction = async (
       try {
         await sendPasswordResetEmail(user.email, resetToken, user.name);
       } catch (emailError) {
-        console.error("Failed to send password reset email:", emailError);
+        logger.error({ err: emailError }, "Failed to send password reset email");
         // Don't throw error - still return success to avoid revealing email existence
       }
     }
@@ -164,7 +165,7 @@ const passwordResetAction = async (
         "If an account with that email exists, you will receive a password reset link.",
     };
   } catch (error) {
-    console.error("Password reset error:", error);
+    logger.error({ err: error }, "Password reset error");
     return { error: "Password reset failed. Please try again." };
   }
 };
@@ -225,7 +226,7 @@ const resetPasswordWithTokenAction = async (
         "Password reset successful. You can now log in with your new password.",
     };
   } catch (error) {
-    console.error("Password reset with token error:", error);
+    logger.error({ err: error }, "Password reset with token error");
     return { error: "Password reset failed. Please try again." };
   }
 };
@@ -257,7 +258,7 @@ const logoutAction = async () => {
 
     redirect("/login");
   } catch (error) {
-    console.error("Logout error:", error);
+    logger.error({ err: error }, "Logout error");
     redirect("/login");
   }
 };

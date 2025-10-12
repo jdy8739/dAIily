@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { env } from "./env";
+import { logger } from "./logger";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -29,7 +30,7 @@ const sendPasswordResetEmail = async (
   });
 
   if (error) {
-    console.error("Failed to send password reset email:", error);
+    logger.error({ err: error, email }, "Failed to send password reset email");
     throw new Error("Failed to send password reset email");
   }
 

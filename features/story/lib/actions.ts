@@ -9,6 +9,7 @@ import {
   sanitizeGoalTitle,
   sanitizePeriod,
 } from "@/lib/sanitize";
+import { logger } from "@/lib/logger";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -74,7 +75,7 @@ const getUserGoals = async (
 
     return { goals };
   } catch (error) {
-    console.error("Goals fetch error:", error);
+    logger.error({ err: error, userId }, "Goals fetch error");
     return { error: "Failed to fetch goals" };
   }
 };
@@ -110,7 +111,7 @@ const getUserStory = async (
 
     return { story: story || null };
   } catch (error) {
-    console.error("Story fetch error:", error);
+    logger.error({ err: error, userId, period }, "Story fetch error");
     return { error: "Failed to fetch story" };
   }
 };
@@ -151,7 +152,7 @@ const getCachedStory = async (
 
     return { story: story || null };
   } catch (error) {
-    console.error("Story fetch error:", error);
+    logger.error({ err: error, period }, "Story fetch error");
     return { error: "Failed to fetch story" };
   }
 };
@@ -466,7 +467,7 @@ ${postsContext}
       updatedAt: story.updatedAt,
     };
   } catch (error) {
-    console.error("Story generation error:", error);
+    logger.error({ err: error, period }, "Story generation error");
     return { success: false, error: "Failed to generate story" };
   }
 };

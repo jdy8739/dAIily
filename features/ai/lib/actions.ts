@@ -1,6 +1,7 @@
 "use server";
 
 import { openai, agent } from "./agent";
+import { logger } from "@/lib/logger";
 
 // Proofread content (non-streaming version for Server Action)
 // Note: For streaming AI responses, the API route pattern must be used
@@ -73,7 +74,7 @@ Respond in JSON format:
 
     return { success: true, result: parsed };
   } catch (error) {
-    console.error("AI proofread error:", error);
+    logger.error({ err: error }, "AI proofread error");
     return { success: false, error: "Failed to proofread content" };
   }
 };

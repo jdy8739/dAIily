@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
+import { logger } from "../../../lib/logger";
 import {
   createPostSchema,
   editPostSchema,
@@ -43,7 +44,7 @@ const createPost = async (
     // Return success instead of redirecting
     return { success: true, postId: post.id };
   } catch (error) {
-    console.error("Post creation error:", error);
+    logger.error({ err: error }, "Post creation error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -92,7 +93,7 @@ const editPost = async (data: EditPostData, status?: "DRAFT" | "PUBLISHED") => {
 
     return { success: true };
   } catch (error) {
-    console.error("Post edit error:", error);
+    logger.error({ err: error, postId: validatedData.postId }, "Post edit error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -138,7 +139,7 @@ const deletePost = async (postId: string, csrfToken?: string) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Post deletion error:", error);
+    logger.error({ err: error, postId }, "Post deletion error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -191,7 +192,7 @@ const likePost = async (postId: string) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Like post error:", error);
+    logger.error({ err: error, postId }, "Like post error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -236,7 +237,7 @@ const unlikePost = async (postId: string) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Unlike post error:", error);
+    logger.error({ err: error, postId }, "Unlike post error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -278,7 +279,7 @@ const createReply = async (data: CreateReplyData) => {
 
     return { success: true, replyId: reply.id };
   } catch (error) {
-    console.error("Reply creation error:", error);
+    logger.error({ err: error, postId: validatedData.postId }, "Reply creation error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -325,7 +326,7 @@ const editReply = async (data: EditReplyData) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Reply edit error:", error);
+    logger.error({ err: error, replyId: validatedData.replyId }, "Reply edit error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -378,7 +379,7 @@ const deleteReply = async (replyId: string) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Reply deletion error:", error);
+    logger.error({ err: error, replyId }, "Reply deletion error");
     if (error instanceof Error) {
       return { error: error.message };
     }
@@ -427,7 +428,7 @@ const loadMoreFeedPosts = async (page: number, itemsPerPage: number = 10) => {
       hasMore: posts.length === itemsPerPage,
     };
   } catch (error) {
-    console.error("Error loading more feed posts:", error);
+    logger.error({ err: error, page, itemsPerPage }, "Error loading more feed posts");
     return {
       items: [],
       hasMore: false,
@@ -481,7 +482,7 @@ const loadMoreDraftPosts = async (page: number, itemsPerPage: number = 10) => {
       hasMore: drafts.length === itemsPerPage,
     };
   } catch (error) {
-    console.error("Error loading more draft posts:", error);
+    logger.error({ err: error, page, itemsPerPage }, "Error loading more draft posts");
     return {
       items: [],
       hasMore: false,
@@ -535,7 +536,7 @@ const loadMoreUserPosts = async (
       hasMore: posts.length === itemsPerPage,
     };
   } catch (error) {
-    console.error("Error loading more user posts:", error);
+    logger.error({ err: error, userId, page, itemsPerPage }, "Error loading more user posts");
     return {
       items: [],
       hasMore: false,
