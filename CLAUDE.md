@@ -153,9 +153,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Validates all required environment variables on startup
   - Type-safe environment variable access
   - Clear error messages for missing/invalid variables
-- **Rate Limiting**:
-  - ✅ AI story generation: 10 generations per day per user
-  - TODO: General API routes (feed, posts, goals, etc.)
+- **Rate Limiting**: ✅ Implemented for AI generation (OpenAI API)
+  - AI story generation: 10 generations per day per user
+  - Database-backed tracking: `User.dailyGenerationCount` + `User.lastGenerationDate`
+  - Atomic operations to prevent race conditions
+  - Automatic daily reset at midnight
+  - Note: Other endpoints (auth, posts, goals) intentionally unprotected for MVP phase
 
 ## Environment Variable Policy
 
