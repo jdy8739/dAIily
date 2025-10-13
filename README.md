@@ -105,12 +105,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
   └── api/               # API routes
 
 /features/               # Feature-Sliced Design modules
-  ├── auth/              # Authentication (login, signup, password reset)
+  ├── auth/              # Authentication (login, signup, password reset, email verification)
   ├── feed/              # Feed display and post creation
   ├── story/             # Story viewing and management
   ├── profile/           # User profile display
   ├── ai/                # AI story generation
-  └── goals/             # Goal tracking (WIP)
+  └── goals/             # Goal tracking (daily, weekly, monthly, quarterly, yearly)
 
 /components/             # Global shared UI components
   ├── atoms/             # Basic UI elements (buttons, inputs, etc.)
