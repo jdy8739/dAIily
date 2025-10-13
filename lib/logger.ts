@@ -25,6 +25,7 @@ const logger = pino({
             colorize: true,
             ignore: "pid,hostname",
             translateTime: "HH:MM:ss",
+            sync: true, // Use sync mode to avoid worker thread issues
           },
         }
       : undefined,

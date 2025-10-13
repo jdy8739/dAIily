@@ -17,6 +17,7 @@ const authOptions: NextAuthOptions = {
           name: data.name || "",
           image: data.image,
           emailVerified: data.emailVerified,
+          verified: true, // OAuth users are automatically verified
         },
       });
 

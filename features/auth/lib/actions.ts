@@ -13,8 +13,9 @@ import {
   createPasswordResetToken,
   deleteSession,
   clearSessionCookie,
+  createEmailVerificationToken,
 } from "../../../lib/auth";
-import { sendPasswordResetEmail } from "../../../lib/email";
+import { sendPasswordResetEmail, sendVerificationEmail } from "../../../lib/email";
 import {
   loginSchema,
   signupSchema,
@@ -55,6 +56,14 @@ const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
     );
     if (!isValidPassword) {
       return { error: "Invalid email or password" };
+    }
+
+    // Check if email is verified
+    if (!user.verified) {
+      return {
+        error: "Please verify your email before logging in. Check your inbox for the verification link.",
+        unverified: true
+      };
     }
 
     // Create session
@@ -105,13 +114,25 @@ const signupAction = async (
       },
     });
 
-    // TODO: Send verification email
+    // Generate and send verification email
+    if (user.email) {
+      try {
+        const verificationToken = await createEmailVerificationToken(user.email);
+        await sendVerificationEmail(user.email, verificationToken, user.name);
+        // logger.info({ email: user.email }, "Verification email sent");
+        console.log("Verification email sent to:", user.email);
+      } catch (emailError) {
+        // logger.error({ err: emailError, email: user.email }, "Failed to send verification email");
+        console.error("Failed to send verification email:", emailError);
+        // Don't fail signup if email fails - user can request resend later
+      }
+    }
   } catch (error) {
     logger.error({ err: error }, "Signup error");
     return { error: "Account creation failed. Please try again." };
   } finally {
     if (user) {
-      redirect("/login?message=Account created successfully. Please log in.");
+      redirect("/login?message=Account created successfully. Please check your email to verify your account.");
     }
   }
 };

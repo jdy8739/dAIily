@@ -197,6 +197,80 @@ const usePasswordResetToken = async (token: string): Promise<void> => {
   });
 };
 
+// Email verification utilities
+const generateEmailVerificationToken = (): string => {
+  return jwt.sign(
+    { type: "email_verification", timestamp: Date.now() },
+    SESSION_SECRET,
+    { expiresIn: "24h" }
+  );
+};
+
+const createEmailVerificationToken = async (
+  email: string
+): Promise<string> => {
+  const token = generateEmailVerificationToken();
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+  // Delete existing verification tokens for this email
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
+
+  await prisma.verificationToken.create({
+    data: {
+      identifier: email,
+      token,
+      expires,
+    },
+  });
+
+  return token;
+};
+
+const verifyEmailVerificationToken = async (token: string) => {
+  try {
+    const decoded = jwt.verify(token, SESSION_SECRET) as {
+      type: string;
+      timestamp: number;
+      iat: number;
+      exp: number;
+    };
+
+    if (decoded.type !== "email_verification") {
+      return null;
+    }
+
+    const verificationRecord = await prisma.verificationToken.findUnique({
+      where: { token },
+    });
+
+    if (!verificationRecord || verificationRecord.expires < new Date()) {
+      return null;
+    }
+
+    return verificationRecord;
+  } catch {
+    return null;
+  }
+};
+
+const markEmailAsVerified = async (email: string): Promise<void> => {
+  // Update user verification status
+  await prisma.user.update({
+    where: { email },
+    data: {
+      verified: true,
+      emailVerified: new Date(),
+    },
+  });
+
+  // Delete verification token after use
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
+};
+
 export {
   hashPassword,
   verifyPassword,
@@ -213,4 +287,7 @@ export {
   createPasswordResetToken,
   verifyPasswordResetToken,
   usePasswordResetToken,
+  createEmailVerificationToken,
+  verifyEmailVerificationToken,
+  markEmailAsVerified,
 };

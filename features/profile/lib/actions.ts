@@ -89,14 +89,34 @@ const deleteAccount = async () => {
       return { success: false, error: "Not authenticated" };
     }
 
-    // Delete user - cascade will automatically delete all posts, replies, likes, etc.
+    // Delete user - cascade will automatically delete all related data:
+    // - Sessions (onDelete: Cascade)
+    // - Posts, Replies, Likes (onDelete: Cascade)
+    // - Goals, Stories, PasswordResets (onDelete: Cascade)
+    // - Accounts (OAuth records) (onDelete: Cascade)
     await prisma.user.delete({
       where: { id: currentUser.id },
     });
 
-    // Clear session cookie
+    // Clear ALL session cookies (both custom and NextAuth)
     const cookieStore = await cookies();
+
+    // Custom session cookie (email/password auth)
     cookieStore.delete("session");
+
+    // NextAuth cookies (OAuth auth)
+    const nextAuthCookies = [
+      "next-auth.session-token",
+      "__Secure-next-auth.session-token",
+      "next-auth.csrf-token",
+      "__Secure-next-auth.csrf-token",
+      "next-auth.callback-url",
+      "__Secure-next-auth.callback-url",
+    ];
+
+    for (const cookieName of nextAuthCookies) {
+      cookieStore.delete(cookieName);
+    }
 
     return { success: true };
   } catch (error) {

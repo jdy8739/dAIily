@@ -37,4 +37,37 @@ const sendPasswordResetEmail = async (
   return data;
 };
 
-export { sendPasswordResetEmail };
+const sendVerificationEmail = async (
+  email: string,
+  verificationToken: string,
+  userName?: string | null
+) => {
+  const verificationUrl = `${env.NEXTAUTH_URL}/verify-email?token=${verificationToken}`;
+
+  const { data, error } = await resend.emails.send({
+    from: "dAIily <onboarding@resend.dev>",
+    to: email,
+    subject: "Verify Your Email - dAIily",
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Welcome to dAIily, ${userName || "there"}!</h2>
+        <p>Thank you for signing up. We're excited to have you on board!</p>
+        <p>To get started, please verify your email address by clicking the button below:</p>
+        <a href="${verificationUrl}" style="display: inline-block; background-color: #0070f3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 16px 0;">Verify Email</a>
+        <p>Or copy and paste this link into your browser:</p>
+        <p style="color: #666; font-size: 14px;">${verificationUrl}</p>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">This link will expire in 24 hours.</p>
+        <p style="color: #999; font-size: 12px;">If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    logger.error({ err: error, email }, "Failed to send verification email");
+    throw new Error("Failed to send verification email");
+  }
+
+  return data;
+};
+
+export { sendPasswordResetEmail, sendVerificationEmail };

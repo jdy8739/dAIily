@@ -21,6 +21,7 @@ interface LoginFormProps {
 const LoginForm = ({ csrfToken }: LoginFormProps) => {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isUnverified, setIsUnverified] = useState(false);
   const router = useRouter();
 
   const {
@@ -47,9 +48,13 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
               type: "server",
               message: result.error,
             });
+            setIsUnverified(false);
           } else {
             // Show general errors at the top
             setServerError(result.error);
+            // Check if user is unverified
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setIsUnverified((result as any).unverified === true);
           }
         } else {
           // Success - redirect client-side
@@ -57,6 +62,7 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
         }
       } catch (err) {
         setServerError("An unexpected error occurred. Please try again.");
+        setIsUnverified(false);
       } finally {
         setLoading(false);
       }
@@ -76,6 +82,14 @@ const LoginForm = ({ csrfToken }: LoginFormProps) => {
         {serverError && (
           <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
             <p className="text-sm text-warning font-medium">{serverError}</p>
+            {isUnverified && (
+              <Link
+                href="/resend-verification"
+                className="text-sm text-primary hover:text-primary/80 transition-colors mt-2 inline-block font-medium"
+              >
+                Resend verification email →
+              </Link>
+            )}
           </div>
         )}
 
