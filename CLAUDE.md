@@ -136,7 +136,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Security & Best Practices
 
-- **CSRF Protection**: Implemented for all auth Server Actions (login, signup, password reset)
+- **Email Verification**: Implemented for email/password signups
+  - JWT-based verification tokens with 24-hour expiration
+  - Users must verify email before logging in
+  - Resend verification email functionality
+  - OAuth users (Google/GitHub) auto-verified
+- **CSRF Protection**: Implemented for all auth Server Actions (login, signup, password reset, email verification)
   - CSRF tokens generated server-side and validated on submission
   - Stateless tokens with HMAC-SHA256 signature and 1-hour expiration
   - Timing-safe comparison to prevent timing attacks
@@ -144,8 +149,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Strict CSP headers for scripts, styles, images, frames
   - Additional security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy
   - Permissions-Policy to restrict camera, microphone, geolocation
-- **Environment Validation**: Validate all env vars with Zod schemas (TODO)
-- **Rate Limiting**: Add rate limiting to API routes (TODO)
+- **Environment Validation**: ✅ Implemented with Zod schemas (lib/env.ts)
+  - Validates all required environment variables on startup
+  - Type-safe environment variable access
+  - Clear error messages for missing/invalid variables
+- **Rate Limiting**:
+  - ✅ AI story generation: 10 generations per day per user
+  - TODO: General API routes (feed, posts, goals, etc.)
 
 ## Environment Variable Policy
 
