@@ -42,7 +42,8 @@ Internet → AWS EC2 Instance
    - Clone repository
    - Configure environment variables
    - Build Docker images
-   - Run database migrations
+   - Run Prisma migrations: `docker compose run --rm app npx prisma migrate deploy`
+   - (Optional) Seed database: `docker compose run --rm app npx prisma db seed`
 
 4. **Web Server Configuration**
    - Configure Nginx reverse proxy
@@ -51,19 +52,30 @@ Internet → AWS EC2 Instance
 
 ### Update Process
 
-1. Pull latest code
+1. Pull latest code: `git pull origin main`
 2. Rebuild containers: `docker compose up -d --build`
-3. Run migrations if needed
-4. Verify deployment
+3. Run Prisma migrations (if schema changed): `docker compose run --rm app npx prisma migrate deploy`
+4. Verify deployment: `docker compose ps` and check logs
 
 ## Key Components
 
 ### Dockerfile
 Multi-stage build:
-- Dependencies installation
-- Prisma generation
-- Next.js build (standalone output)
-- Minimal production runtime
+- Dependencies installation (`npm ci`)
+- Prisma Client generation (`npx prisma generate`)
+- Next.js build with standalone output (`next build`)
+- Minimal production runtime (Node.js Alpine)
+- Copy Prisma schema and generated client to runtime
+
+**Important Prisma Steps:**
+```dockerfile
+# Build stage
+RUN npx prisma generate
+
+# Runtime stage
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+```
 
 ### docker-compose.yml
 Services:
@@ -84,12 +96,109 @@ Required:
 - OAuth credentials (Google, GitHub)
 - API keys (OpenAI, Resend)
 
+## Database & Prisma Setup
+
+### Initial Database Setup
+
+1. **Start PostgreSQL container:**
+   ```bash
+   docker compose up -d db
+   ```
+
+2. **Run migrations to create tables:**
+   ```bash
+   docker compose run --rm app npx prisma migrate deploy
+   ```
+
+3. **Verify database connection:**
+   ```bash
+   docker compose exec db psql -U postgres -d daiily -c "\dt"
+   ```
+
+4. **(Optional) Seed initial data:**
+   ```bash
+   docker compose run --rm app npx prisma db seed
+   ```
+
+### Database Operations
+
+**View database:**
+```bash
+docker compose exec db psql -U postgres -d daiily
+```
+
+**Run new migrations (after schema changes):**
+```bash
+docker compose run --rm app npx prisma migrate deploy
+```
+
+**Reset database (DESTRUCTIVE - deletes all data):**
+```bash
+docker compose run --rm app npx prisma migrate reset --force
+```
+
+**Backup database:**
+```bash
+docker compose exec db pg_dump -U postgres daiily > backup_$(date +%Y%m%d_%H%M%S).sql
+```
+
+**Restore database:**
+```bash
+cat backup.sql | docker compose exec -T db psql -U postgres -d daiily
+```
+
+### Prisma Client
+
+The Prisma Client is generated during Docker build and must be included in the runtime container. If you see "Cannot find module '@prisma/client'" errors, ensure:
+
+1. `npx prisma generate` runs in the Dockerfile build stage
+2. Both `/app/prisma` and `/app/node_modules/.prisma` are copied to the runtime stage
+3. The `DATABASE_URL` environment variable is set correctly in production
+
 ## Maintenance
 
-- **Backups**: Daily PostgreSQL dumps via cron
-- **Logs**: Docker logs + Nginx logs
-- **Updates**: Git pull + container rebuild
-- **SSL**: Auto-renewal via Certbot
+### Automated Backups
+
+Setup daily PostgreSQL backups with cron:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add daily backup at 2 AM
+0 2 * * * cd /path/to/daiily && docker compose exec -T db pg_dump -U postgres daiily | gzip > /backups/daiily_$(date +\%Y\%m\%d).sql.gz
+```
+
+### Monitoring
+
+- **Application Logs**: `docker compose logs -f app`
+- **Database Logs**: `docker compose logs -f db`
+- **Nginx Logs**: `tail -f /var/log/nginx/access.log /var/log/nginx/error.log`
+- **Container Status**: `docker compose ps`
+
+### Updates
+
+```bash
+# Pull latest code
+git pull origin main
+
+# Rebuild and restart containers
+docker compose up -d --build
+
+# Run migrations if schema changed
+docker compose run --rm app npx prisma migrate deploy
+
+# Verify
+docker compose ps
+docker compose logs -f app
+```
+
+### SSL Certificate Renewal
+
+Certbot auto-renews certificates. Verify renewal:
+```bash
+sudo certbot renew --dry-run
+```
 
 ## Why This Setup?
 
