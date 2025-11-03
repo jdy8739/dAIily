@@ -154,5 +154,3 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
-
-export { calculateDeadline };
