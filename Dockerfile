@@ -35,8 +35,12 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy public directory
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Handle public directory
+RUN mkdir -p ./public /tmp/builder-public
+RUN --mount=from=builder,source=/app,target=/mnt/app,rw \
+    if [ -d "/mnt/app/public" ] && [ "$(ls -A /mnt/app/public 2>/dev/null)" ]; then \
+        cp -r /mnt/app/public/* ./public/; \
+    fi
 
 # Copy Prisma files
 COPY --from=builder /app/prisma ./prisma
