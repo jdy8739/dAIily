@@ -17,7 +17,7 @@ const cspHeader = `
   .replace(/\s{2,}/g, " ")
   .trim();
 
-const middleware = (request: NextRequest) => {
+const middleware = (_request: NextRequest) => {
   const response = NextResponse.next();
 
   // Add CSP header
