@@ -17,6 +17,7 @@ const cspHeader = `
   .replace(/\s{2,}/g, " ")
   .trim();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const middleware = (_request: NextRequest) => {
   const response = NextResponse.next();
 
