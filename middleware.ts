@@ -15,7 +15,6 @@ const cspHeader = `
   frame-ancestors 'none';
   frame-src 'self' https://accounts.google.com;
   connect-src 'self' https://accounts.google.com;
-  ${!isDevelopment ? "upgrade-insecure-requests;" : ""}
 `
   .replace(/\s{2,}/g, " ")
   .trim();
