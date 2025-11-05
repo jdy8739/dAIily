@@ -89,6 +89,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 - `npm run db:studio` - Open Prisma Studio GUI
 - `npm run db:seed` - Seed database with test data
 
+## Deployment
+
+The application is deployed at **https://daiily.site** using Docker and nginx.
+
+For detailed deployment instructions, environment setup, and infrastructure configuration, see [DEPLOY.md](./DEPLOY.md).
+
 ## Project Structure
 
 ```

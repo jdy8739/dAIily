@@ -1,339 +1,361 @@
-# Deployment Strategy
+# Deployment Guide
 
-## Overview
+This document outlines the deployment infrastructure and procedures for Daiily.
 
-Production deployment using **AWS EC2 + Docker Compose + Nginx** for containerized application with traditional reverse proxy.
+**Live Site:** https://daiily.site
 
-## Architecture
+## Architecture Overview
+
+The application is containerized with Docker and orchestrated using Docker Compose. The production stack consists of three main services:
 
 ```
-Internet → AWS EC2 Instance
-            ├── Nginx (Host) - SSL Termination
-            └── Docker Compose Network
-                  ├── Next.js App Container
-                  └── PostgreSQL Container
+┌─────────────────────────────────────────────────────────────┐
+│                     Client (HTTPS)                           │
+│                   https://daiily.site                        │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         │     Nginx Reverse Proxy       │
+         │   Port 80 → 443 (SSL/TLS)     │
+         └───────────────┬───────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         │   Next.js App Container       │
+         │    Port 3000 (Internal)       │
+         └───────────────┬───────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         │  PostgreSQL Database          │
+         │   Port 5432 (Internal)        │
+         └───────────────────────────────┘
 ```
 
-**Tech Stack:**
-- **Infrastructure**: AWS EC2 (Ubuntu 22.04 LTS)
-- **Application**: Next.js 15 in Docker container (Node.js 20 Alpine)
-- **Database**: PostgreSQL 16 in Docker container
-- **Reverse Proxy**: Nginx on host (SSL termination)
-- **SSL**: Let's Encrypt via Certbot
+## Services
 
-## Deployment Flow
+### 1. **App Service** (Next.js)
+- **Image**: Built from local Dockerfile
+- **Environment**: Production (NODE_ENV=production)
+- **Port**: 3000 (internal only, exposed via nginx)
+- **Startup**: Automatic database migrations via entrypoint script
+- **Restart Policy**: unless-stopped
+
+### 2. **Nginx Service** (Reverse Proxy)
+- **Image**: nginx:alpine
+- **Ports**:
+  - 80 (HTTP → HTTPS redirect)
+  - 443 (HTTPS with SSL/TLS)
+- **Configuration**: ./nginx.conf
+- **SSL Certificates**: ./ssl/cert.pem and ./ssl/key.pem
+- **Restart Policy**: unless-stopped
+
+### 3. **Database Service** (PostgreSQL)
+- **Image**: postgres:16-alpine
+- **Port**: 5432 (internal only)
+- **Version**: PostgreSQL 16
+- **Data**: Persistent volume (postgres_data)
+- **Health Checks**: Automatic with pg_isready
+- **Restart Policy**: unless-stopped
+
+## Prerequisites
+
+### Server Requirements
+- Docker and Docker Compose installed
+- Domain name with DNS configured
+- SSL certificates (self-signed or from certificate authority)
+- At least 2GB RAM, 20GB storage
+
+### Environment Setup
+Your EC2 instance needs the following directory structure:
+
+```
+/path/to/daiily/
+├── docker-compose.prod.yml
+├── Dockerfile
+├── entrypoint.sh
+├── nginx.conf
+├── ssl/
+│   ├── cert.pem          # SSL certificate
+│   └── key.pem           # SSL private key
+├── .env                  # Environment variables (not in git)
+├── src/
+├── prisma/
+└── ...
+```
+
+## Environment Variables
+
+Create a `.env` file on your server with the following variables:
+
+```env
+# Database
+POSTGRES_PASSWORD=your-secure-password
+
+# NextAuth Configuration
+NEXTAUTH_SECRET=your-secure-nextauth-secret
+JWT_SECRET=your-secure-jwt-secret
+SESSION_SECRET=your-secure-session-secret
+NEXTAUTH_URL=https://daiily.site
+
+# OAuth Providers
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Security
+CSRF_SECRET=your-csrf-secret
+
+# External Services
+OPENAI_API_KEY=your-openai-api-key
+RESEND_API_KEY=your-resend-api-key
+```
+
+### Important Notes
+- **Never commit `.env` to version control**
+- Use strong, unique secrets (minimum 32 characters)
+- For OAuth providers:
+  - Configure redirect URIs in Google Cloud Console: `https://daiily.site/api/auth/callback/google`
+  - Configure redirect URIs in GitHub: `https://daiily.site/api/auth/callback/github`
+- SSL certificates must match the domain name
+
+## Deployment Steps
 
 ### Initial Setup
 
-1. **AWS EC2 Setup**
-   - Launch EC2 instance (t3.micro recommended)
-   - Ubuntu 22.04 LTS AMI
-   - Configure Security Groups (SSH:22, HTTP:80, HTTPS:443)
-   - Attach Elastic IP for static IP address
-   - Setup SSH key pair authentication
-   - Create non-root user with sudo privileges
-
-2. **Install Dependencies**
-   - Docker & Docker Compose
-   - Nginx
-   - Certbot
-
-3. **Application Setup**
-   - Clone repository
-   - Copy `.env` file from local to EC2 (contains all required variables)
-   - Verify `.env` exists before proceeding
-   - Build Docker images
-   - Run Prisma migrations: `docker compose run --rm app npx prisma migrate deploy`
-   - (Optional) Seed database: `docker compose run --rm app npx prisma db seed`
-
-4. **Web Server Configuration**
-   - Install Nginx: `sudo apt install nginx`
-   - Configure Nginx reverse proxy (see [nginx.conf](./nginx.conf))
-   - Obtain SSL certificate with Certbot
-   - Enable HTTPS redirect
-   - Restart Nginx: `sudo systemctl restart nginx`
-
-### Update Process
-
-1. Pull latest code: `git pull origin main`
-2. Rebuild containers: `docker compose up -d --build` (automatically loads `.env`)
-3. Run Prisma migrations (if schema changed): `docker compose run --rm app npx prisma migrate deploy`
-4. Verify deployment: `docker compose ps` and check logs
-
-## Key Components
-
-### Dockerfile
-Multi-stage build with security best practices:
-
-**Build Stage:**
-- Dependencies installation (`npm ci`)
-- Prisma Client generation (`npx prisma generate`)
-- Next.js build with standalone output (`next build`)
-
-**Runtime Stage (Node.js 20 Alpine):**
-- Install `wget` for Docker health checks
-- Create non-root `nodejs` user (UID 1001) for security
-- Copy Prisma schema and generated client
-- Run container as `nextjs` user (no root access)
-
-**Important Prisma Steps:**
-```dockerfile
-# Build stage
-RUN npx prisma generate
-
-# Runtime stage
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-
-# Security: Run as non-root user
-USER nextjs
-```
-
-**Docker Compose Configuration:**
-- Service includes health checks (wget-based ping every 30 seconds)
-- Automatic restart unless stopped
-- Environment: `NODE_ENV=production` (required for Next.js optimization)
-
-### docker-compose.yml
-Services:
-- Next.js app (port 3000)
-- PostgreSQL (port 5432)
-- Persistent volume for database
-
-### Nginx Configuration
-
-Template available in [nginx.conf](./nginx.conf)
-
-**Setup Steps:**
-```bash
-# 1. Copy template config
-sudo cp ~/daiily/docs/nginx.conf /etc/nginx/sites-available/daiily
-
-# 2. Edit config with your domain
-sudo nano /etc/nginx/sites-available/daiily
-# Replace "yourdomain.com" with your actual domain
-
-# 3. Enable site
-sudo ln -s /etc/nginx/sites-available/daiily /etc/nginx/sites-enabled/daiily
-
-# 4. Remove default site
-sudo rm /etc/nginx/sites-enabled/default
-
-# 5. Test Nginx config
-sudo nginx -t
-
-# 6. Restart Nginx
-sudo systemctl restart nginx
-
-# 7. Get SSL certificate (Let's Encrypt)
-sudo apt install certbot python3-certbot-nginx
-sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
-
-# 8. Restart Nginx again (now with SSL)
-sudo systemctl restart nginx
-```
-
-**Features:**
-- SSL/TLS termination (HTTPS)
-- Reverse proxy to Docker container on localhost:3000
-- Static asset caching for Next.js
-- Security headers (HSTS, X-Frame-Options, CSP)
-- Gzip compression
-- HTTP → HTTPS redirect
-
-### Environment Variables
-
-Your `.env` file contains all required variables and is protected by `.gitignore`. When deploying to EC2:
-
-**Copy `.env` to EC2:**
-```bash
-scp .env ubuntu@your-ec2-ip:/home/ubuntu/daiily/
-```
-
-**Verify your `.env` contains:**
-
-**Database:**
-```
-DATABASE_URL=postgresql://jeongdoyeong@localhost:5432/daiily
-POSTGRES_PASSWORD=your_secure_password
-```
-
-**Authentication & Security:**
-```
-NEXTAUTH_SECRET=your-nextauth-secret
-NEXTAUTH_URL=https://yourdomain.com
-CSRF_SECRET=your_csrf_secret
-```
-
-**OAuth Providers:**
-```
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GITHUB_CLIENT_ID=your_github_id
-GITHUB_CLIENT_SECRET=your_github_secret
-```
-
-**External APIs:**
-```
-OPENAI_API_KEY=your_openai_key
-RESEND_API_KEY=your_resend_key
-```
-
-**Notes:**
-- `docker-compose.yml` loads all variables from `.env` via `env_file` directive
-- `docker-compose.yml` automatically sets `NODE_ENV=production` for Next.js optimization
-- `POSTGRES_PASSWORD` is used by both the app and database service initialization
-- `.env` is protected by `.gitignore` - never committed to git
-
-## Database & Prisma Setup
-
-### Initial Database Setup
-
-1. **Start PostgreSQL container:**
+1. **Clone the repository**:
    ```bash
-   docker compose up -d db
+   git clone <repo-url> /path/to/daiily
+   cd /path/to/daiily
    ```
 
-2. **Run migrations to create tables:**
+2. **Create SSL directory and certificates**:
    ```bash
-   docker compose run --rm app npx prisma migrate deploy
+   mkdir -p ssl
+   # Copy your SSL certificate and key files
+   # Or generate self-signed certificates:
+   openssl req -x509 -newkey rsa:4096 -nodes -out ssl/cert.pem -keyout ssl/key.pem -days 365
    ```
 
-3. **Verify database connection:**
+3. **Create and configure .env file**:
    ```bash
-   docker compose exec db psql -U postgres -d daiily -c "\dt"
+   cat > .env << 'EOF'
+   POSTGRES_PASSWORD=your-secure-password
+   NEXTAUTH_SECRET=your-secure-nextauth-secret
+   JWT_SECRET=your-secure-jwt-secret
+   SESSION_SECRET=your-secure-session-secret
+   NEXTAUTH_URL=https://daiily.site
+   GOOGLE_CLIENT_ID=...
+   GOOGLE_CLIENT_SECRET=...
+   GITHUB_CLIENT_ID=...
+   GITHUB_CLIENT_SECRET=...
+   CSRF_SECRET=...
+   OPENAI_API_KEY=...
+   RESEND_API_KEY=...
+   EOF
    ```
 
-4. **(Optional) Seed initial data:**
+4. **Start the application**:
    ```bash
-   docker compose run --rm app npx prisma db seed
+   docker-compose -f docker-compose.prod.yml up -d
    ```
 
-### Database Operations
+5. **Verify services are running**:
+   ```bash
+   docker-compose -f docker-compose.prod.yml ps
+   ```
 
-**View database:**
+### Updating the Application
+
+1. **Pull latest changes**:
+   ```bash
+   git pull origin main
+   ```
+
+2. **Rebuild and restart services**:
+   ```bash
+   docker-compose -f docker-compose.prod.yml down
+   docker-compose -f docker-compose.prod.yml up -d --build
+   ```
+
+The entrypoint script will automatically run database migrations.
+
+## Database Management
+
+### Automatic Migrations
+Database schema migrations run automatically on container startup via the entrypoint script:
 ```bash
-docker compose exec db psql -U postgres -d daiily
+npx prisma db push --skip-generate
 ```
 
-**Run new migrations (after schema changes):**
+### Manual Database Operations
+
+**Connect to PostgreSQL**:
 ```bash
-docker compose run --rm app npx prisma migrate deploy
+docker-compose -f docker-compose.prod.yml exec db psql -U postgres -d daiily
 ```
 
-**Reset database (DESTRUCTIVE - deletes all data):**
+**View database logs**:
 ```bash
-docker compose run --rm app npx prisma migrate reset --force
+docker-compose -f docker-compose.prod.yml logs db
 ```
 
-**Backup database:**
+**Backup database**:
 ```bash
-docker compose exec db pg_dump -U postgres daiily > backup_$(date +%Y%m%d_%H%M%S).sql
+docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backup.sql
 ```
 
-**Restore database:**
+**Restore database**:
 ```bash
-cat backup.sql | docker compose exec -T db psql -U postgres -d daiily
+docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < backup.sql
 ```
 
-### Prisma Client
+## Monitoring & Troubleshooting
 
-The Prisma Client is generated during Docker build and must be included in the runtime container. If you see "Cannot find module '@prisma/client'" errors, ensure:
+### View Logs
 
-1. `npx prisma generate` runs in the Dockerfile build stage
-2. Both `/app/prisma` and `/app/node_modules/.prisma` are copied to the runtime stage
-3. The `DATABASE_URL` environment variable is set correctly in production
-
-## Monitoring & Health Checks
-
-Both services have health checks configured in `docker-compose.yml`:
-
-**Application Container:**
-- Health check: HTTP GET to `http://localhost:3000/`
-- Interval: Every 30 seconds
-- Timeout: 10 seconds
-- Retries: 3 failures before unhealthy
-- Start period: 40 seconds (allows startup time)
-
-**Database Container:**
-- Health check: `pg_isready` command
-- Interval: Every 10 seconds
-- Timeout: 5 seconds
-- Retries: 5 failures before unhealthy
-- Start period: 10 seconds
-
-**Verify Health:**
+**All services**:
 ```bash
-docker compose ps  # Shows health status
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-Output should show:
+**App service only**:
+```bash
+docker-compose -f docker-compose.prod.yml logs -f app
 ```
-STATUS           PORTS
-Up 5 minutes (healthy)  0.0.0.0:3000->3000/tcp
-Up 5 minutes (healthy)  5432/tcp
+
+**Database service only**:
+```bash
+docker-compose -f docker-compose.prod.yml logs -f db
 ```
+
+**Nginx service only**:
+```bash
+docker-compose -f docker-compose.prod.yml logs -f nginx
+```
+
+### Common Issues
+
+**Issue: Account creation fails with "The table `public.users` does not exist"**
+- The database migrations haven't run
+- Check app logs: `docker-compose -f docker-compose.prod.yml logs app`
+- Verify the database container is healthy and accepting connections
+- Restart the app container: `docker-compose -f docker-compose.prod.yml restart app`
+
+**Issue: SSL certificate errors**
+- Verify SSL files exist at `./ssl/cert.pem` and `./ssl/key.pem`
+- Check nginx logs: `docker-compose -f docker-compose.prod.yml logs nginx`
+- For self-signed certificates, add to your OAuth provider's allowed domains
+
+**Issue: OAuth redirects to wrong URL**
+- Ensure `NEXTAUTH_URL` is set to your production domain
+- Verify OAuth provider redirect URIs match exactly
+- Restart app service: `docker-compose -f docker-compose.prod.yml restart app`
+
+**Issue: Database connection refused**
+- Check database container is running: `docker-compose -f docker-compose.prod.yml ps`
+- Verify `POSTGRES_PASSWORD` matches in .env and docker-compose.prod.yml
+- Check database logs: `docker-compose -f docker-compose.prod.yml logs db`
+
+### Health Checks
+
+The database service includes automatic health checks:
+```bash
+docker-compose -f docker-compose.prod.yml ps
+```
+
+Look for healthy status on the `db` service.
+
+## Performance Optimization
+
+### Image Optimization
+- Next.js images are optimized via `next/image`
+- PNG/JPEG compression is handled automatically
+
+### Database Performance
+- PostgreSQL 16-alpine provides efficient resource usage
+- Indexes are created via Prisma schema
+- Connection pooling can be configured in DATABASE_URL if needed
+
+### Caching
+- Next.js static optimization
+- Browser caching via nginx headers
+- Tailwind CSS v4 produces minimal CSS bundle
+
+## Security Considerations
+
+1. **HTTPS Only**: All traffic is redirected from HTTP to HTTPS via nginx
+2. **Environment Variables**: Sensitive data is never committed to version control
+3. **Database Isolation**: PostgreSQL runs in internal network, not exposed to the internet
+4. **Session Security**: JWT-based sessions with secure cookies
+5. **CSRF Protection**: Custom HMAC-SHA256 tokens for auth actions
+6. **Content Security Policy**: Implemented via Next.js middleware
+
+## Scaling & Advanced Deployment
+
+For production at scale, consider:
+
+1. **Reverse Proxy Load Balancing**: Use AWS Load Balancer or similar
+2. **Database Replication**: Set up PostgreSQL streaming replication
+3. **Container Orchestration**: Migrate to Kubernetes for multi-instance deployments
+4. **CDN Integration**: CloudFront or similar for static assets
+5. **Monitoring**: Prometheus + Grafana for metrics
+6. **Log Aggregation**: ELK stack or CloudWatch for centralized logging
 
 ## Maintenance
 
-### Automated Backups
+### Regular Tasks
 
-Setup daily PostgreSQL backups with cron:
+**Daily**:
+- Monitor application logs for errors
+- Check health of services
 
-```bash
-# Edit crontab
-crontab -e
+**Weekly**:
+- Review performance metrics
+- Check for available updates to Docker base images
 
-# Add daily backup at 2 AM
-0 2 * * * cd /path/to/daiily && docker compose exec -T db pg_dump -U postgres daiily | gzip > /backups/daiily_$(date +\%Y\%m\%d).sql.gz
-```
-
-### Monitoring
-
-- **Application Logs**: `docker compose logs -f app`
-- **Database Logs**: `docker compose logs -f db`
-- **Nginx Logs**: `tail -f /var/log/nginx/access.log /var/log/nginx/error.log`
-- **Container Status**: `docker compose ps`
+**Monthly**:
+- Backup database
+- Review security logs
+- Test disaster recovery procedures
 
 ### Updates
 
+To update the application with new code:
+
 ```bash
-# Pull latest code
+cd /path/to/daiily
 git pull origin main
-
-# Rebuild and restart containers (uses .env)
-docker compose up -d --build
-
-# Run migrations if schema changed
-docker compose run --rm app npx prisma migrate deploy
-
-# Verify
-docker compose ps  # Check health status
-docker compose logs -f app
+docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-**Note:** The docker-compose.yml already loads `.env` via `env_file` directive, so all environment variables (database, auth, API keys) are automatically available to containers.
+The entrypoint script handles all database migrations automatically.
 
-### SSL Certificate Renewal
+## Rollback Procedures
 
-Certbot auto-renews certificates. Verify renewal:
-```bash
-sudo certbot renew --dry-run
-```
+If a deployment causes issues:
 
-## Why This Setup?
+1. **Identify the problematic commit**:
+   ```bash
+   git log --oneline -5
+   ```
 
-**Pros:**
-- Industry-standard production stack (AWS + Docker + Nginx)
-- AWS free tier eligible (750 hours/month for 12 months)
-- Docker containers provide isolation and consistency
-- Nginx on host simplifies SSL management
-- Full control over infrastructure
-- Easy to scale (upgrade EC2 instance, migrate to ECS/EKS later)
-- Learning DevOps and cloud fundamentals
+2. **Revert to previous commit**:
+   ```bash
+   git revert HEAD
+   git push origin main
+   ```
 
-**Cons:**
-- More manual setup than PaaS (Vercel, Railway)
-- Requires server maintenance and monitoring
-- Need to manage security updates
-- AWS costs after free tier (~$10-15/month for t3.micro)
+3. **Redeploy**:
+   ```bash
+   docker-compose -f docker-compose.prod.yml down
+   docker-compose -f docker-compose.prod.yml up -d --build
+   ```
+
+## References
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Nginx Documentation](https://nginx.org/en/docs/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
