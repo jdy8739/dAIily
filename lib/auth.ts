@@ -108,7 +108,13 @@ const getSessionFromCookie = async () => {
 
 const clearSessionCookie = async (): Promise<void> => {
   const cookieStore = await cookies();
-  cookieStore.delete("session");
+  cookieStore.set("session", "", {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/",
+  });
 };
 
 // Current user helper

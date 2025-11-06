@@ -264,17 +264,24 @@ const logoutAction = async () => {
     }
 
     // Clear NextAuth cookies (for OAuth users)
+    // Must match the original cookie attributes to properly delete secure cookies
     const nextAuthCookies = [
-      "next-auth.session-token",
-      "__Secure-next-auth.session-token",
-      "next-auth.csrf-token",
-      "__Secure-next-auth.csrf-token",
-      "next-auth.callback-url",
-      "__Secure-next-auth.callback-url",
+      { name: "next-auth.session-token", secure: false },
+      { name: "__Secure-next-auth.session-token", secure: true },
+      { name: "next-auth.csrf-token", secure: false },
+      { name: "__Secure-next-auth.csrf-token", secure: true },
+      { name: "next-auth.callback-url", secure: false },
+      { name: "__Secure-next-auth.callback-url", secure: true },
     ];
 
-    for (const cookieName of nextAuthCookies) {
-      cookieStore.delete(cookieName);
+    for (const cookie of nextAuthCookies) {
+      cookieStore.set(cookie.name, "", {
+        httpOnly: true,
+        secure: cookie.secure,
+        sameSite: "lax",
+        maxAge: 0,
+        path: "/",
+      });
     }
 
     redirect("/login");
