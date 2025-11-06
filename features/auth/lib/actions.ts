@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { prisma } from "../../../lib/prisma";
 import { validateCsrf } from "../../../lib/csrf-middleware";
 import { logger } from "../../../lib/logger";
+import { env } from "../../../lib/env";
 import {
   hashPassword,
   verifyPassword,
@@ -26,6 +27,7 @@ import {
   type PasswordResetFormData,
   type NewPasswordFormData,
 } from "../schemas";
+import { signOut } from "next-auth/react";
 import { User } from "next-auth";
 
 const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
@@ -256,6 +258,7 @@ const logoutAction = async () => {
   try {
     // Clear custom session (for email/password users)
     const cookieStore = await cookies();
+    // Use custom cookie name for email/password sessions
     const sessionToken = cookieStore.get("session")?.value;
 
     if (sessionToken) {
@@ -263,26 +266,9 @@ const logoutAction = async () => {
       await clearSessionCookie();
     }
 
-    // Clear NextAuth cookies (for OAuth users)
-    // Must match the original cookie attributes to properly delete secure cookies
-    const nextAuthCookies = [
-      { name: "next-auth.session-token", secure: false },
-      { name: "__Secure-next-auth.session-token", secure: true },
-      { name: "next-auth.csrf-token", secure: false },
-      { name: "__Secure-next-auth.csrf-token", secure: true },
-      { name: "next-auth.callback-url", secure: false },
-      { name: "__Secure-next-auth.callback-url", secure: true },
-    ];
-
-    for (const cookie of nextAuthCookies) {
-      cookieStore.set(cookie.name, "", {
-        httpOnly: true,
-        secure: cookie.secure,
-        sameSite: "lax",
-        maxAge: 0,
-        path: "/",
-      });
-    }
+    // Use NextAuth's signOut to properly handle OAuth logout and cookie cleanup
+    // This is the proper way to sign out and let NextAuth manage its cookies
+    await signOut({ redirect: false });
 
     redirect("/login");
   } catch (error) {

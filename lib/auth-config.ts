@@ -42,6 +42,7 @@ const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   pages: {
     signIn: "/login",
@@ -79,10 +80,28 @@ const authOptions: NextAuthOptions = {
 
       return true;
     },
+    async signOut() {
+      // NextAuth will handle cookie cleanup automatically
+      // This callback allows us to perform any additional cleanup if needed
+      return true;
+    },
   },
   events: {
     async signIn() {
       // Optional: Add any post sign-in logic here
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: env.NODE_ENV === "production"
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: env.NODE_ENV === "production",
+      },
     },
   },
 };

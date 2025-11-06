@@ -82,7 +82,11 @@ const deleteSession = async (token: string): Promise<void> => {
 // Cookie utilities
 const setSessionCookie = async (token: string): Promise<void> => {
   const cookieStore = await cookies();
-  cookieStore.set("session", token, {
+  // Use custom cookie name for email/password sessions (separate from NextAuth)
+  // This prevents conflicts with NextAuth's JWT encryption
+  const cookieName = "session";
+
+  cookieStore.set(cookieName, token, {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "lax",
@@ -94,7 +98,9 @@ const setSessionCookie = async (token: string): Promise<void> => {
 const getSessionFromCookie = async () => {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get("session")?.value;
+    // Use custom cookie name for email/password sessions
+    const cookieName = "session";
+    const sessionToken = cookieStore.get(cookieName)?.value;
 
     if (!sessionToken) {
       return null;
@@ -108,7 +114,10 @@ const getSessionFromCookie = async () => {
 
 const clearSessionCookie = async (): Promise<void> => {
   const cookieStore = await cookies();
-  cookieStore.set("session", "", {
+  // Clear custom session cookie for email/password users
+  const cookieName = "session";
+
+  cookieStore.set(cookieName, "", {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "lax",
