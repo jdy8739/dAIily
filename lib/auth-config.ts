@@ -80,11 +80,6 @@ const authOptions: NextAuthOptions = {
 
       return true;
     },
-    async signOut() {
-      // NextAuth will handle cookie cleanup automatically
-      // This callback allows us to perform any additional cleanup if needed
-      return true;
-    },
   },
   events: {
     async signIn() {
