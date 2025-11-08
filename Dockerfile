@@ -7,9 +7,9 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# 프로덕션 의존성만 설치 (이미지 크기 최소화)
+# 전체 의존성 설치 (빌드 시 필요)
 # --no-audit, --no-fund로 불필요한 네트워크 요청 제거
-RUN npm ci --only=production --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 
 # Generate Prisma client
 RUN npx prisma generate
