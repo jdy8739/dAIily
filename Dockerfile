@@ -7,8 +7,9 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install dependencies
-RUN npm ci
+# 프로덕션 의존성만 설치 (이미지 크기 최소화)
+# --no-audit, --no-fund로 불필요한 네트워크 요청 제거
+RUN npm ci --only=production --no-audit --no-fund
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -24,7 +25,7 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Install wget for health checks
+# 헬스체크용 wget만 설치 (최소한의 패키지)
 RUN apk add --no-cache wget
 
 # Create non-root user
@@ -56,5 +57,7 @@ EXPOSE 3000
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
+# Node.js 힙 메모리 300MB로 제한 (t3.micro 1GB RAM에 맞춤)
+ENV NODE_OPTIONS="--max-old-space-size=300"
 
 CMD ["/app/entrypoint.sh"]
