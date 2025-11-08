@@ -33,20 +33,30 @@ The application is containerized with Docker and orchestrated using Docker Compo
 ## Services
 
 ### 1. **App Service** (Next.js)
-- **Image**: Built from local Dockerfile
+- **Image**: Built from local Dockerfile (multi-stage, Alpine-based)
 - **Environment**: Production (NODE_ENV=production)
 - **Port**: 3000 (internal only, exposed via nginx)
 - **Startup**: Automatic database migrations via entrypoint script
 - **Restart Policy**: unless-stopped
+- **Resource Limits** (t3.micro optimized):
+  - Memory limit: 400MB, reservation: 200MB
+  - CPU limit: 0.5, reservation: 0.25
+- **Heap Memory**: Limited to 300MB via NODE_OPTIONS
 
 ### 2. **Nginx Service** (Reverse Proxy)
 - **Image**: nginx:alpine
 - **Ports**:
   - 80 (HTTP → HTTPS redirect)
   - 443 (HTTPS with SSL/TLS)
-- **Configuration**: ./nginx.conf
+- **Configuration**: ./nginx.conf (optimized for t3.micro)
 - **SSL Certificates**: ./ssl/cert.pem and ./ssl/key.pem
 - **Restart Policy**: unless-stopped
+- **Resource Limits**:
+  - Memory limit: 50MB, reservation: 20MB
+  - CPU limit: 0.2, reservation: 0.1
+- **Worker Connections**: 256 (reduced from 1024)
+- **Gzip Compression**: Enabled (30-70% bandwidth savings)
+- **Static Asset Caching**: 1-year browser cache for static files
 
 ### 3. **Database Service** (PostgreSQL)
 - **Image**: postgres:16-alpine
@@ -55,6 +65,15 @@ The application is containerized with Docker and orchestrated using Docker Compo
 - **Data**: Persistent volume (postgres_data)
 - **Health Checks**: Automatic with pg_isready
 - **Restart Policy**: unless-stopped
+- **Resource Limits**:
+  - Memory limit: 200MB, reservation: 100MB
+  - CPU limit: 0.3, reservation: 0.1
+- **Optimizations**:
+  - shared_buffers: 32MB (t3.micro optimized)
+  - effective_cache_size: 128MB
+  - work_mem: 2MB
+  - maintenance_work_mem: 16MB
+  - max_connections: 20 (reduced from default)
 
 ## Prerequisites
 
@@ -62,7 +81,10 @@ The application is containerized with Docker and orchestrated using Docker Compo
 - Docker and Docker Compose installed
 - Domain name with DNS configured
 - SSL certificates (self-signed or from certificate authority)
-- At least 2GB RAM, 20GB storage
+- **Minimum**: AWS t3.micro (1GB RAM, 1 vCPU) or equivalent
+  - Supports ~10-20 concurrent users with current optimizations
+  - For higher traffic, upgrade to t3.small or larger
+- Minimum 20GB storage for data persistence
 
 ### Environment Setup
 Your EC2 instance needs the following directory structure:
@@ -187,6 +209,13 @@ Database schema migrations run automatically on container startup via the entryp
 npx prisma db push --skip-generate
 ```
 
+### Connection Pool Configuration
+PostgreSQL is configured with `max_connections=20`. Ensure Prisma's connection pool doesn't exceed this:
+```env
+# In .env file, add connection_limit if needed
+DATABASE_URL="postgresql://postgres:password@db:5432/daiily?schema=public&connection_limit=10"
+```
+
 ### Manual Database Operations
 
 **Connect to PostgreSQL**:
@@ -267,19 +296,78 @@ Look for healthy status on the `db` service.
 
 ## Performance Optimization
 
+### Docker & Build Optimization
+- **Multi-stage builds**: Builder stage includes all dependencies, runner stage only includes production code
+- **Alpine Linux**: Minimal base image (5MB) for smaller container sizes
+- **Standalone output**: Next.js standalone mode reduces runtime dependencies
+- **Heap memory limit**: 300MB restricts Node.js memory usage for t3.micro compatibility
+
 ### Image Optimization
-- Next.js images are optimized via `next/image`
-- PNG/JPEG compression is handled automatically
+- **Disabled image optimization** (`unoptimized: true` in next.config.ts) to reduce memory usage
+- For production with more resources, enable image optimization
+- PNG/JPEG compression can be handled by nginx or CDN if needed
+
+### Nginx Optimization
+- **Worker connections**: Limited to 256 (vs 1024 default) to reduce memory footprint
+- **Keep-alive timeout**: 30 seconds (vs 60s) to free connections faster
+- **Gzip compression**: Enabled on text/JSON responses (30-70% bandwidth reduction)
+- **Static asset caching**: 1-year browser cache with immutable headers
+- **Upstream connection reuse**: 2 persistent connections to app server
 
 ### Database Performance
-- PostgreSQL 16-alpine provides efficient resource usage
-- Indexes are created via Prisma schema
-- Connection pooling can be configured in DATABASE_URL if needed
+- **PostgreSQL 16-alpine**: Minimal resource usage with optimized parameters
+- **Shared buffers**: 32MB (suitable for t3.micro)
+- **Effective cache size**: 128MB to help query planner
+- **Work memory**: 2MB per operation
+- **Max connections**: 20 (monitor and adjust based on usage)
+- **Health checks**: Automatic with 30-second intervals
 
-### Caching
-- Next.js static optimization
-- Browser caching via nginx headers
-- Tailwind CSS v4 produces minimal CSS bundle
+### Caching Strategy
+- **Browser caching**: Static assets cached for 1 year with immutable flag
+- **Next.js static optimization**: Prerendered pages served directly
+- **Tailwind CSS v4**: Generates minimal CSS bundle with on-demand compilation
+
+### Monitoring Performance
+Monitor actual resource usage on t3.micro:
+```bash
+docker stats
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+**Warning signs of resource exhaustion:**
+- Container restarts frequently
+- OOM (Out of Memory) errors in logs
+- High CPU constantly at 100%
+- Response times degrade under load
+
+If experiencing issues, consider upgrading to t3.small or larger instance.
+
+## Cost Optimization (AWS t3.micro)
+
+This deployment is optimized for **AWS t3.micro** instances to minimize costs:
+
+### Architecture Choices
+- **Alpine-based containers**: Reduced image sizes (nginx: 41MB, postgres: 251MB, node: 188MB)
+- **Minimal dependencies**: Production-only npm packages in final image
+- **Resource limits**: Each service constrained to prevent runaway usage
+
+### Cost Breakdown (Approximate)
+- **t3.micro instance**: ~$4-6/month
+- **EBS storage (20GB)**: ~$2/month
+- **Data transfer**: ~$0.09/GB outbound
+- **Total**: ~$6-8/month for small-scale deployment
+
+### Scaling Guidelines
+- **t3.micro**: Suitable for ~10-20 concurrent users, 100K-500K requests/day
+- **t3.small**: For ~50-100 concurrent users, 1M+ requests/day
+- **Beyond t3.small**: Consider managed services (RDS, Elastic Beanstalk, etc.)
+
+### Key Optimizations in Place
+1. **Gzip compression**: Reduces bandwidth costs by 30-70%
+2. **Static asset caching**: Reduces server load and bandwidth
+3. **Memory limits**: Prevents unexpected resource scaling
+4. **Alpine Linux**: Smaller disk footprint
+5. **Headless architecture**: API-first design reduces unnecessary data transfers
 
 ## Security Considerations
 
@@ -289,6 +377,7 @@ Look for healthy status on the `db` service.
 4. **Session Security**: JWT-based sessions with secure cookies
 5. **CSRF Protection**: Custom HMAC-SHA256 tokens for auth actions
 6. **Content Security Policy**: Implemented via Next.js middleware
+7. **Non-root user**: App runs as unprivileged `nextjs` user in Docker
 
 ## Scaling & Advanced Deployment
 
