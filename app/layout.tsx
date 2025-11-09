@@ -1,9 +1,80 @@
+import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "../components/providers/theme-provider";
 import SessionProvider from "../components/providers/session-provider";
 import { CsrfProvider } from "../components/providers/csrf-provider";
 import ThemeToggle from "../components/atoms/theme-toggle";
 import ErrorBoundary from "../components/atoms/error-boundary";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXTAUTH_URL || "http://localhost:3000"
+  ),
+  title: {
+    default: "Daiily - Professional Growth Diary",
+    template: "%s | Daiily",
+  },
+  description:
+    "Share daily professional experiences at your firm. Track what you did, learned, and achieved each day. Grow together with professionals in your field.",
+  keywords: [
+    "professional growth",
+    "career development",
+    "daily diary",
+    "work journal",
+    "professional development",
+    "career tracking",
+    "growth diary",
+  ],
+  authors: [{ name: "Daiily" }],
+  creator: "Daiily",
+  publisher: "Daiily",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Daiily",
+    title: "Daiily - Professional Growth Diary",
+    description:
+      "Share daily professional experiences at your firm. Track what you did, learned, and achieved each day.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Daiily - Track Your Professional Growth",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Daiily - Professional Growth Diary",
+    description:
+      "Share daily professional experiences at your firm. Track what you did, learned, and achieved each day.",
+    images: ["/twitter-image"],
+    creator: "@daiily",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  manifest: "/manifest.json",
+};
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (

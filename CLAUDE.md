@@ -160,6 +160,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Automatic daily reset at midnight
   - Note: Other endpoints (auth, posts, goals) intentionally unprotected for MVP phase
 
+## Git Commit Policy
+
+**CRITICAL**: **NEVER create git commits unless explicitly ordered by the user.**
+
+- Only run `git commit` when the user explicitly requests it
+- Do not proactively commit changes after completing tasks
+- If changes are ready to commit, inform the user but wait for their explicit command
+- This ensures the user maintains full control over git history and commit messages
+
 ## Environment Variable Policy
 
 **CRITICAL**: **NEVER modify, change, update, or touch the `.env` file unless explicitly ordered by the user.**
