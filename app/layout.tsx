@@ -5,6 +5,10 @@ import SessionProvider from "../components/providers/session-provider";
 import { CsrfProvider } from "../components/providers/csrf-provider";
 import ThemeToggle from "../components/atoms/theme-toggle";
 import ErrorBoundary from "../components/atoms/error-boundary";
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+} from "../lib/structured-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -77,8 +81,24 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
+  // Generate structured data schemas for SEO
+  const organizationSchema = generateOrganizationSchema();
+  const webSiteSchema = generateWebSiteSchema();
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        {/* WebSite Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+        />
+      </head>
       <body className="transition-colors">
         <ErrorBoundary>
           <SessionProvider>

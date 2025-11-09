@@ -7,6 +7,7 @@ import { getCurrentUser } from "../../../lib/auth";
 import UserStoryViewer from "../../../features/story/components/user-story-viewer";
 import StoryGenerator from "../../../features/story/components/story-generator";
 import GoalsSection from "../../../features/goals/components/goals-section";
+import { generateProfilePageSchema } from "../../../lib/structured-data";
 
 interface UserStoryPageProps {
   params: Promise<{ userId: string }>;
@@ -72,8 +73,23 @@ const UserStoryPage = async ({ params }: UserStoryPageProps) => {
 
   const isOwnStory = currentUser?.id === userId;
 
+  // Generate ProfilePage structured data for SEO
+  const profilePageSchema = generateProfilePageSchema({
+    name: user.name || "Unknown User",
+    userId: user.id,
+    bio: user.bio || undefined,
+    image: user.image || undefined,
+    currentRole: user.currentRole || undefined,
+  });
+
   return (
     <AuthLayout>
+      {/* ProfilePage Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageSchema) }}
+      />
+
       <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-screen">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* Header */}

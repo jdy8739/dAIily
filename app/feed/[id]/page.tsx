@@ -10,6 +10,7 @@ import ReplyList from "../../../features/feed/components/molecules/reply-list";
 import UserNameMenu from "../../../components/molecules/user-name-menu";
 import { getPostById } from "../../../features/feed/lib/queries";
 import ClientDate from "../../../components/atoms/client-date";
+import { generateArticleSchema } from "../../../lib/structured-data";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -67,8 +68,25 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
 
   const isAuthor = currentUser?.id === post.author.id;
 
+  // Generate Article structured data for SEO
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    content: post.content,
+    authorName: post.author.name || "Unknown",
+    authorId: post.author.id,
+    publishedAt: post.createdAt,
+    updatedAt: post.updatedAt,
+    postId: post.id,
+  });
+
   return (
     <AuthLayout>
+      {/* Article Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+
       <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-screen">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* Header */}
