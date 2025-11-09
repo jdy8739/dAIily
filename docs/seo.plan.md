@@ -10,8 +10,8 @@ Complete SEO system implementation for Daiily using Next.js 15's file-based meta
 - ✅ **COMPLETED** - Open Graph images for social sharing (Phase 2)
 - ✅ **COMPLETED** - Twitter Card metadata & images (Phase 1 & 2)
 - ✅ **COMPLETED** - Dynamic metadata for posts/stories/user pages (Phase 3)
-- ❌ Missing sitemap.xml and robots.txt
-- ❌ No structured data (JSON-LD)
+- ✅ **COMPLETED** - Sitemap.xml and robots.txt (Phase 5.1 & 5.2)
+- ❌ No structured data (JSON-LD) (Phase 5.3)
 
 ## Implementation Phases
 
@@ -192,67 +192,76 @@ Add simple metadata exports to all static pages:
 **Priority:** 🟡 Medium
 **Location:** `/app/`
 
-#### 5.1 Dynamic Sitemap
+#### 5.1 Dynamic Sitemap ✅ COMPLETED
 **File:** `app/sitemap.ts`
+**Status:** ✅ Done - Implemented in `app/sitemap.ts`
 
-**Tasks:**
-- Generate sitemap dynamically
-- Include:
-  - Homepage
-  - Static pages (login, signup, feed)
-  - All published posts: `/feed/[id]`
-  - User story pages: `/story/[userId]`
-  - User feed pages: `/feed/user/[userId]`
-- Exclude:
-  - Auth pages
-  - Draft posts
-  - Private profiles
-- Set proper `lastModified` dates
-- Set `changeFrequency` and `priority`
+**Completed Tasks:**
+- ✅ Generate sitemap dynamically from database
+- ✅ Include static pages: `/`, `/feed`, `/story`
+- ✅ Include all published posts: `/feed/[id]`
+- ✅ Include verified user story pages: `/story/[userId]`
+- ✅ Include verified user feed pages: `/feed/user/[userId]`
+- ✅ Exclude auth pages, drafts, and unverified users
+- ✅ Set proper `lastModified` dates from database
+- ✅ Set `changeFrequency` (hourly for feed, daily/weekly for others)
+- ✅ Set `priority` values (1.0 for home, decreasing for other pages)
 
 **Implementation:**
 ```typescript
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await prisma.post.findMany({
-    where: { status: 'published' }
-  })
+  const baseUrl = env.NEXTAUTH_URL;
 
-  return [
-    { url: '/', changeFrequency: 'daily', priority: 1 },
-    { url: '/feed', changeFrequency: 'hourly', priority: 0.9 },
-    ...posts.map(post => ({
-      url: `/feed/${post.id}`,
-      lastModified: post.updatedAt,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    })),
-  ]
+  // Fetch published posts and verified users
+  const publishedPosts = await prisma.post.findMany({
+    where: { status: "PUBLISHED" },
+    select: { id: true, updatedAt: true },
+  });
+
+  const verifiedUsers = await prisma.user.findMany({
+    where: { verified: true },
+    select: { id: true, updatedAt: true },
+  });
+
+  // Static pages, post pages, user story pages, user feed pages
+  return [...staticPages, ...postPages, ...userStoryPages, ...userFeedPages];
 }
 ```
 
-#### 5.2 Robots.txt
-**File:** `app/robots.ts`
+**Accessible at:** `http://localhost:3000/sitemap.xml`
 
-**Tasks:**
-- Allow crawling of public pages
-- Disallow auth pages, drafts, admin routes
-- Reference sitemap location
+#### 5.2 Robots.txt ✅ COMPLETED
+**File:** `app/robots.ts`
+**Status:** ✅ Done - Implemented in `app/robots.ts`
+
+**Completed Tasks:**
+- ✅ Allow crawling of public pages (`/`, `/feed`, `/story`)
+- ✅ Disallow auth pages (`/login`, `/signup`, `/forgot-password`, etc.)
+- ✅ Disallow private routes (`/drafts`, `/write`, `/profile`)
+- ✅ Disallow API routes and edit pages
+- ✅ Reference sitemap location
 
 **Implementation:**
 ```typescript
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = env.NEXTAUTH_URL;
+
   return {
-    rules: {
+    rules: [{
       userAgent: '*',
       allow: ['/', '/feed', '/story'],
-      disallow: ['/login', '/signup', '/drafts', '/api', '/write'],
-    },
-    sitemap: `${process.env.NEXTAUTH_URL}/sitemap.xml`,
-  }
+      disallow: ['/login', '/signup', '/drafts', '/api', '/write', '/profile', '*/edit'],
+    }],
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
 }
 ```
 
+**Accessible at:** `http://localhost:3000/robots.txt`
+
 #### 5.3 Structured Data (JSON-LD)
+**Status:** ❌ Not Started
+
 **Tasks:**
 - Add Organization schema to root layout
 - Add Article schema to post pages
@@ -264,10 +273,10 @@ export default function robots(): MetadataRoute.Robots {
 - Post pages: Article + BreadcrumbList
 - User pages: Person + ProfilePage
 
-#### Files to Create
-- `app/sitemap.ts`
-- `app/robots.ts`
-- `lib/structured-data.ts` (helper functions)
+#### Files Created
+- ✅ `app/sitemap.ts` - Dynamic XML sitemap generation
+- ✅ `app/robots.ts` - SEO-friendly robots.txt configuration
+- ❌ `lib/structured-data.ts` (helper functions) - Pending
 
 ---
 
@@ -409,10 +418,10 @@ No additional environment variables required.
 
 ## Success Metrics
 
-- [ ] All pages have proper meta tags
-- [ ] Social sharing shows rich previews
-- [ ] Sitemap accessible at `/sitemap.xml`
-- [ ] Robots.txt accessible at `/robots.txt`
+- [x] All pages have proper meta tags
+- [x] Social sharing shows rich previews
+- [x] Sitemap accessible at `/sitemap.xml`
+- [x] Robots.txt accessible at `/robots.txt`
 - [ ] Structured data passes validation
 - [ ] Google Search Console shows proper indexing
 - [ ] Social media validators show correct previews
