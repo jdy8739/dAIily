@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../components/templates/auth-layout";
@@ -13,6 +14,47 @@ import ClientDate from "../../../components/atoms/client-date";
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
 }
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + "...";
+};
+
+export const generateMetadata = async ({
+  params,
+}: FeedDetailPageProps): Promise<Metadata> => {
+  const { id } = await params;
+  const post = await getPostById(id);
+
+  if (!post) {
+    return {
+      title: "Post Not Found",
+      description: "The requested post could not be found.",
+    };
+  }
+
+  const title = `${post.title} by ${post.author.name || "Unknown"}`;
+  const description = truncateText(post.content, 160);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      authors: [post.author.name || "Unknown"],
+      url: `/feed/${post.id}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+};
 
 const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
   const { id } = await params;

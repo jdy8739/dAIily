@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../../components/templates/auth-layout";
@@ -13,6 +14,42 @@ import ClientDate from "../../../../components/atoms/client-date";
 interface UserProfilePageProps {
   params: Promise<{ userId: string }>;
 }
+
+export const generateMetadata = async ({
+  params,
+}: UserProfilePageProps): Promise<Metadata> => {
+  const { userId } = await params;
+  const user = await getUserById(userId);
+
+  if (!user) {
+    return {
+      title: "User Not Found",
+      description: "The requested user could not be found.",
+    };
+  }
+
+  const title = `${user.name}'s Posts`;
+  const roleInfo = user.currentRole && user.industry
+    ? `${user.currentRole} in ${user.industry}`
+    : user.currentRole || user.industry || "Professional";
+  const description = `View all posts from ${user.name} - ${roleInfo}. Follow their professional growth journey on Daiily.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      url: `/feed/user/${userId}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+};
 
 const UserProfilePage = async ({ params }: UserProfilePageProps) => {
   const { userId } = await params;

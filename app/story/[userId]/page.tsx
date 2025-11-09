@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AuthLayout from "../../../components/templates/auth-layout";
@@ -10,6 +11,51 @@ import GoalsSection from "../../../features/goals/components/goals-section";
 interface UserStoryPageProps {
   params: Promise<{ userId: string }>;
 }
+
+export const generateMetadata = async ({
+  params,
+}: UserStoryPageProps): Promise<Metadata> => {
+  const { userId } = await params;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      name: true,
+      email: true,
+      _count: {
+        select: {
+          posts: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    return {
+      title: "User Not Found",
+      description: "The requested user could not be found.",
+    };
+  }
+
+  const title = `${user.name}'s Growth Story`;
+  const description = `View ${user.name}'s professional growth journey on Daiily. ${user._count.posts} posts shared.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      url: `/story/${userId}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+};
 
 const UserStoryPage = async ({ params }: UserStoryPageProps) => {
   const { userId } = await params;
