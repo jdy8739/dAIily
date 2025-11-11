@@ -127,7 +127,10 @@ const getUserById = async (userId: string) => {
   return prisma.user.findUnique({
     where: { id: userId },
     select: {
+      id: true,
       name: true,
+      bio: true,
+      image: true,
       createdAt: true,
       currentRole: true,
       industry: true,
