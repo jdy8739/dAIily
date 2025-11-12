@@ -5,25 +5,33 @@ import { env } from "@/lib/env";
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const baseUrl = env.NEXTAUTH_URL;
 
-  // Fetch all published posts
-  const publishedPosts = await prisma.post.findMany({
-    where: { status: "PUBLISHED" },
-    select: {
-      id: true,
-      updatedAt: true,
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+  let publishedPosts: { id: string; updatedAt: Date }[] = [];
+  let verifiedUsers: { id: string; updatedAt: Date }[] = [];
 
-  // Fetch all users with verified accounts (for story pages)
-  const verifiedUsers = await prisma.user.findMany({
-    where: { verified: true },
-    select: {
-      id: true,
-      updatedAt: true,
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+  try {
+    // Fetch all published posts
+    publishedPosts = await prisma.post.findMany({
+      where: { status: "PUBLISHED" },
+      select: {
+        id: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    // Fetch all users with verified accounts (for story pages)
+    verifiedUsers = await prisma.user.findMany({
+      where: { verified: true },
+      select: {
+        id: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    // Database not available during build - return static pages only
+    console.warn("Database not available for sitemap generation, returning static pages only");
+  }
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
