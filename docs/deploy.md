@@ -147,6 +147,9 @@ docker-compose -f docker-compose.prod.yml logs -f nginx    # Nginx only
 | Nginx restarting | Check SSL certificates exist: `ls -la ssl/` |
 | Build memory errors | Add swap: `sudo fallocate -l 2G /swapfile && sudo swapon /swapfile` |
 | Environment validation failed | Ensure DATABASE_URL uses `db:5432` not `localhost:5432` |
+| Authentication failed (postgres) | Database created with old password. Run: `docker-compose -f docker-compose.prod.yml down -v && docker-compose -f docker-compose.prod.yml up -d` |
+| HTML entities in .env (&quot;) | Remove HTML entities, use plain quotes or no quotes for simple values |
+| Login always fails | Check app logs for database connection errors. Verify OAuth redirect URIs match domain |
 
 ## Optimizations
 
@@ -170,6 +173,27 @@ Monitor with: `docker stats` and `docker-compose -f docker-compose.prod.yml logs
 - t3.micro: 10-20 concurrent users, 100K-500K requests/day
 - t3.small: 50-100 concurrent users, 1M+ requests/day
 
+## Maintenance
+
+### SSL Certificate Renewal
+```bash
+# Renew Let's Encrypt certificates (run every 60 days)
+sudo certbot renew
+sudo cp /etc/letsencrypt/live/daiily.site/fullchain.pem ssl/cert.pem
+sudo cp /etc/letsencrypt/live/daiily.site/privkey.pem ssl/key.pem
+sudo chown ubuntu:ubuntu ssl/*.pem
+docker-compose -f docker-compose.prod.yml restart nginx
+```
+
+### Backup Database
+```bash
+# Create backup
+docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backup-$(date +%Y%m%d).sql
+
+# Restore backup
+docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < backup-20241201.sql
+```
+
 ## Security
 
 - HTTPS only (HTTP redirects to HTTPS)
@@ -179,4 +203,5 @@ Monitor with: `docker stats` and `docker-compose -f docker-compose.prod.yml logs
 - CSRF protection (HMAC-SHA256)
 - CSP headers via Next.js middleware
 - Non-root user in Docker
+- Let's Encrypt SSL certificates (auto-renewal recommended)
 
