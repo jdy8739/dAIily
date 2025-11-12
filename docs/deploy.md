@@ -6,30 +6,34 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                  Client (HTTPS)                              │
-│              https://daiily.site                             │
-│          (AWS t3.micro EC2 Instance)                         │
+│                     Internet                                 │
+│                 daiily.site → [SERVER-IP]                   │
+└──────────────────────────┬─────────────────────────────────┘
+                           │
+┌──────────────────────────┴─────────────────────────────────┐
+│              AWS Lightsail t3.micro                        │
+│                  Ubuntu 22.04                              │
+│              Firewall: 22, 80, 443                         │
 └──────────────────────────┬─────────────────────────────────┘
                            │
     ┌──────────────────────┴──────────────────────┐
     │  Nginx Reverse Proxy (Alpine)                │
-    │  Ports: 80 (HTTP→HTTPS) / 443 (SSL/TLS)     │
+    │  Ports: 80→443 redirect / 443 SSL           │
+    │  SSL: Let's Encrypt (certbot)               │
     │  Memory: 50MB / CPU: 0.2                    │
-    │  Features: Gzip, 1y static cache            │
     └──────────────────────┬──────────────────────┘
-                           │
+                           │ http://app:3000
     ┌──────────────────────┴──────────────────────┐
     │  Next.js App (Node.js Alpine)               │
-    │  Port: 3000 (Internal Only)                 │
+    │  Port: 3000 (Docker network only)           │
     │  Memory: 400MB / CPU: 0.5                   │
-    │  Heap: 300MB, Auto migrations               │
+    │  DATABASE_URL: postgres://...@db:5432       │
     └──────────────────────┬──────────────────────┘
-                           │
+                           │ postgresql://
     ┌──────────────────────┴──────────────────────┐
-    │  PostgreSQL Database (Alpine)               │
-    │  Port: 5432 (Internal Only)                 │
+    │  PostgreSQL 16 (Alpine)                     │
+    │  Port: 5432 (Docker network only)           │
     │  Memory: 200MB / CPU: 0.3                   │
-    │  Config: max_connections=20                 │
     │  Volume: postgres_data (persistent)         │
     └─────────────────────────────────────────────┘
 ```
@@ -46,11 +50,11 @@
 
 ## Prerequisites
 
-- Docker & Docker Compose
-- Domain + DNS configured
-- SSL certs: `./ssl/cert.pem` and `./ssl/key.pem`
-- **AWS t3.micro minimum** (1GB RAM, supports ~10-20 concurrent users)
-- 20GB storage
+- **AWS Lightsail t3.micro** (1GB RAM, 1 vCPU, 20GB SSD)
+- **Domain**: DNS A record pointing to server IP
+- **Firewall**: Ports 22 (SSH), 80 (HTTP), 443 (HTTPS) open
+- **SSL**: Let's Encrypt certificates via certbot
+- **Docker & Docker Compose** installed
 
 ## Environment Variables (`.env`)
 
@@ -75,11 +79,40 @@ RESEND_API_KEY=<your-key>
 
 ## Deployment Steps
 
-1. Clone repository: `git clone <repo-url> /path/to/daiily && cd /path/to/daiily`
-2. Create SSL certificates: `mkdir -p ssl && openssl req -x509 -newkey rsa:4096 -nodes -out ssl/cert.pem -keyout ssl/key.pem -days 365`
-3. Create `.env` file with variables from "Environment Variables" section above
-4. Start: `docker-compose -f docker-compose.prod.yml up -d`
-5. Verify: `docker-compose -f docker-compose.prod.yml ps`
+### 1. Server Setup
+```bash
+# Install Docker & Docker Compose
+sudo apt update
+sudo apt install -y docker.io
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo usermod -aG docker ubuntu
+```
+
+### 2. Deploy Application
+```bash
+# Copy project files to server
+scp -i key.pem -r . ubuntu@server-ip:~/daiily/
+
+# SSH to server
+ssh -i key.pem ubuntu@server-ip
+cd daiily
+
+# Create SSL certificates
+mkdir -p ssl
+sudo certbot certonly --standalone -d daiily.site
+sudo cp /etc/letsencrypt/live/daiily.site/fullchain.pem ssl/cert.pem
+sudo cp /etc/letsencrypt/live/daiily.site/privkey.pem ssl/key.pem
+sudo chown ubuntu:ubuntu ssl/*.pem
+
+# Start services
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### 3. Configure AWS Lightsail Firewall
+- Go to AWS Lightsail Console
+- Instance → Networking → Firewall
+- Add rules: HTTP (80), HTTPS (443), SSH (22)
 
 **To Update**: `git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d --build`
 
@@ -108,11 +141,12 @@ docker-compose -f docker-compose.prod.yml logs -f nginx    # Nginx only
 
 | Issue | Solution |
 |-------|----------|
-| Database migrations fail | Check app logs. Verify DB container is healthy: `docker-compose -f docker-compose.prod.yml ps` |
-| SSL certificate errors | Verify `./ssl/cert.pem` and `./ssl/key.pem` exist. Check nginx logs. |
-| OAuth redirects to wrong URL | Ensure `NEXTAUTH_URL=https://daiily.site` in .env. Verify provider redirect URIs match. |
-| Database connection refused | Check `POSTGRES_PASSWORD` matches in .env and docker-compose.prod.yml. Check DB logs. |
-| Out of memory errors | Upgrade to t3.small. Monitor with `docker stats`. |
+| Site not accessible externally | Check AWS Lightsail firewall rules (ports 80, 443) |
+| SSL certificate errors | Run certbot and copy certificates to `./ssl/` directory |
+| Database connection failed | Use hex password without special characters in DATABASE_URL |
+| Nginx restarting | Check SSL certificates exist: `ls -la ssl/` |
+| Build memory errors | Add swap: `sudo fallocate -l 2G /swapfile && sudo swapon /swapfile` |
+| Environment validation failed | Ensure DATABASE_URL uses `db:5432` not `localhost:5432` |
 
 ## Optimizations
 
