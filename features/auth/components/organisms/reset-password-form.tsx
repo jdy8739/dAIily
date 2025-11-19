@@ -47,8 +47,8 @@ const ResetPasswordForm = ({
       </h2>
 
       {error && (
-        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-6">
-          <p className="text-warning text-sm">{error}</p>
+        <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 mb-6">
+          <p className="text-accent text-sm">{error}</p>
         </div>
       )}
 
@@ -70,7 +70,7 @@ const ResetPasswordForm = ({
             placeholder="Enter your new password"
           />
           {errors.password && (
-            <p className="text-warning text-sm mt-1">
+            <p className="text-accent text-sm mt-1">
               {errors.password.message}
             </p>
           )}
@@ -91,7 +91,7 @@ const ResetPasswordForm = ({
             placeholder="Confirm your new password"
           />
           {errors.confirmPassword && (
-            <p className="text-warning text-sm mt-1">
+            <p className="text-accent text-sm mt-1">
               {errors.confirmPassword.message}
             </p>
           )}

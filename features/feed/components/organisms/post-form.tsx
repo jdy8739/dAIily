@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Sparkles } from "lucide-react";
 import { createPostSchema, type CreatePostData } from "../../schemas/post";
 import { createPost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
@@ -133,8 +134,8 @@ const PostForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {error && (
-          <div className="p-4 rounded-md bg-warning/10 border border-warning/30">
-            <p className="text-sm text-warning font-medium">{error}</p>
+          <div className="p-3 rounded-md bg-accent/10 border border-accent/30">
+            <p className="text-sm text-accent font-medium">{error}</p>
           </div>
         )}
 
@@ -145,7 +146,6 @@ const PostForm = () => {
           label="Title"
           placeholder="What did you accomplish today?"
           error={errors.title?.message}
-          className="px-4 py-3"
           disabled={loading || aiLoading}
         />
 
@@ -156,12 +156,11 @@ const PostForm = () => {
           rows={12}
           placeholder="Share your experiences, learnings, and achievements from today..."
           error={errors.content?.message}
-          className="px-4 py-3"
           disabled={loading || aiLoading}
         />
 
         <div className="flex items-center justify-between pt-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <Button
               type="button"
               variant="outline"
@@ -177,7 +176,8 @@ const PostForm = () => {
               disabled={loading || aiLoading}
               onClick={onAiCorrect}
             >
-              ✨ AI Correct
+              <Sparkles className="w-4 h-4 mr-1.5" />
+              AI Correct
             </Button>
           </div>
 

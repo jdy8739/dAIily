@@ -46,9 +46,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       // Default fallback UI
       return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
-          <div className="max-w-md w-full bg-card border border-destructive/50 rounded-lg p-6 shadow-lg">
+          <div className="max-w-md w-full bg-card border border-accent/50 rounded-lg p-6 shadow-lg">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
                 <span className="text-2xl">⚠️</span>
               </div>
               <div>
@@ -63,7 +63,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
             {process.env.NODE_ENV === "development" && this.state.error && (
               <div className="mb-4 p-3 bg-muted rounded border border-border">
-                <p className="text-xs font-mono text-destructive break-all">
+                <p className="text-xs font-mono text-accent break-all">
                   {this.state.error.message}
                 </p>
               </div>
@@ -72,7 +72,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <div className="space-y-2">
               <button
                 onClick={() => window.location.reload()}
-                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
               >
                 Reload Page
               </button>

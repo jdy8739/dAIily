@@ -83,7 +83,7 @@ const GoalCard = ({
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <span>Started: {formatDate(goal.startDate)}</span>
               <span>•</span>
-              <span className={isOverdue ? "text-warning" : ""}>
+              <span className={isOverdue ? "text-accent" : ""}>
                 Due: {formatDate(goal.deadline)}
                 {isOverdue && " (Overdue)"}
               </span>
@@ -116,7 +116,7 @@ const GoalCard = ({
               size="sm"
               onClick={handleRemove}
               disabled={loading}
-              className="text-warning border-warning hover:bg-warning/10"
+              className="text-accent border-accent hover:bg-accent/10"
             >
               ✕ Delete
             </Button>
@@ -145,7 +145,7 @@ const GoalCard = ({
                 size="sm"
                 onClick={handleRemove}
                 disabled={loading}
-                className="text-warning border-warning hover:bg-warning/10"
+                className="text-accent border-accent hover:bg-accent/10"
               >
                 ✕ Delete
               </Button>

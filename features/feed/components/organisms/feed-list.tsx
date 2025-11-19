@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MessageCircle, Share2 } from "lucide-react";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
 import LikeButton from "../molecules/like-button";
 import ClientDate from "../../../../components/atoms/client-date";
@@ -24,47 +25,76 @@ type FeedListProps = {
   loadMore: (page: number) => Promise<{ items: FeedPost[]; hasMore: boolean }>;
 };
 
+const FeedListSkeleton = () => (
+  <div className="space-y-4">
+    {[1, 2, 3].map((i) => (
+      <div key={i} className="bg-card rounded-lg border border-border/50 p-5">
+        <div className="flex items-start space-x-3">
+          <div className="w-9 h-9 rounded-full skeleton" />
+          <div className="flex-1">
+            <div className="flex items-center space-x-2 mb-3">
+              <div className="h-4 w-24 rounded skeleton" />
+              <div className="h-3 w-16 rounded skeleton" />
+            </div>
+            <div className="h-5 w-3/4 rounded skeleton mb-2" />
+            <div className="space-y-2 mb-4">
+              <div className="h-4 w-full rounded skeleton" />
+              <div className="h-4 w-5/6 rounded skeleton" />
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="h-4 w-12 rounded skeleton" />
+              <div className="h-4 w-12 rounded skeleton" />
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
   return (
     <InfiniteScroll
       items={initialPosts}
       renderItem={(post) => (
         <Link key={post.id} href={`/feed/${post.id}`} className="block">
-          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 hover:shadow-md hover:border-accent/50 transition-all duration-200 cursor-pointer">
-            <div className="flex items-start space-x-4">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold text-sm">
+          <div className="bg-card rounded-lg border border-border/50 p-5 hover:border-border transition-colors cursor-pointer">
+            <div className="flex items-start space-x-3">
+              <div className="w-9 h-9 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-foreground font-medium text-xs">
                   {post.author.name
                     ?.split(" ")
                     .map((n) => n[0])
                     .join("") || "??"}
                 </span>
               </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="font-semibold text-foreground">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h3 className="font-medium text-foreground text-sm">
                     {post.author.name}
                   </h3>
-                  <span className="text-sm text-muted-foreground">•</span>
-                  <ClientDate date={post.createdAt} className="text-sm text-muted-foreground" />
+                  <span className="text-secondary">·</span>
+                  <ClientDate date={post.createdAt} className="text-xs text-secondary" />
                 </div>
-                <h4 className="font-medium text-foreground mb-2 group-hover:text-primary transition-colors">
+                <h4 className="font-medium text-foreground text-sm mb-1.5">
                   {post.title}
                 </h4>
-                <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
+                <p className="text-muted-foreground text-sm mb-3 whitespace-pre-wrap line-clamp-3">
                   {post.content}
                 </p>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-4 text-muted-foreground">
                   <LikeButton
                     postId={post.id}
                     initialLiked={false}
                     initialLikeCount={post._count.likes}
                   />
-                  <span className="hover:text-accent transition-colors">
-                    💬 {post._count.replies}
+                  <span className="flex items-center space-x-1.5 text-xs hover:text-foreground transition-colors">
+                    <MessageCircle className="w-4 h-4" />
+                    <span>{post._count.replies}</span>
                   </span>
-                  <span className="hover:text-accent transition-colors">
-                    🔄 Share
+                  <span className="flex items-center space-x-1.5 text-xs hover:text-foreground transition-colors">
+                    <Share2 className="w-4 h-4" />
+                    <span>Share</span>
                   </span>
                 </div>
               </div>
@@ -73,8 +103,9 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
         </Link>
       )}
       onLoadMore={loadMore}
-      endMessage={<p>No more posts to load</p>}
-      className="space-y-6"
+      loader={<FeedListSkeleton />}
+      endMessage={<p className="text-center text-sm text-muted-foreground py-4">No more posts to load</p>}
+      className="space-y-4"
     />
   );
 };

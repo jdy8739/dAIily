@@ -75,13 +75,13 @@ const ThemeDemo = () => {
           <div className="p-3 rounded bg-success text-success-foreground text-center text-sm">
             Success
           </div>
-          <div className="p-3 rounded bg-warning text-warning-foreground text-center text-sm">
+          <div className="p-3 rounded bg-accent text-accent-foreground text-center text-sm">
             Warning
           </div>
-          <div className="p-3 rounded bg-info text-info-foreground text-center text-sm">
+          <div className="p-3 rounded bg-secondary text-secondary-foreground text-center text-sm">
             Info
           </div>
-          <div className="p-3 rounded bg-destructive text-destructive-foreground text-center text-sm">
+          <div className="p-3 rounded bg-accent text-accent-foreground text-center text-sm">
             Error
           </div>
         </div>

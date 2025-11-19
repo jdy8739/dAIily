@@ -11,29 +11,29 @@ const FeedPage = async () => {
 
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl mb-8">
-            <h1 className="text-3xl font-bold text-accent-foreground mb-2">
+      <div className="min-h-[calc(100vh-56px)]">
+        <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="title-3 text-foreground mb-2">
               Growth Feed
             </h1>
-            <p className="text-accent-foreground/90">
+            <p className="text-muted-foreground text-sm">
               Discover and be inspired by others&apos; professional journeys
             </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {posts.length === 0 ? (
-              <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8 text-center">
-                <h3 className="text-lg font-medium text-foreground mb-2">
+              <div className="bg-card rounded-lg border border-border/50 p-8 text-center">
+                <h3 className="text-base font-medium text-foreground mb-2">
                   No posts yet
                 </h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground text-sm mb-4">
                   Be the first to share your professional growth journey!
                 </p>
                 <Link
                   href="/write"
-                  className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  className="inline-flex items-center h-8 px-3 bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors text-sm font-medium"
                 >
                   Write Your First Entry
                 </Link>
@@ -46,13 +46,13 @@ const FeedPage = async () => {
             )}
 
             {currentUser && (
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
+              <div className="bg-card border border-border/50 rounded-lg p-6 text-center">
                 <p className="text-sm text-muted-foreground mb-4">
                   Check out your own posts and activity
                 </p>
                 <Link
                   href={`/feed/user/${currentUser.id}?tab=feed`}
-                  className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  className="inline-flex items-center h-8 px-3 bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors text-sm font-medium"
                 >
                   View My Posts
                 </Link>

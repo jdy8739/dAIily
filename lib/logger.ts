@@ -17,18 +17,6 @@ import { env } from "./env";
  */
 const logger = pino({
   level: env.NODE_ENV === "production" ? "info" : "debug",
-  transport:
-    env.NODE_ENV === "development"
-      ? {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-            ignore: "pid,hostname",
-            translateTime: "HH:MM:ss",
-            sync: true, // Use sync mode to avoid worker thread issues
-          },
-        }
-      : undefined,
   formatters: {
     level: label => {
       return { level: label };

@@ -92,7 +92,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-destructive/10 border border-destructive/30 text-destructive px-4 py-3 rounded-md">
+        <div className="bg-accent/10 border border-accent/30 text-accent px-4 py-3 rounded-md">
           {error}
         </div>
       )}
@@ -223,7 +223,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
         <button
           type="submit"
           disabled={isSubmitting || !hasChanges}
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-medium"
+          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
         >
           {isSubmitting ? "Updating..." : "Update Career Information"}
         </button>

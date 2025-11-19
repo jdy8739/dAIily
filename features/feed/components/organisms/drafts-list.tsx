@@ -36,10 +36,10 @@ const DraftsList = ({ initialDrafts, loadMore }: DraftsListProps) => {
           <div className="flex items-start justify-between">
             <Link href={`/feed/${draft.id}/edit`} className="flex-1 cursor-pointer">
               <div className="flex items-center space-x-2 mb-2">
-                <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded">
+                <span className="px-2 py-1 text-xs font-medium bg-success/20 text-success rounded">
                   DRAFT
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-secondary">
                   <ClientDate date={draft.createdAt} />
                 </span>
               </div>

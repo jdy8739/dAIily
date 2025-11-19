@@ -39,7 +39,7 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
             bg-input text-foreground
             focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring
             disabled:bg-muted disabled:text-muted-foreground
-            ${error ? "border-warning" : "border-border"}
+            ${error ? "border-accent" : "border-border"}
             ${className}
           `}
           {...props}
@@ -56,7 +56,7 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
           ))}
         </select>
         {error && (
-          <p className="mt-1 text-sm text-warning font-medium">{error}</p>
+          <p className="mt-1 text-sm text-accent font-medium">{error}</p>
         )}
       </div>
     );

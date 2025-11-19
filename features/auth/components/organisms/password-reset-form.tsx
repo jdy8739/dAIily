@@ -68,10 +68,10 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
-            <p className="text-sm text-warning font-medium">{error}</p>
+          <div className="mb-4 p-3 bg-accent/10 border border-accent/30 rounded-md">
+            <p className="text-sm text-accent font-medium">{error}</p>
             {error.includes("Google or GitHub") && (
-              <p className="text-xs text-warning/80 mt-2">
+              <p className="text-xs text-accent/80 mt-2">
                 Redirecting to login page in 3 seconds...
               </p>
             )}

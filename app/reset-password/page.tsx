@@ -17,14 +17,14 @@ const ResetPasswordPage = async ({
   const csrfToken = generateCsrfToken();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-info/20 via-primary/10 to-accent/20">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 via-primary/10 to-accent/20">
       <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
-          <div className="bg-gradient-to-r from-info to-primary p-6 rounded-xl mb-8 max-w-2xl mx-auto">
-            <h1 className="text-4xl font-bold text-info-foreground mb-2 text-foreground">
+          <div className="bg-gradient-to-r from-secondary to-primary p-6 rounded-xl mb-8 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold text-secondary-foreground mb-2 text-foreground">
               Reset Your Password
             </h1>
-            <p className="text-info-foreground/90 text-lg">
+            <p className="text-secondary-foreground/90 text-lg">
               Enter your new password below
             </p>
           </div>

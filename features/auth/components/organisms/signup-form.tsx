@@ -66,8 +66,8 @@ const SignupForm = ({ csrfToken }: SignupFormProps) => {
         </div>
 
         {serverError && (
-          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-md">
-            <p className="text-sm text-warning font-medium">{serverError}</p>
+          <div className="mb-4 p-3 bg-accent/10 border border-accent/30 rounded-md">
+            <p className="text-sm text-accent font-medium">{serverError}</p>
           </div>
         )}
 

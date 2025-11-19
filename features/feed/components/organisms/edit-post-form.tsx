@@ -184,7 +184,7 @@ const EditPostForm = ({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="bg-warning/10 border border-warning/30 text-warning px-4 py-3 rounded-md">
+          <div className="bg-accent/10 border border-accent/30 text-accent px-4 py-3 rounded-md">
             <span className="font-medium">{error}</span>
           </div>
         )}

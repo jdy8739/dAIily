@@ -42,20 +42,20 @@ const ReplyForm = ({ postId, onReplyCreated }: ReplyFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <textarea
           value={content}
           onChange={e => setContent(e.target.value)}
           placeholder="Write your reply..."
-          className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+          className="w-full px-3 py-3 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none transition-colors hover:border-border/80 text-sm"
           rows={3}
           maxLength={1000}
           disabled={isSubmitting}
         />
-        <div className="flex justify-between items-center mt-1 text-sm text-muted-foreground">
+        <div className="flex justify-between items-center mt-1.5 text-xs text-muted-foreground">
           <span>{content.length}/1000</span>
-          {error && <span className="text-destructive">{error}</span>}
+          {error && <span className="text-accent">{error}</span>}
         </div>
       </div>
 
@@ -63,7 +63,7 @@ const ReplyForm = ({ postId, onReplyCreated }: ReplyFormProps) => {
         <button
           type="submit"
           disabled={isSubmitting || !content.trim()}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="h-8 px-3 bg-foreground text-background rounded-md hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors text-sm font-medium"
         >
           {isSubmitting ? "Posting..." : "Reply"}
         </button>

@@ -78,7 +78,7 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
           rows={4}
         />
 
-        {error && <p className="text-warning text-sm">{error}</p>}
+        {error && <p className="text-accent text-sm">{error}</p>}
 
         <div className="flex gap-2">
           <Button type="submit" variant="primary" size="sm" disabled={loading}>

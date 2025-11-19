@@ -73,7 +73,7 @@ const EditReplyForm = ({
         />
         <div className="flex justify-between items-center mt-1 text-xs text-muted-foreground">
           <span>{content.length}/1000</span>
-          {error && <span className="text-destructive">{error}</span>}
+          {error && <span className="text-accent">{error}</span>}
         </div>
       </div>
 

@@ -275,8 +275,8 @@ const StoryGenerator = () => {
         )}
 
         {error && error !== "NO_POSTS" && (
-          <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 text-center">
-            <p className="text-warning font-medium">{error}</p>
+          <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 text-center">
+            <p className="text-accent font-medium">{error}</p>
             <Button
               variant="outline"
               size="sm"
@@ -300,7 +300,7 @@ const StoryGenerator = () => {
                   {generatedAt && <ClientDate date={generatedAt} />}
                 </p>
                 {isOutdated && (
-                  <p className="text-xs text-warning mt-1 flex items-center gap-1">
+                  <p className="text-xs text-accent mt-1 flex items-center gap-1">
                     <span>⚠️</span>
                     <span>
                       This story is outdated. Recent posts and goals aren't
@@ -322,7 +322,7 @@ const StoryGenerator = () => {
 
       {/* Tips */}
       {!story && !loading && !showGeneratePrompt && (
-        <div className="bg-info/10 border border-info/30 rounded-lg p-6">
+        <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-6">
           <h3 className="font-semibold text-foreground mb-3 flex items-center">
             <span className="mr-2">💡</span>
             Tips for Better Insights

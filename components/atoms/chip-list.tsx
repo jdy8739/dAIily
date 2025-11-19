@@ -92,7 +92,7 @@ const ChipList = ({
         className={`
           min-h-[2.5rem] p-2 border rounded-md bg-input
           focus-within:ring-2 focus-within:ring-ring focus-within:border-ring
-          ${error ? "border-warning" : "border-border"}
+          ${error ? "border-accent" : "border-border"}
           ${disabled ? "bg-muted cursor-not-allowed" : "cursor-text"}
         `}
         onClick={e => {
@@ -135,7 +135,7 @@ const ChipList = ({
       </div>
 
       {error && (
-        <p className="mt-1 text-sm text-warning font-medium">{error}</p>
+        <p className="mt-1 text-sm text-accent font-medium">{error}</p>
       )}
 
       {maxItems && (

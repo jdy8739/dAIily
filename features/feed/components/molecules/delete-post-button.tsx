@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 import { useCsrf } from "../../../../components/providers/csrf-provider";
 import { deletePost } from "../../lib/actions";
 
@@ -43,7 +44,7 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="px-3 py-1 text-sm bg-accent text-accent-foreground rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {isDeleting ? "Deleting..." : "Confirm Delete"}
         </button>
@@ -61,10 +62,11 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="px-3 py-1 text-sm text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-destructive/10 cursor-pointer"
+      className="flex items-center space-x-1.5 px-3 py-1 text-sm text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer"
       title="Delete post"
     >
-      🗑️ Delete
+      <Trash2 className="w-4 h-4" />
+      <span>Delete</span>
     </button>
   );
 };

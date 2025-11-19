@@ -122,7 +122,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                 </div>
                 <Link
                   href="/write"
-                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap"
+                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap"
                 >
                   ✍️ Write New Entry
                 </Link>

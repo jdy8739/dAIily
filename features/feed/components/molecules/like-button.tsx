@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Heart } from "lucide-react";
 import { likePost, unlikePost } from "../../lib/actions";
 
 interface LikeButtonProps {
@@ -55,17 +56,19 @@ const LikeButton = ({
     <button
       onClick={handleLike}
       disabled={isLoading}
-      className={`flex items-center space-x-1 px-2 py-1 rounded transition-colors ${
+      className={`flex items-center space-x-1.5 text-xs transition-colors ${
         isLiked
           ? "text-accent hover:text-accent/80"
-          : "text-muted-foreground hover:text-accent"
+          : "text-muted-foreground hover:text-foreground"
       } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
       title={isLiked ? "Unlike this post" : "Like this post"}
     >
-      <span className={`transition-transform ${isLoading ? "scale-110" : ""}`}>
-        {isLiked ? "❤️" : "🤍"}
-      </span>
-      <span className="text-sm font-medium">{likeCount}</span>
+      <Heart
+        className={`w-4 h-4 transition-transform ${isLoading ? "scale-110" : ""} ${
+          isLiked ? "fill-current" : ""
+        }`}
+      />
+      <span className="font-medium">{likeCount}</span>
     </button>
   );
 };

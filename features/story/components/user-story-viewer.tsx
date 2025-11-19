@@ -217,7 +217,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
 
           {error && (
             <div className="text-center py-12">
-              <p className="text-warning">{error}</p>
+              <p className="text-accent">{error}</p>
             </div>
           )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { deleteReply } from "../../lib/actions";
 
 interface DeleteReplyButtonProps {
@@ -54,7 +55,7 @@ const DeleteReplyButton = ({ replyId, onDeleted }: DeleteReplyButtonProps) => {
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="px-2 py-1 text-xs bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="px-2 py-1 text-xs bg-accent text-accent-foreground rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {isDeleting ? "Deleting..." : "Confirm"}
         </button>
@@ -72,10 +73,10 @@ const DeleteReplyButton = ({ replyId, onDeleted }: DeleteReplyButtonProps) => {
   return (
     <button
       onClick={handleShowConfirm}
-      className="px-2 py-1 text-xs text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-destructive/10 cursor-pointer"
+      className="p-1.5 text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer"
       title="Delete reply"
     >
-      🗑️
+      <Trash2 className="w-3.5 h-3.5" />
     </button>
   );
 };

@@ -23,7 +23,7 @@ const NotFound = () => {
         <div className="space-y-3">
           <Link
             href="/feed"
-            className="block w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+            className="block w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
           >
             Go to Feed
           </Link>

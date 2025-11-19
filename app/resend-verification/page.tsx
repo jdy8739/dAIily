@@ -59,7 +59,7 @@ const ResendVerificationPage = () => {
               className={`p-3 rounded-md text-sm ${
                 message.type === "success"
                   ? "bg-success/10 text-success border border-success/30"
-                  : "bg-destructive/10 text-destructive border border-destructive/30"
+                  : "bg-accent/10 text-accent border border-accent/30"
               }`}
             >
               {message.text}

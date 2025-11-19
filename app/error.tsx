@@ -18,9 +18,9 @@ const Error = ({ error, reset }: ErrorProps) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="max-w-md w-full bg-card border border-destructive/50 rounded-lg p-8 shadow-lg">
+      <div className="max-w-md w-full bg-card border border-accent/50 rounded-lg p-8 shadow-lg">
         <div className="flex items-center justify-center mb-6">
-          <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center">
             <span className="text-4xl">⚠️</span>
           </div>
         </div>
@@ -34,7 +34,7 @@ const Error = ({ error, reset }: ErrorProps) => {
 
         {process.env.NODE_ENV === "development" && error.message && (
           <div className="mb-6 p-4 bg-muted rounded-lg border border-border">
-            <p className="text-xs font-mono text-destructive break-words">
+            <p className="text-xs font-mono text-accent break-words">
               {error.message}
             </p>
             {error.digest && (
@@ -48,7 +48,7 @@ const Error = ({ error, reset }: ErrorProps) => {
         <div className="space-y-3">
           <button
             onClick={reset}
-            className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+            className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-semibold"
           >
             Try Again
           </button>

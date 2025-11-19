@@ -27,9 +27,9 @@ const DeleteAccountSection = () => {
   };
 
   return (
-    <div className="mt-12 pt-8 border-t border-destructive/30">
-      <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-destructive mb-2">
+    <div className="mt-12 pt-8 border-t border-accent/30">
+      <div className="bg-accent/5 border border-accent/20 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-accent mb-2">
           Danger Zone
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
@@ -39,7 +39,7 @@ const DeleteAccountSection = () => {
         <button
           type="button"
           onClick={handleDeleteAccount}
-          className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors font-medium"
+          className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors font-semibold"
         >
           Delete Account
         </button>
