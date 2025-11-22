@@ -62,10 +62,9 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 ml-auto">
               <Link
                 href="/profile"
-                className="hidden sm:block text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer truncate max-w-[120px]"
-                title={user.name || "Profile"}
+                className="hidden sm:block text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-                {user.name}
+                Profile
               </Link>
               <MobileMenu userName={user.name || "User"} />
               <LogoutButton className="hidden sm:block" />
