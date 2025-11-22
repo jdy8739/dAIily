@@ -134,7 +134,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
         ) : (
           <UserFeedList
             initialPosts={posts}
-            loadMore={async (page) => await loadMoreUserPosts(userId, page)}
+            loadMore={loadMoreUserPosts.bind(null, userId)}
           />
         )}
       </div>
