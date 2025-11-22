@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { RotateCcw } from "lucide-react";
 import { updateProfile } from "../../lib/actions";
 import type { User } from "@prisma/client";
 import Input from "../../../../components/atoms/input";
@@ -71,6 +72,14 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
     }
   };
 
+  const handleRevert = () => {
+    setName(user.name || "");
+    setEmail(user.email);
+    setBio(user.bio || "");
+    setError(null);
+    setSuccess(false);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
@@ -127,13 +136,23 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
         </p>
       </div>
 
-      <div className="pt-4">
+      <div className="pt-4 flex gap-3">
+        {hasChanges && (
+          <button
+            type="button"
+            onClick={handleRevert}
+            disabled={isSubmitting}
+            className="flex items-center justify-center px-6 py-3 border border-border text-foreground rounded-md hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" /> Revert
+          </button>
+        )}
         <button
           type="submit"
           disabled={
             isSubmitting || !hasChanges || !name.trim() || !email.trim()
           }
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
         >
           {isSubmitting ? "Updating..." : "Update Profile"}
         </button>

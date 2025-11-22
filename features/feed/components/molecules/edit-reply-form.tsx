@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RotateCcw } from "lucide-react";
 import { editReply } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
 
@@ -60,6 +61,15 @@ const EditReplyForm = ({
     onCancel();
   };
 
+  const handleRevert = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContent(initialContent);
+    setError(null);
+  };
+
+  const hasChanges = content.trim() !== initialContent.trim();
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
@@ -79,6 +89,17 @@ const EditReplyForm = ({
       </div>
 
       <div className="flex justify-end space-x-2">
+        {hasChanges && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleRevert}
+            disabled={isSubmitting}
+          >
+            <RotateCcw className="w-3 h-3 mr-1" /> Revert
+          </Button>
+        )}
         <Button
           type="button"
           variant="outline"
@@ -92,11 +113,7 @@ const EditReplyForm = ({
           type="submit"
           variant="primary"
           size="sm"
-          disabled={
-            isSubmitting ||
-            !content.trim() ||
-            content.trim() === initialContent.trim()
-          }
+          disabled={isSubmitting || !content.trim() || !hasChanges}
         >
           {isSubmitting ? "Saving..." : "Save"}
         </Button>

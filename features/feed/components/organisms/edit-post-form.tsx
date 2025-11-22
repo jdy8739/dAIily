@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import { Sparkles, RotateCcw } from "lucide-react";
 import { editPost, deletePost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
 import StreamingDots from "../../../../components/atoms/streaming-dots";
@@ -111,6 +111,12 @@ const EditPostForm = ({
 
   const handleCancel = () => {
     router.push(isDraft ? "/drafts" : `/feed/${postId}`);
+  };
+
+  const handleRevert = () => {
+    setTitle(initialTitle);
+    setContent(initialContent);
+    setError(null);
   };
 
   const handleDelete = async () => {
@@ -257,6 +263,17 @@ const EditPostForm = ({
             >
               <Sparkles className="w-4 h-4 mr-1" /> AI Correct
             </Button>
+
+            {hasChanges && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSubmitting || aiLoading}
+                onClick={handleRevert}
+              >
+                <RotateCcw className="w-4 h-4 mr-1" /> Revert
+              </Button>
+            )}
           </div>
 
           <div className="flex space-x-4">

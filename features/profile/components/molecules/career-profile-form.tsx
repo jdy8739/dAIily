@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "../../lib/actions";
 import type { User } from "@prisma/client";
-import { Briefcase, Code } from "lucide-react";
+import { Briefcase, Code, RotateCcw } from "lucide-react";
 import Input from "../../../../components/atoms/input";
 import Dropdown from "../../../../components/atoms/dropdown";
 import ChipList from "../../../../components/atoms/chip-list";
@@ -88,6 +88,18 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleRevert = () => {
+    setCurrentRole(user.currentRole || "");
+    setExperienceLevel(user.experienceLevel || "JUNIOR");
+    setIndustry(user.industry || "");
+    setYearsOfExperience(user.yearsOfExperience || 0);
+    setCurrentSkills(user.currentSkills || []);
+    setTargetSkills(user.targetSkills || []);
+    setCurrentGoals(user.currentGoals || []);
+    setError(null);
+    setSuccess(false);
   };
 
   return (
@@ -223,11 +235,21 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
         />
       </div>
 
-      <div className="pt-6">
+      <div className="pt-6 flex gap-3">
+        {hasChanges && (
+          <button
+            type="button"
+            onClick={handleRevert}
+            disabled={isSubmitting}
+            className="flex items-center justify-center px-6 py-3 border border-border text-foreground rounded-md hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" /> Revert
+          </button>
+        )}
         <button
           type="submit"
           disabled={isSubmitting || !hasChanges}
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
         >
           {isSubmitting ? "Updating..." : "Update Career Information"}
         </button>
