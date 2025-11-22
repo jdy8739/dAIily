@@ -35,18 +35,18 @@ const getUserGoals = async (
   userId: string
 ): Promise<{ goals: GoalSelect[] } | { error: string }> => {
   try {
-    // Require authentication to view any profile
-    const currentUser = await getCurrentUser();
+    // Fetch current user and verify target user exists in parallel
+    const [currentUser, user] = await Promise.all([
+      getCurrentUser(),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      }),
+    ]);
 
     if (!currentUser) {
       return { error: "Unauthorized - Please log in to view profiles" };
     }
-
-    // Verify the user exists
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true },
-    });
 
     if (!user) {
       return { error: "User not found" };
@@ -240,86 +240,122 @@ const generateStory = async (
       };
     }
 
-    // Fetch user profile and posts
-    const user = await prisma.user.findUnique({
-      where: { id: currentUser.id },
-      select: {
-        name: true,
-        currentRole: true,
-        industry: true,
-        experienceLevel: true,
-        yearsOfExperience: true,
-        currentSkills: true,
-        targetSkills: true,
-        currentGoals: true,
-        createdAt: true,
-      },
-    });
+    // Calculate date range based on period (for non-"all" periods, we can compute startDate without user query)
+    const getStartDate = (period: string, userCreatedAt?: Date): Date => {
+      switch (period) {
+        case "daily": {
+          const date = new Date(now);
+          date.setDate(now.getDate() - 1);
+          return date;
+        }
+        case "weekly": {
+          const date = new Date(now);
+          date.setDate(now.getDate() - 7);
+          return date;
+        }
+        case "monthly": {
+          const date = new Date(now);
+          date.setMonth(now.getMonth() - 1);
+          return date;
+        }
+        case "yearly": {
+          const date = new Date(now);
+          date.setFullYear(now.getFullYear() - 1);
+          return date;
+        }
+        case "all":
+        default:
+          return userCreatedAt || new Date(0);
+      }
+    };
+
+    // For "all" period, we need user.createdAt first, otherwise parallelize all queries
+    const isAllPeriod = period === "all";
+
+    // Fetch user profile, posts, and goals in parallel when possible
+    const [user, posts, activeGoals] = await (async () => {
+      if (isAllPeriod) {
+        // Need user first for createdAt
+        const userResult = await prisma.user.findUnique({
+          where: { id: currentUser.id },
+          select: {
+            name: true,
+            currentRole: true,
+            industry: true,
+            experienceLevel: true,
+            yearsOfExperience: true,
+            currentSkills: true,
+            targetSkills: true,
+            currentGoals: true,
+            createdAt: true,
+          },
+        });
+
+        if (!userResult) {
+          return [null, [], []] as const;
+        }
+
+        const startDate = getStartDate(period, userResult.createdAt);
+
+        // Now fetch posts and goals in parallel
+        const [postsResult, goalsResult] = await Promise.all([
+          prisma.post.findMany({
+            where: {
+              authorId: currentUser.id,
+              status: "PUBLISHED",
+              createdAt: { gte: startDate },
+            },
+            select: { title: true, content: true, createdAt: true },
+            orderBy: { createdAt: "asc" },
+          }),
+          prisma.goal.findMany({
+            where: { userId: currentUser.id, status: "ACTIVE" },
+            select: { title: true, period: true, startDate: true, deadline: true },
+            orderBy: { startDate: "desc" },
+          }),
+        ]);
+
+        return [userResult, postsResult, goalsResult] as const;
+      } else {
+        // Non-"all" period: parallelize all three queries
+        const startDate = getStartDate(period);
+
+        return Promise.all([
+          prisma.user.findUnique({
+            where: { id: currentUser.id },
+            select: {
+              name: true,
+              currentRole: true,
+              industry: true,
+              experienceLevel: true,
+              yearsOfExperience: true,
+              currentSkills: true,
+              targetSkills: true,
+              currentGoals: true,
+              createdAt: true,
+            },
+          }),
+          prisma.post.findMany({
+            where: {
+              authorId: currentUser.id,
+              status: "PUBLISHED",
+              createdAt: { gte: startDate },
+            },
+            select: { title: true, content: true, createdAt: true },
+            orderBy: { createdAt: "asc" },
+          }),
+          prisma.goal.findMany({
+            where: { userId: currentUser.id, status: "ACTIVE" },
+            select: { title: true, period: true, startDate: true, deadline: true },
+            orderBy: { startDate: "desc" },
+          }),
+        ]);
+      }
+    })();
 
     if (!user) {
       return { success: false, error: "User not found" };
     }
-
-    // Calculate date range based on period
-    let startDate: Date;
-
-    switch (period) {
-      case "daily":
-        startDate = new Date(now);
-        startDate.setDate(now.getDate() - 1);
-        break;
-      case "weekly":
-        startDate = new Date(now);
-        startDate.setDate(now.getDate() - 7);
-        break;
-      case "monthly":
-        startDate = new Date(now);
-        startDate.setMonth(now.getMonth() - 1);
-        break;
-      case "yearly":
-        startDate = new Date(now);
-        startDate.setFullYear(now.getFullYear() - 1);
-        break;
-      case "all":
-      default:
-        startDate = user.createdAt;
-    }
-
-    // Fetch posts in period
-    const posts = await prisma.post.findMany({
-      where: {
-        authorId: currentUser.id,
-        status: "PUBLISHED",
-        createdAt: {
-          gte: startDate,
-        },
-      },
-      select: {
-        title: true,
-        content: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-
-    // Fetch active goals
-    const activeGoals = await prisma.goal.findMany({
-      where: {
-        userId: currentUser.id,
-        status: "ACTIVE",
-      },
-      select: {
-        title: true,
-        period: true,
-        startDate: true,
-        deadline: true,
-      },
-      orderBy: {
-        startDate: "desc",
-      },
-    });
 
     // If no posts, return early
     if (posts.length === 0) {

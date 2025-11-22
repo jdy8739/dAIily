@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "../../../lib/prisma";
 
 /**
@@ -33,9 +34,10 @@ const getFeedPosts = async (limit: number = 10) => {
 
 /**
  * Get a single post by ID with full details including replies
+ * Cached per request to deduplicate metadata and component queries
  * Returns null if post not found
  */
-const getPostById = async (id: string) => {
+const getPostById = cache(async (id: string) => {
   return prisma.post.findUnique({
     where: { id },
     include: {
@@ -71,7 +73,7 @@ const getPostById = async (id: string) => {
       },
     },
   });
-};
+});
 
 /**
  * Get a post for editing (minimal data, author only)
@@ -121,9 +123,10 @@ const getUserPosts = async (userId: string, limit: number = 10) => {
 
 /**
  * Get user data by ID with profile information
+ * Cached per request to deduplicate metadata and component queries
  * Returns null if user not found
  */
-const getUserById = async (userId: string) => {
+const getUserById = cache(async (userId: string) => {
   return prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -137,7 +140,7 @@ const getUserById = async (userId: string) => {
       currentGoals: true,
     },
   });
-};
+});
 
 /**
  * Get all draft posts by a specific user

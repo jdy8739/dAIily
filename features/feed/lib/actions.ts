@@ -155,25 +155,25 @@ const likePost = async (postId: string) => {
   }
 
   try {
-    // Check if post exists
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
-      select: { id: true },
-    });
+    // Check post exists and if user already liked in parallel
+    const [post, existingLike] = await Promise.all([
+      prisma.post.findUnique({
+        where: { id: postId },
+        select: { id: true },
+      }),
+      prisma.like.findUnique({
+        where: {
+          userId_postId: {
+            userId: user.id,
+            postId: postId,
+          },
+        },
+      }),
+    ]);
 
     if (!post) {
       return { error: "Post not found" };
     }
-
-    // Check if user already liked this post
-    const existingLike = await prisma.like.findUnique({
-      where: {
-        userId_postId: {
-          userId: user.id,
-          postId: postId,
-        },
-      },
-    });
 
     if (existingLike) {
       return { error: "You have already liked this post" };

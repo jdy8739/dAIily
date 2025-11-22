@@ -1,3 +1,4 @@
+import { cache } from "react";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
@@ -126,8 +127,8 @@ const clearSessionCookie = async (): Promise<void> => {
   });
 };
 
-// Current user helper
-const getCurrentUser = async () => {
+// Current user helper - cached per request to prevent duplicate DB queries
+const getCurrentUser = cache(async () => {
   // First check NextAuth session (for OAuth users)
   const nextAuthSession = await getServerSession(authOptions);
 
@@ -142,7 +143,7 @@ const getCurrentUser = async () => {
   // Fallback to custom session (for email/password users)
   const customSession = await getSessionFromCookie();
   return customSession?.user ?? null;
-};
+});
 
 // Password reset utilities
 const generatePasswordResetToken = (): string => {

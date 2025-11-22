@@ -60,8 +60,12 @@ export const generateMetadata = async ({
 
 const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
   const { id } = await params;
-  const currentUser = await getCurrentUser();
-  const post = await getPostById(id);
+
+  // Fetch in parallel instead of sequentially
+  const [currentUser, post] = await Promise.all([
+    getCurrentUser(),
+    getPostById(id),
+  ]);
 
   if (!post) {
     notFound();

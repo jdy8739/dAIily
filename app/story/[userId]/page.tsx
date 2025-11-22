@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,16 +14,17 @@ interface UserStoryPageProps {
   params: Promise<{ userId: string }>;
 }
 
-export const generateMetadata = async ({
-  params,
-}: UserStoryPageProps): Promise<Metadata> => {
-  const { userId } = await params;
-
-  const user = await prisma.user.findUnique({
+// Cached user query to deduplicate metadata and component queries
+const getStoryUser = cache(async (userId: string) => {
+  return prisma.user.findUnique({
     where: { id: userId },
     select: {
+      id: true,
       name: true,
       email: true,
+      bio: true,
+      image: true,
+      currentRole: true,
       _count: {
         select: {
           posts: true,
@@ -30,6 +32,13 @@ export const generateMetadata = async ({
       },
     },
   });
+});
+
+export const generateMetadata = async ({
+  params,
+}: UserStoryPageProps): Promise<Metadata> => {
+  const { userId } = await params;
+  const user = await getStoryUser(userId);
 
   if (!user) {
     return {
@@ -60,12 +69,12 @@ export const generateMetadata = async ({
 
 const UserStoryPage = async ({ params }: UserStoryPageProps) => {
   const { userId } = await params;
-  const currentUser = await getCurrentUser();
 
-  // Fetch user with basic info only
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+  // Fetch in parallel instead of sequentially
+  const [currentUser, user] = await Promise.all([
+    getCurrentUser(),
+    getStoryUser(userId),
+  ]);
 
   if (!user) {
     notFound();

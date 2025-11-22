@@ -6,8 +6,11 @@ import { loadMoreFeedPosts } from "../../features/feed/lib/actions";
 import FeedList from "../../features/feed/components/organisms/feed-list";
 
 const FeedPage = async () => {
-  const currentUser = await getCurrentUser();
-  const posts = await getFeedPosts();
+  // Fetch in parallel instead of sequentially
+  const [currentUser, posts] = await Promise.all([
+    getCurrentUser(),
+    getFeedPosts(),
+  ]);
 
   return (
     <AuthLayout>
