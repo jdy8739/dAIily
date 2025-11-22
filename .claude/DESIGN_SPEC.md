@@ -12,10 +12,24 @@
 - **Foreground**: `#fafafa` (off-white)
 
 ### Typography
+
+#### Heading Hierarchy
+- **h1**: `text-3xl font-bold` - Page titles, main headings
+- **h2**: `text-2xl font-bold` - Major sections
+- **h3**: `text-xl font-semibold` - Subsections, cards
+- **h4**: `text-lg font-semibold` - Small sections, labels
+- **h5**: `text-base font-semibold` - Minor headings
+- **h6**: `text-sm font-semibold` - Small labels
+
+#### Base Settings
 - **Font**: Inter Variable (via next/font/google)
-- **Type scale**: title-1 through title-6
-- **Text sizes**: text-large, text-regular, text-small, text-mini
 - **Feature**: `text-wrap: balance` for headings
+- **Line height**: `leading-relaxed` (1.625) for body text
+
+#### Text Color Hierarchy
+- **Primary text**: `text-foreground` - Main content
+- **Secondary text**: `text-secondary` - Important metadata (dates, counts, labels)
+- **Muted text**: `text-muted-foreground` - Secondary info (previews, hints, empty states)
 
 ### Colors (HSL) - Cursor Dark Midnight Palette
 ```css
@@ -40,15 +54,37 @@
 - **Success (Green)**: Draft tags, success states
 
 ### Spacing & Components
-- **Grid**: 8px base unit
-- **Button height**: 32px
-- **Button padding**: 0 12px
-- **Border radius**: 6px
-- **Borders**: 1px solid with alpha (subtle)
+
+#### Button Sizes
+- **sm**: `h-7` (height: 28px) - Small buttons, compact forms
+- **md**: `h-8` (height: 32px) - Default/primary buttons
+- **lg**: `h-10` (height: 40px) - Large/prominent buttons, CTAs
+- **padding**: `px-3` (12px) for sm, `px-4` (16px) for md/lg
+- **border-radius**: `rounded-md` (6px)
+
+#### Card Standard
+- **Background**: `bg-card`
+- **Border**: `border border-border` (using semantic variables)
+- **Padding**: `p-6` (24px) - Standard for all cards
+- **Border radius**: `rounded-lg` (8px)
+- **Shadow**: `shadow-sm` (subtle, no heavy shadows)
+- **Hover**: `hover:border-border` for interactive cards
+
+#### Spacing Scale
+- **Default gap/margin**: `space-y-4` (16px) - Between elements
+- **Section gaps**: `space-y-6` (24px) - Between major sections
+- **Component gaps**: `gap-3` (12px) - Inside components
+- **Grid spacing**: `gap-4` (16px) - Grid layouts
 
 ### Icons
-- Replace all emojis with **Lucide icons**
-- Heart, MessageCircle, etc.
+- **Library**: Lucide React icons
+- **Sizes**:
+  - `w-4 h-4` (16px) - Inline with text, button icons
+  - `w-5 h-5` (20px) - Headings, larger labels
+  - `w-6 h-6` (24px) - Large cards, prominent features
+  - `w-8 h-8` (32px) - Page headers, hero sections
+- **Styling**: Use semantic colors (`text-primary`, `text-accent`, etc.)
+- **No emojis** - All replaced with Lucide icons throughout
 
 ## Files to Update
 
@@ -73,14 +109,21 @@
 ## Visual Patterns
 
 ### Cards
-- `bg-card` with `border border-border/50`
-- No heavy shadows
-- Subtle hover: `hover:border-border`
+- Standard: `bg-card rounded-lg border border-border p-6 shadow-sm`
+- All cards use consistent `p-6` (24px) padding
+- Borders use `border-border` (semantic variable)
+- No heavy shadows, use `shadow-sm` for subtle depth
+- Hover states: `hover:border-border` for interactive cards
 
-### Buttons (Vercel-style)
-- Primary: dark bg, light text
-- Secondary: transparent bg, border
-- Height: 32px, padding: 0 12px
+### Buttons
+- **Variants**: primary, secondary, outline, ai
+- **Sizes**: sm (h-7), md (h-8), lg (h-10)
+- **Padding**: px-3 (sm), px-4 (md/lg)
+- **Border radius**: rounded-md (6px)
+- **Text weight**: font-semibold for all buttons
+- **Primary**: `bg-primary text-primary-foreground hover:bg-primary/90`
+- **Outline**: `border border-border bg-background hover:bg-muted`
+- **Disabled**: `opacity-50 disabled:cursor-not-allowed`
 
 ### Skeleton Animation
 ```css
