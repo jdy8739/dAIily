@@ -68,7 +68,7 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
                 {user.name}
               </Link>
               <MobileMenu userName={user.name || "User"} />
-              <LogoutButton />
+              <LogoutButton className="hidden sm:block" />
               <ThemeToggle />
             </div>
           </div>

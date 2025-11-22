@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
+import LogoutButton from "../../features/auth/components/molecules/logout-button";
 
 interface MobileMenuProps {
   userName: string;
@@ -49,6 +50,10 @@ const MobileMenu = ({ userName }: MobileMenuProps) => {
                 {item.label}
               </Link>
             ))}
+            {/* Logout button - bottom of menu */}
+            <div className="px-4 py-3 border-t border-border/50">
+              <LogoutButton />
+            </div>
           </nav>
         </div>
       )}

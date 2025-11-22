@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { logoutAction } from "../../lib/actions";
 
-const LogoutButton = () => {
+interface LogoutButtonProps {
+  className?: string;
+}
+
+const LogoutButton = ({ className = "" }: LogoutButtonProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -23,7 +27,7 @@ const LogoutButton = () => {
     <button
       onClick={handleLogout}
       disabled={loading}
-      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+      className={`text-sm font-medium text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer ${className}`}
     >
       {loading ? "Signing out..." : "Sign Out"}
     </button>
