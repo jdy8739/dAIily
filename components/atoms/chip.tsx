@@ -56,7 +56,7 @@ const Chip = ({
         <button
           type="button"
           onClick={onRemove}
-          className="ml-1 rounded-full p-0.5 hover:bg-muted transition-colors"
+          className="ml-1 rounded-full p-0.5 hover:bg-muted transition-colors cursor-pointer"
           aria-label="Remove"
         >
           <X className="h-3 w-3" />
