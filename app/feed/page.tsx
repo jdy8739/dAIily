@@ -12,7 +12,7 @@ const FeedPage = async () => {
   return (
     <AuthLayout>
       <div className="min-h-[calc(100vh-56px)]">
-        <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="title-3 text-foreground mb-2">
               Growth Feed

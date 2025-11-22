@@ -13,23 +13,19 @@ const PasswordResetPage = async () => {
   const csrfToken = generateCsrfToken();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent/20 via-accent/10 to-primary/20">
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <div className="bg-gradient-to-r from-accent to-accent p-6 rounded-xl mb-8 max-w-xl mx-auto">
-            <h1 className="text-3xl font-bold text-accent-foreground mb-2 text-foreground">
-              Reset Your Password
-            </h1>
-            <p className="text-accent-foreground/90">
-              Secure password recovery for your Daiily account
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-accent/10 via-background to-primary/10 flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-2xl space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground">
+            Reset Your Password
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Secure password recovery for your Daiily account
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
-          <div className="flex-1 max-w-md">
-            <PasswordResetForm csrfToken={csrfToken} />
-          </div>
+        <div className="flex justify-center">
+          <PasswordResetForm csrfToken={csrfToken} />
         </div>
       </div>
     </div>

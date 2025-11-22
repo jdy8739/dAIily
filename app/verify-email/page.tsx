@@ -58,9 +58,9 @@ const VerifyEmailContent = () => {
   }, [token, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 px-4">
-      <div className="bg-card rounded-lg shadow-lg border border-accent/30 p-8 max-w-md w-full">
-        <div className="text-center">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        <div className="bg-card rounded-lg shadow-lg border border-border p-8 text-center">
           {status === "loading" && (
             <>
               <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -121,16 +121,16 @@ const VerifyEmailContent = () => {
                 Verification Failed
               </h1>
               <p className="text-muted-foreground mb-6">{message}</p>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Link
                   href="/login"
-                  className="inline-block w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  className="inline-flex items-center justify-center w-full h-10 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-semibold"
                 >
                   Go to Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-block w-full px-4 py-2 border border-border text-foreground rounded-md hover:bg-muted transition-colors"
+                  className="inline-flex items-center justify-center w-full h-10 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors font-medium"
                 >
                   Sign Up Again
                 </Link>
@@ -138,7 +138,7 @@ const VerifyEmailContent = () => {
             </>
           )}
         </div>
-      </div>
+        </div>
     </div>
   );
 };
@@ -147,7 +147,7 @@ const VerifyEmailPage = () => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/20 via-primary/10 to-info/20">
+        <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }
