@@ -76,9 +76,9 @@ const InfiniteScroll = <T,>({
 
     try {
       const result = await onLoadMore(page + 1);
-      setItems((prev) => [...prev, ...result.items]);
+      setItems(prev => [...prev, ...result.items]);
       setHasMore(result.hasMore);
-      setPage((prev) => prev + 1);
+      setPage(prev => prev + 1);
     } catch (error) {
       console.error("Error loading more items:", error);
       if (onError && error instanceof Error) {
@@ -91,7 +91,7 @@ const InfiniteScroll = <T,>({
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0]?.isIntersecting && hasMore && !loading) {
           loadMore();
         }

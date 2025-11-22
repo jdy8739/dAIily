@@ -26,9 +26,12 @@ type FeedListProps = {
 };
 
 const FeedListSkeleton = () => (
-  <div className="space-y-4">
-    {[1, 2, 3].map((i) => (
-      <div key={i} className="bg-card rounded-lg border border-border/50 p-6">
+  <div className="space-y-4 container">
+    {[1, 2, 3].map(i => (
+      <div
+        key={i}
+        className="bg-card rounded-lg border border-border/50 p-6 container"
+      >
         <div className="flex items-start space-x-3">
           <div className="w-9 h-9 rounded-full skeleton" />
           <div className="flex-1">
@@ -56,7 +59,7 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
   return (
     <InfiniteScroll
       items={initialPosts}
-      renderItem={(post) => (
+      renderItem={post => (
         <Link key={post.id} href={`/feed/${post.id}`} className="block">
           <div className="bg-card rounded-lg border border-border/50 p-6 hover:border-border transition-colors cursor-pointer">
             <div className="flex items-start space-x-3">
@@ -64,7 +67,7 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
                 <span className="text-foreground font-medium text-xs">
                   {post.author.name
                     ?.split(" ")
-                    .map((n) => n[0])
+                    .map(n => n[0])
                     .join("") || "??"}
                 </span>
               </div>
@@ -74,7 +77,10 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
                     {post.author.name}
                   </h3>
                   <span className="text-secondary">·</span>
-                  <ClientDate date={post.createdAt} className="text-xs text-secondary" />
+                  <ClientDate
+                    date={post.createdAt}
+                    className="text-xs text-secondary"
+                  />
                 </div>
                 <h4 className="font-medium text-foreground text-sm mb-1.5">
                   {post.title}
@@ -104,7 +110,11 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
       )}
       onLoadMore={loadMore}
       loader={<FeedListSkeleton />}
-      endMessage={<p className="text-center text-sm text-muted-foreground py-4">No more posts to load</p>}
+      endMessage={
+        <p className="text-center text-sm text-muted-foreground py-4">
+          No more posts to load
+        </p>
+      }
       className="space-y-4"
     />
   );
