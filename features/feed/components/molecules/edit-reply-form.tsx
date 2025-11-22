@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { editReply } from "../../lib/actions";
+import Button from "../../../../components/atoms/button";
 
 interface EditReplyFormProps {
   replyId: string;
@@ -78,25 +79,27 @@ const EditReplyForm = ({
       </div>
 
       <div className="flex justify-end space-x-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={handleCancel}
           disabled={isSubmitting}
-          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
+          variant="primary"
+          size="sm"
           disabled={
             isSubmitting ||
             !content.trim() ||
             content.trim() === initialContent.trim()
           }
-          className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {isSubmitting ? "Saving..." : "Save"}
-        </button>
+        </Button>
       </div>
     </form>
   );

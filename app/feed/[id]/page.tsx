@@ -192,9 +192,9 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
 
           {/* Replies Section */}
           <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-8">
-            <h3 className="text-lg font-semibold text-foreground mb-6">
+            <h4 className="text-lg font-semibold text-foreground mb-6">
               Replies ({post._count.replies})
-            </h3>
+            </h4>
 
             {/* Reply Form - only show to logged in users */}
             {currentUser && (

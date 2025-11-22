@@ -173,7 +173,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
                 <h4 className="text-foreground font-medium mb-2 whitespace-pre-wrap break-words">
                   {goal.title}
                 </h4>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-secondary">
                   <span>
                     Deadline: <ClientDate date={goal.deadline} />
                   </span>

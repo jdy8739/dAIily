@@ -38,7 +38,7 @@ const UserFeedList = ({ initialPosts, loadMore }: UserFeedListProps) => {
           <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
             {post.content}
           </p>
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-4 text-sm text-secondary">
             <ClientDate date={post.createdAt} />
             <span className="flex items-center gap-1">
               <Heart className="w-4 h-4" /> {post._count.likes}

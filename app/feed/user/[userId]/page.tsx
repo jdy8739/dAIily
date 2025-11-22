@@ -83,19 +83,19 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
           <div className="text-4xl font-bold text-primary mb-2">
             {totalPosts}
           </div>
-          <div className="text-muted-foreground">Posts</div>
+          <div className="text-secondary">Posts</div>
         </div>
         <div className="bg-muted/30 rounded-lg p-6 text-center">
           <div className="text-4xl font-bold text-primary mb-2">
             {totalLikes}
           </div>
-          <div className="text-muted-foreground">Likes Received</div>
+          <div className="text-secondary">Likes Received</div>
         </div>
         <div className="bg-muted/30 rounded-lg p-6 text-center">
           <div className="text-4xl font-bold text-primary mb-2">
             {totalReplies}
           </div>
-          <div className="text-muted-foreground">Replies Received</div>
+          <div className="text-secondary">Replies Received</div>
         </div>
       </div>
 

@@ -67,23 +67,23 @@ Files to update (standardized to `border-border`):
 
 ### 5. Consolidate Inline Buttons to Button Component
 
-- [ ] `features/feed/components/molecules/reply-form.tsx:66` - Custom button
-- [ ] `features/feed/components/molecules/edit-reply-form.tsx:85,96` - Custom buttons
-- [ ] `features/feed/components/molecules/delete-post-button.tsx:47,54,65` - Custom buttons
-- [ ] `app/feed/[id]/page.tsx:150` - Inline edit link
+- [x] `features/feed/components/molecules/reply-form.tsx:66` - Custom button → Button component
+- [x] `features/feed/components/molecules/edit-reply-form.tsx:85,96` - Custom buttons → Button component
+- [x] `features/feed/components/molecules/delete-post-button.tsx:47,54,65` - Custom buttons → Button component
+- [x] `app/feed/[id]/page.tsx:150` - Inline edit link (already using Pencil icon)
 
 ### 6. Establish Typography Hierarchy
 
 Standard sizes to apply:
-- h1: `text-3xl font-bold` or `title-2`
-- h2: `text-2xl font-bold` or `title-3`
-- h3: `text-xl font-semibold` or `title-4`
-- h4: `text-lg font-semibold` or `title-5`
+- h1: `text-3xl font-bold` (correct)
+- h2: `text-2xl font-bold` (correct)
+- h3: `text-xl font-semibold` (correct)
+- h4: `text-lg font-semibold` (correct)
 
-Files to review:
-- [ ] `app/feed/user/[userId]/page.tsx:103` - `text-xl font-semibold`
-- [ ] `app/feed/[id]/page.tsx:193` - `text-lg font-semibold`
-- [ ] `features/goals/components/goals-section.tsx:137` - `text-lg font-semibold`
+Files reviewed and fixed:
+- [x] `app/feed/user/[userId]/page.tsx:104` - `<h3 text-xl font-semibold>` ✓
+- [x] `app/feed/[id]/page.tsx:195` - Changed `<h3>` to `<h4 text-lg font-semibold>` (semantic fix)
+- [x] `features/goals/components/goals-section.tsx:138` - Changed `<h2>` to `<h3 text-lg font-semibold>` (semantic fix)
 
 ---
 
@@ -91,7 +91,11 @@ Files to review:
 
 ### 7. Review Text Color Usage
 
-- [ ] Review `text-muted-foreground` usage - some could use `text-secondary` for better contrast
+- [x] Reviewed `text-muted-foreground` usage and improved contrast with `text-secondary`:
+  - `features/feed/components/organisms/user-feed-list.tsx:41` - Engagement stats (date, likes, replies)
+  - `app/feed/user/[userId]/page.tsx:86,92,98` - Stats labels (Posts, Likes, Replies)
+  - `features/story/components/user-story-viewer.tsx:176` - Goal deadline metadata
+  - Kept `text-muted-foreground` for truly secondary info (previews, hints, empty states)
 
 ### 8. Document Design Standards
 

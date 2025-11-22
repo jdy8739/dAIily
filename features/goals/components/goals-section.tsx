@@ -135,9 +135,9 @@ const GoalsSection = () => {
         className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Target className="w-5 h-5" /> Your Goals
-        </h2>
+        </h3>
         <button className="text-muted-foreground hover:text-foreground">
           {collapsed ? "▼" : "▲"}
         </button>

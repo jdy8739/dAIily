@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createReply } from "../../lib/actions";
+import Button from "../../../../components/atoms/button";
 
 interface ReplyFormProps {
   postId: string;
@@ -60,13 +61,14 @@ const ReplyForm = ({ postId, onReplyCreated }: ReplyFormProps) => {
       </div>
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="sm"
           disabled={isSubmitting || !content.trim()}
-          className="h-8 px-3 bg-foreground text-background rounded-md hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors text-sm font-medium"
         >
           {isSubmitting ? "Posting..." : "Reply"}
-        </button>
+        </Button>
       </div>
     </form>
   );

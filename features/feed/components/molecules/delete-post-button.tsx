@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { useCsrf } from "../../../../components/providers/csrf-provider";
 import { deletePost } from "../../lib/actions";
+import Button from "../../../../components/atoms/button";
 
 interface DeletePostButtonProps {
   postId: string;
@@ -41,20 +42,22 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
   if (showConfirm) {
     return (
       <div className="flex items-center space-x-2">
-        <button
-          onClick={handleDelete}
+        <Button
+          variant="primary"
+          size="sm"
           disabled={isDeleting}
-          className="px-3 py-1 text-sm bg-accent text-accent-foreground rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          onClick={handleDelete}
         >
           {isDeleting ? "Deleting..." : "Confirm Delete"}
-        </button>
-        <button
-          onClick={() => setShowConfirm(false)}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           disabled={isDeleting}
-          className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors"
+          onClick={() => setShowConfirm(false)}
         >
           Cancel
-        </button>
+        </Button>
       </div>
     );
   }
