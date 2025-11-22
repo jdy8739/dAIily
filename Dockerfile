@@ -25,30 +25,18 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# 헬스체크용 wget만 설치 (최소한의 패키지)
 RUN apk add --no-cache wget
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy built application
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Handle public directory
-RUN mkdir -p ./public /tmp/builder-public
-RUN --mount=from=builder,source=/app,target=/mnt/app,rw \
-    if [ -d "/mnt/app/public" ] && [ "$(ls -A /mnt/app/public 2>/dev/null)" ]; then \
-        cp -r /mnt/app/public/* ./public/; \
-    fi
-
-# Copy Prisma files and complete dependencies
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
+# Copy everything (full node_modules for Prisma CLI)
+COPY --from=builder --chown=nextjs:nodejs /app/package*.json ./
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Copy entrypoint script
 COPY --chown=nextjs:nodejs entrypoint.sh /app/entrypoint.sh
