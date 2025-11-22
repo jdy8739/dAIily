@@ -54,13 +54,13 @@ const NavDropdown = ({ label, items }: NavDropdownProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-40 bg-card border border-border rounded-md shadow-lg py-1 z-50">
+        <div className="absolute top-full left-0 mt-2 w-40 bg-card border border-border rounded-lg shadow-lg z-50">
           {items.map(item => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-colors"
+              className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-colors first:rounded-t-lg last:rounded-b-lg"
             >
               {item.label}
             </Link>

@@ -55,14 +55,14 @@ const DeleteReplyButton = ({ replyId, onDeleted }: DeleteReplyButtonProps) => {
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="px-2 py-1 text-xs bg-accent text-accent-foreground rounded hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="h-9 px-4 py-2 text-sm bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-medium"
         >
           {isDeleting ? "Deleting..." : "Confirm"}
         </button>
         <button
           onClick={handleCancel}
           disabled={isDeleting}
-          className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors"
+          className="h-9 px-4 py-2 text-sm bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 disabled:opacity-50 cursor-pointer transition-colors font-medium"
         >
           Cancel
         </button>

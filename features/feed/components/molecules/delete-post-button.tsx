@@ -65,7 +65,7 @@ const DeletePostButton = ({ postId }: DeletePostButtonProps) => {
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="flex items-center space-x-1.5 px-3 py-1 text-sm text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer"
+      className="flex items-center space-x-2 px-4 py-2 h-9 text-sm text-muted-foreground hover:text-accent transition-colors rounded-lg hover:bg-accent/10 cursor-pointer font-medium"
       title="Delete post"
     >
       <Trash2 className="w-4 h-4" />
