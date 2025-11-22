@@ -22,7 +22,7 @@ const Chip = ({
   className = "",
 }: ChipProps) => {
   const baseClasses =
-    "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors";
+    "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors cursor-pointer";
 
   const variantClasses = {
     default: "bg-muted text-muted-foreground hover:bg-muted/80",
