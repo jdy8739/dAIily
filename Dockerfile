@@ -35,8 +35,13 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copy public if exists
+RUN --mount=from=builder,source=/app,target=/mnt/app \
+    if [ -d "/mnt/app/public" ]; then \
+        cp -r /mnt/app/public ./public && chown -R nextjs:nodejs ./public; \
+    fi
 
 # Copy entrypoint script
 COPY --chown=nextjs:nodejs entrypoint.sh /app/entrypoint.sh
