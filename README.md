@@ -7,7 +7,9 @@ A growth diary feed application where professionals share their daily experience
 ### Core
 - **Framework**: Next.js 15 with App Router + Turbopack
 - **Database**: PostgreSQL + Prisma ORM
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v4 with CSS variables for theming
+- **Icons**: Lucide React
+- **Theme**: Dark-first design with Cursor Dark Midnight palette
 - **Language**: TypeScript
 - **Architecture**: Headless, Feature-Sliced Design (FSD)
 
@@ -24,7 +26,6 @@ A growth diary feed application where professionals share their daily experience
 - **Validation**: Zod schemas
 - **Email**: Resend for transactional emails
 - **Logging**: Pino with sensitive data redaction (pino-pretty for dev)
-- **UI Components**: Lucide React icons
 - **Theming**: next-themes (dark/light mode support)
 
 ## Getting Started
@@ -140,7 +141,8 @@ For detailed deployment instructions, environment setup, and infrastructure conf
 /docs/                   # Documentation
   ├── ai-review-concept.md       # AI story generation & security features
   ├── db.md                      # Database schema & migration guide
-  └── git-commit-guide.md        # Commit message conventions
+  ├── git-commit-guide.md        # Commit message conventions
+  └── DESIGN_SPEC.md             # Design standards & component documentation
 
 /.claude/                # Claude Code configuration
 /scripts/                # Utility scripts
@@ -182,10 +184,14 @@ Each feature follows this pattern:
 - OpenAI GPT integration
 
 ### UI/UX
-- Dark/light theme support with next-themes
+- Dark-first theme with Cursor Dark Midnight palette
+- Light mode support with CSS variables
+- Consistent design system (standardized buttons, typography, spacing)
+- Lucide React icons throughout
 - Responsive design (mobile-first)
 - Smooth transitions and loading states
 - Accessible components
+- Comprehensive design documentation (DESIGN_SPEC.md)
 
 ### Developer Experience
 - Structured logging with sensitive data redaction
@@ -201,6 +207,8 @@ Each feature follows this pattern:
 - **Arrow functions**: Use arrow functions and exports at bottom
 - **Feature-Sliced Design**: Nested features support with strict upward imports
 - **Type Safety**: Strict TypeScript with Zod runtime validation
+- **Design System**: Use CSS variables, Lucide icons, and standardized components
 - **No hardcoded colors**: Always use CSS variables for theming
+- **Typography**: Follow semantic HTML hierarchy (h1-h6) with consistent sizing
 
-See `CLAUDE.md` for detailed architecture guidelines.
+See `CLAUDE.md` for detailed architecture guidelines and `DESIGN_SPEC.md` for UI/component standards.
