@@ -6,8 +6,8 @@ import Chip from "./chip";
 interface ChipListProps {
   items: string[];
   onChange: (items: string[]) => void;
-  placeholder?: string;
   label?: string;
+  description?: string;
   disabled?: boolean;
   maxItems?: number;
   variant?: "default" | "primary" | "secondary" | "accent" | "outline";
@@ -19,8 +19,8 @@ interface ChipListProps {
 const ChipList = ({
   items,
   onChange,
-  placeholder = "Type and press Enter to add...",
   label,
+  description,
   disabled = false,
   maxItems,
   variant = "default",
@@ -82,15 +82,20 @@ const ChipList = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-foreground mb-2"
+          className="block text-sm font-semibold text-foreground mb-2"
         >
           {label}
         </label>
       )}
+      {description && (
+        <p className="text-xs text-muted-foreground mb-3">
+          {description}
+        </p>
+      )}
 
       <div
         className={`
-          min-h-[2.5rem] p-2 border rounded-md bg-input
+          min-h-[3.5rem] p-3 border rounded-lg bg-input
           focus-within:ring-2 focus-within:ring-ring focus-within:border-ring
           ${error ? "border-accent" : "border-border"}
           ${disabled ? "bg-muted cursor-not-allowed" : "cursor-text"}
@@ -126,9 +131,8 @@ const ChipList = ({
               onCompositionEnd={handleCompositionEnd}
               onKeyDown={handleKeyDown}
               onBlur={handleInputBlur}
-              placeholder={items.length === 0 ? placeholder : ""}
               disabled={disabled}
-              className="flex-1 min-w-[120px] bg-transparent outline-none text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed"
+              className="flex-1 min-w-[120px] bg-transparent outline-none text-foreground disabled:cursor-not-allowed text-base"
             />
           )}
         </div>

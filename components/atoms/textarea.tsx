@@ -6,10 +6,11 @@ interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string;
   label?: string;
+  description?: string;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ error, label, className = "", id, ...props }, ref) => {
+  ({ error, label, description, className = "", id, ...props }, ref) => {
     const textareaId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
@@ -17,17 +18,22 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium text-foreground mb-1.5"
+            className="block text-sm font-semibold text-foreground mb-2"
           >
             {label}
           </label>
+        )}
+        {description && (
+          <p className="text-xs text-muted-foreground mb-3">
+            {description}
+          </p>
         )}
         <textarea
           ref={ref}
           id={textareaId}
           className={`
-            w-full px-3 py-3 border rounded-md resize-none
-            bg-input text-foreground placeholder:text-muted-foreground
+            w-full px-4 py-4 border rounded-lg resize-none text-base
+            bg-input text-foreground
             focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
             disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed
             transition-colors

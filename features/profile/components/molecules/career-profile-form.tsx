@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "../../lib/actions";
 import type { User } from "@prisma/client";
+import { Briefcase, Code } from "lucide-react";
 import Input from "../../../../components/atoms/input";
 import Dropdown from "../../../../components/atoms/dropdown";
 import ChipList from "../../../../components/atoms/chip-list";
@@ -105,11 +106,12 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
 
       {/* Career Information */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
-          <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
+        <div className="flex items-center gap-2 pb-3 border-b border-border">
+          <Briefcase className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">
             Career Information
-          </span>
-        </h3>
+          </h3>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Input
@@ -117,7 +119,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
             type="text"
             value={currentRole}
             onChange={e => setCurrentRole(e.target.value)}
-            placeholder="e.g., Frontend Developer, Product Manager"
+            description="e.g., Frontend Developer, Product Manager"
             maxLength={100}
             disabled={isSubmitting}
           />
@@ -127,7 +129,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
             type="text"
             value={industry}
             onChange={e => setIndustry(e.target.value)}
-            placeholder="e.g., Technology, Healthcare, Finance"
+            description="e.g., Technology, Healthcare, Finance"
             maxLength={100}
             disabled={isSubmitting}
           />
@@ -151,6 +153,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
                   | "C_LEVEL"
               )
             }
+            description="Select your current experience level"
             disabled={isSubmitting}
             options={[
               { value: "INTERN", label: "Intern" },
@@ -170,7 +173,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
             type="number"
             value={yearsOfExperience}
             onChange={e => setYearsOfExperience(Number(e.target.value))}
-            placeholder="Years of experience"
+            description="Enter the number of years you've been working"
             min={0}
             max={50}
             disabled={isSubmitting}
@@ -180,18 +183,19 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
 
       {/* Skills & Goals */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
-          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+        <div className="flex items-center gap-2 pb-3 border-b border-border">
+          <Code className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">
             Skills & Goals
-          </span>
-        </h3>
+          </h3>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ChipList
             label="Current Skills"
             items={currentSkills}
             onChange={setCurrentSkills}
-            placeholder="e.g., React, TypeScript, Python..."
+            description="e.g., React, TypeScript, Python..."
             disabled={isSubmitting}
             variant="primary"
             maxItems={20}
@@ -201,7 +205,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
             label="Skills I Want to Learn"
             items={targetSkills}
             onChange={setTargetSkills}
-            placeholder="e.g., GraphQL, Machine Learning, AWS..."
+            description="e.g., GraphQL, Machine Learning, AWS..."
             disabled={isSubmitting}
             variant="secondary"
             maxItems={20}
@@ -212,7 +216,7 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
           label="Current Goals"
           items={currentGoals}
           onChange={setCurrentGoals}
-          placeholder="e.g., Get promoted to senior developer, Learn React Native..."
+          description="e.g., Get promoted to senior developer, Learn React Native..."
           disabled={isSubmitting}
           variant="accent"
           maxItems={15}

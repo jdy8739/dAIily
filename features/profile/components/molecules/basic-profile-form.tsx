@@ -90,7 +90,7 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
         type="text"
         value={name}
         onChange={e => setName(e.target.value)}
-        placeholder="Enter your full name"
+        description="Enter your full name"
         maxLength={100}
         disabled={isSubmitting}
         required
@@ -101,7 +101,7 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
         type="email"
         value={email}
         onChange={e => setEmail(e.target.value)}
-        placeholder="Enter your email address"
+        description="Enter your email address"
         disabled={isSubmitting}
         required
       />
@@ -111,12 +111,12 @@ const BasicProfileForm = ({ user }: BasicProfileFormProps) => {
           label="Bio"
           value={bio}
           onChange={e => setBio(e.target.value)}
-          placeholder="Tell us about yourself..."
+          description="Tell us about yourself..."
           maxLength={500}
-          rows={3}
+          rows={4}
           disabled={isSubmitting}
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-2">
           {bio.length}/500 characters
         </p>
       </div>

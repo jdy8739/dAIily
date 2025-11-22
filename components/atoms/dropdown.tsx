@@ -12,11 +12,12 @@ interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   options: DropdownOption[];
   placeholder?: string;
+  description?: string;
 }
 
 const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
   (
-    { error, label, className = "", id, options, placeholder, ...props },
+    { error, label, description, className = "", id, options, ...props },
     ref
   ) => {
     const selectId = id || label?.toLowerCase().replace(/\s+/g, "-");
@@ -26,16 +27,21 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-foreground mb-1"
+            className="block text-sm font-semibold text-foreground mb-2"
           >
             {label}
           </label>
+        )}
+        {description && (
+          <p className="text-xs text-muted-foreground mb-3">
+            {description}
+          </p>
         )}
         <select
           ref={ref}
           id={selectId}
           className={`
-            w-full px-3 py-2 border rounded-md shadow-sm
+            w-full h-14 px-4 py-3 border rounded-lg shadow-sm text-base
             bg-input text-foreground
             focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring
             disabled:bg-muted disabled:text-muted-foreground
@@ -44,11 +50,6 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
           `}
           {...props}
         >
-          {placeholder && (
-            <option value="" disabled>
-              {placeholder}
-            </option>
-          )}
           {options.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}

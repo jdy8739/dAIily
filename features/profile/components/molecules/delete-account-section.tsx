@@ -30,7 +30,7 @@ const DeleteAccountSection = () => {
     <div className="mt-12 pt-8 border-t border-accent/30">
       <div className="bg-accent/5 border border-accent/20 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-accent mb-2">
-          Danger Zone
+          Delete Account
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
           Once you delete your account, there is no going back. All your posts,

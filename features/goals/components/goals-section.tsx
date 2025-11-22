@@ -196,7 +196,7 @@ const GoalsSection = () => {
                 setShowForm(false);
                 setEditingGoalId(null);
               }}
-              className="flex-1 px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="flex-1 h-14 px-4 py-3 border rounded-lg text-base bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors border-border hover:border-border/80"
             >
               {GOAL_PERIODS.map(period => (
                 <option key={period} value={period}>

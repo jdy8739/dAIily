@@ -202,7 +202,7 @@ const EditPostForm = ({
             id="title"
             value={title}
             onChange={e => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+            className="w-full h-14 px-4 py-3 border rounded-lg text-base bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors border-border hover:border-border/80"
             placeholder="What did you accomplish today?"
             maxLength={200}
             disabled={isSubmitting || aiLoading}
@@ -224,7 +224,7 @@ const EditPostForm = ({
             id="content"
             value={content}
             onChange={e => setContent(e.target.value)}
-            className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+            className="w-full px-4 py-3 border rounded-lg text-base bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none transition-colors border-border hover:border-border/80"
             placeholder="Share the details of your professional growth, challenges overcome, skills learned, or achievements gained..."
             rows={12}
             maxLength={5000}

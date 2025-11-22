@@ -66,7 +66,7 @@ const EditReplyForm = ({
         <textarea
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="w-full px-3 py-2 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none text-sm"
+          className="w-full px-4 py-3 border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none text-base border-border hover:border-border/80 transition-colors"
           rows={3}
           maxLength={1000}
           disabled={isSubmitting}

@@ -49,7 +49,7 @@ const ReplyForm = ({ postId, onReplyCreated }: ReplyFormProps) => {
           value={content}
           onChange={e => setContent(e.target.value)}
           placeholder="Write your reply..."
-          className="w-full px-3 py-3 border border-border rounded-md bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none transition-colors hover:border-border/80 text-sm"
+          className="w-full px-4 py-3 border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none transition-colors text-base border-border hover:border-border/80"
           rows={3}
           maxLength={1000}
           disabled={isSubmitting}
