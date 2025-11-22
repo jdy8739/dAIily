@@ -24,7 +24,6 @@ const ResetPasswordForm = ({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
   } = useForm<NewPasswordFormData>({
     resolver: zodResolver(newPasswordSchema),
     defaultValues: {
