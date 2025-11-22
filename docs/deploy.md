@@ -114,7 +114,26 @@ docker-compose -f docker-compose.prod.yml up -d
 - Instance → Networking → Firewall
 - Add rules: HTTP (80), HTTPS (443), SSH (22)
 
-**To Update**: `git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d --build`
+### Update Deployment
+
+```bash
+# Pull latest code
+git pull
+
+# Rebuild and restart (recommended)
+docker-compose -f docker-compose.prod.yml build --no-cache app
+docker-compose -f docker-compose.prod.yml up -d
+
+# Check logs
+docker-compose -f docker-compose.prod.yml logs -f app
+```
+
+**Command breakdown**:
+- `build --no-cache app` - Rebuild app image from scratch (no cached layers)
+- `up -d` - Start all services in detached mode, recreates containers with new images
+- `logs -f app` - Follow app logs in real-time (Ctrl+C to exit)
+
+**Important**: Always run `up -d` after `build` to recreate containers and reconnect Docker networks. Rebuilding only the app without restarting can cause 502 errors.
 
 ## Database Management
 
@@ -127,20 +146,67 @@ docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > b
 docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < backup.sql  # Restore
 ```
 
-## Monitoring & Troubleshooting
+## Docker Commands Reference
 
-### View Logs
+### Container Management
 ```bash
+# List running containers
+docker-compose -f docker-compose.prod.yml ps
+
+# Start all services
+docker-compose -f docker-compose.prod.yml up -d
+
+# Stop all services
+docker-compose -f docker-compose.prod.yml down
+
+# Restart all services
+docker-compose -f docker-compose.prod.yml restart
+
+# Restart specific service
+docker-compose -f docker-compose.prod.yml restart app
+
+# Rebuild specific service
+docker-compose -f docker-compose.prod.yml build --no-cache app
+
+# Remove all containers and volumes (DESTRUCTIVE)
+docker-compose -f docker-compose.prod.yml down -v
+```
+
+### Monitoring & Logs
+```bash
+# View logs (real-time)
 docker-compose -f docker-compose.prod.yml logs -f          # All services
 docker-compose -f docker-compose.prod.yml logs -f app      # App only
 docker-compose -f docker-compose.prod.yml logs -f db       # Database only
 docker-compose -f docker-compose.prod.yml logs -f nginx    # Nginx only
+
+# View last 50 lines
+docker-compose -f docker-compose.prod.yml logs --tail=50 app
+
+# Monitor resource usage
+docker stats
+```
+
+### Health Checks
+```bash
+# Check container status
+docker-compose -f docker-compose.prod.yml ps
+
+# Test app from nginx container
+docker-compose -f docker-compose.prod.yml exec nginx wget -O- http://app:3000
+
+# Test database connection
+docker-compose -f docker-compose.prod.yml exec db psql -U postgres -d daiily -c "SELECT 1;"
+
+# Check external access
+curl -I https://daiily.site
 ```
 
 ### Common Issues
 
 | Issue | Solution |
 |-------|----------|
+| 502 Bad Gateway | App container not running or network disconnected. Run: `docker-compose -f docker-compose.prod.yml restart` |
 | Site not accessible externally | Check AWS Lightsail firewall rules (ports 80, 443) |
 | SSL certificate errors | Run certbot and copy certificates to `./ssl/` directory |
 | Database connection failed | Use hex password without special characters in DATABASE_URL |
@@ -150,15 +216,18 @@ docker-compose -f docker-compose.prod.yml logs -f nginx    # Nginx only
 | Authentication failed (postgres) | Database created with old password. Run: `docker-compose -f docker-compose.prod.yml down -v && docker-compose -f docker-compose.prod.yml up -d` |
 | HTML entities in .env (&quot;) | Remove HTML entities, use plain quotes or no quotes for simple values |
 | Login always fails | Check app logs for database connection errors. Verify OAuth redirect URIs match domain |
+| App container missing after rebuild | Rebuilt app without restarting services. Run: `docker-compose -f docker-compose.prod.yml up -d` |
 
 ## Optimizations
 
-- **Multi-stage Docker build**: Minimal final image
-- **Alpine Linux**: Tiny base (5MB)
-- **Next.js standalone**: Reduced runtime dependencies
+- **Multi-stage Docker build**: Separates build and runtime stages
+- **Alpine Linux**: Tiny base image (5MB)
+- **Full node_modules**: Includes Prisma CLI for auto-migrations (~300MB total)
 - **Nginx**: 256 worker connections, gzip compression, 1-year static cache
 - **PostgreSQL**: shared_buffers 32MB, max_connections 20
 - **Node.js heap**: Limited to 300MB
+
+**Note**: Current setup uses full build (not standalone) to support automatic Prisma migrations on startup. See `.claude/history/output-method.md` for alternative approaches.
 
 Monitor with: `docker stats` and `docker-compose -f docker-compose.prod.yml logs -f`
 
