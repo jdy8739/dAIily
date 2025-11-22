@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Pencil, Check, X, RotateCcw } from "lucide-react";
 import Button from "../../../components/atoms/button";
 import { Goal as PrismaGoal } from "@prisma/client";
 
@@ -73,7 +74,7 @@ const GoalCard = ({
   const isOverdue = new Date(goal.deadline) < new Date();
 
   return (
-    <div className="border border-border rounded-lg p-4 bg-card">
+    <div className="border border-border rounded-lg p-6 bg-card">
       <div className="flex flex-col gap-3">
         <div className="flex-1">
           <h4 className="text-foreground font-medium mb-2 whitespace-pre-wrap break-words">
@@ -100,7 +101,7 @@ const GoalCard = ({
               disabled={loading}
               className="text-foreground border-border hover:bg-muted"
             >
-              ✎ Edit
+              <Pencil className="w-4 h-4 mr-1" /> Edit
             </Button>
             <Button
               variant="outline"
@@ -109,7 +110,7 @@ const GoalCard = ({
               disabled={loading}
               className="text-success border-success hover:bg-success/10"
             >
-              ✓ Complete
+              <Check className="w-4 h-4 mr-1" /> Complete
             </Button>
             <Button
               variant="outline"
@@ -118,15 +119,15 @@ const GoalCard = ({
               disabled={loading}
               className="text-accent border-accent hover:bg-accent/10"
             >
-              ✕ Delete
+              <X className="w-4 h-4 mr-1" /> Delete
             </Button>
           </div>
         )}
 
         {goal.status === "COMPLETED" && (
           <div className="flex items-center justify-between gap-2">
-            <span className="text-success text-sm font-medium">
-              ✓ Completed
+            <span className="text-success text-sm font-medium flex items-center gap-1">
+              <Check className="w-4 h-4" /> Completed
             </span>
             <div className="flex gap-2">
               {onReactivate && (
@@ -137,7 +138,7 @@ const GoalCard = ({
                   disabled={loading}
                   className="text-primary border-primary hover:bg-primary/10"
                 >
-                  ↻ Reactivate
+                  <RotateCcw className="w-4 h-4 mr-1" /> Reactivate
                 </Button>
               )}
               <Button
@@ -147,7 +148,7 @@ const GoalCard = ({
                 disabled={loading}
                 className="text-accent border-accent hover:bg-accent/10"
               >
-                ✕ Delete
+                <X className="w-4 h-4 mr-1" /> Delete
               </Button>
             </div>
           </div>

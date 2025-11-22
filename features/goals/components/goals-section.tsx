@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Target, Trophy } from "lucide-react";
 import { useCsrf } from "../../../components/providers/csrf-provider";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
@@ -135,7 +136,7 @@ const GoalsSection = () => {
         onClick={() => setCollapsed(!collapsed)}
       >
         <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          🎯 Your Goals
+          <Target className="w-5 h-5" /> Your Goals
         </h2>
         <button className="text-muted-foreground hover:text-foreground">
           {collapsed ? "▼" : "▲"}
@@ -159,7 +160,7 @@ const GoalsSection = () => {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              🎯 Active Goals
+              <Target className="w-4 h-4 inline-block mr-1" /> Active Goals
               {selectedTab === "active" && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
@@ -176,7 +177,7 @@ const GoalsSection = () => {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              🏆 Achieved Goals
+              <Trophy className="w-4 h-4 inline-block mr-1" /> Achieved Goals
               {selectedTab === "achieved" && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}

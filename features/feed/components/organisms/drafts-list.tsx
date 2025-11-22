@@ -31,7 +31,7 @@ const DraftsList = ({ initialDrafts, loadMore }: DraftsListProps) => {
       renderItem={(draft) => (
         <div
           key={draft.id}
-          className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 hover:shadow-md hover:border-accent/50 transition-all duration-200"
+          className="bg-card rounded-lg shadow-sm border border-border p-6 hover:shadow-md hover:border-border transition-all duration-200"
         >
           <div className="flex items-start justify-between">
             <Link href={`/feed/${draft.id}/edit`} className="flex-1 cursor-pointer">

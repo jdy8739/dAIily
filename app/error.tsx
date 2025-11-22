@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -21,7 +22,7 @@ const Error = ({ error, reset }: ErrorProps) => {
       <div className="max-w-md w-full bg-card border border-accent/50 rounded-lg p-8 shadow-lg">
         <div className="flex items-center justify-center mb-6">
           <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center">
-            <span className="text-4xl">⚠️</span>
+            <AlertTriangle className="w-8 h-8 text-accent" />
           </div>
         </div>
 

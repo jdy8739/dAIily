@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
+import { BarChart3, Sparkles, PenTool, AlertTriangle, Lightbulb } from "lucide-react";
 import Button from "../../../components/atoms/button";
 import Skeleton from "../../../components/atoms/skeleton";
 import { useCsrf } from "../../../components/providers/csrf-provider";
@@ -198,7 +199,7 @@ const StoryGenerator = () => {
   return (
     <div className="space-y-6">
       {/* Period Selector */}
-      <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
+      <div className="bg-card rounded-lg shadow-sm border border-border p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">
           Choose Time Period
         </h2>
@@ -218,11 +219,11 @@ const StoryGenerator = () => {
       </div>
 
       {/* Story Content */}
-      <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8">
+      <div className="bg-card rounded-lg shadow-sm border border-border p-6">
         {!story && !loading && !error && !showGeneratePrompt && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">📊</span>
+              <BarChart3 className="w-12 h-12 text-primary" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">
               Generate Your Story
@@ -237,7 +238,7 @@ const StoryGenerator = () => {
         {showGeneratePrompt && !loading && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">✨</span>
+              <Sparkles className="w-12 h-12 text-accent" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">
               Generate {STORY_PERIOD_LABELS[period]} Story?
@@ -258,7 +259,7 @@ const StoryGenerator = () => {
         {error && error === "NO_POSTS" && (
           <div className="text-center py-12">
             <div className="w-24 h-24 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">✍️</span>
+              <PenTool className="w-12 h-12 text-accent" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-4">
               No Posts in This Period
@@ -301,7 +302,7 @@ const StoryGenerator = () => {
                 </p>
                 {isOutdated && (
                   <p className="text-xs text-accent mt-1 flex items-center gap-1">
-                    <span>⚠️</span>
+                    <AlertTriangle className="w-4 h-4" />
                     <span>
                       This story is outdated. Recent posts and goals aren't
                       included.
@@ -324,7 +325,7 @@ const StoryGenerator = () => {
       {!story && !loading && !showGeneratePrompt && (
         <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-6">
           <h3 className="font-semibold text-foreground mb-3 flex items-center">
-            <span className="mr-2">💡</span>
+            <Lightbulb className="w-5 h-5 mr-2" />
             Tips for Better Insights
           </h3>
           <ul className="space-y-2 text-sm text-muted-foreground">

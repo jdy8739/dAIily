@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Sparkles } from "lucide-react";
 import { editPost, deletePost } from "../../lib/actions";
 import Button from "../../../../components/atoms/button";
 import StreamingDots from "../../../../components/atoms/streaming-dots";
@@ -254,7 +255,7 @@ const EditPostForm = ({
               disabled={isSubmitting || aiLoading}
               onClick={handleAiCorrect}
             >
-              ✨ AI Correct
+              <Sparkles className="w-4 h-4 mr-1" /> AI Correct
             </Button>
           </div>
 

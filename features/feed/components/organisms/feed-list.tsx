@@ -28,7 +28,7 @@ type FeedListProps = {
 const FeedListSkeleton = () => (
   <div className="space-y-4">
     {[1, 2, 3].map((i) => (
-      <div key={i} className="bg-card rounded-lg border border-border/50 p-5">
+      <div key={i} className="bg-card rounded-lg border border-border/50 p-6">
         <div className="flex items-start space-x-3">
           <div className="w-9 h-9 rounded-full skeleton" />
           <div className="flex-1">
@@ -58,7 +58,7 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
       items={initialPosts}
       renderItem={(post) => (
         <Link key={post.id} href={`/feed/${post.id}`} className="block">
-          <div className="bg-card rounded-lg border border-border/50 p-5 hover:border-border transition-colors cursor-pointer">
+          <div className="bg-card rounded-lg border border-border/50 p-6 hover:border-border transition-colors cursor-pointer">
             <div className="flex items-start space-x-3">
               <div className="w-9 h-9 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-foreground font-medium text-xs">

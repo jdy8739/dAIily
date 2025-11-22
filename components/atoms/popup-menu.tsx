@@ -6,7 +6,7 @@ import Link from "next/link";
 interface PopupMenuItem {
   label: string;
   href: string;
-  icon?: string;
+  icon?: string | React.ReactNode;
 }
 
 interface PopupMenuProps {
@@ -57,7 +57,7 @@ const PopupMenu = ({ trigger, items, className = "" }: PopupMenuProps) => {
               onClick={() => setIsOpen(false)}
               className="flex items-center space-x-3 px-4 py-3 text-foreground hover:bg-accent/10 transition-colors"
             >
-              {item.icon && <span className="text-lg">{item.icon}</span>}
+              {item.icon && (typeof item.icon === "string" ? <span className="text-lg">{item.icon}</span> : item.icon)}
               <span className="text-sm font-medium">{item.label}</span>
             </Link>
           ))}

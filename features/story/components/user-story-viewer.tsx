@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Target, Trophy, FileText } from "lucide-react";
 import { getUserGoals, getUserStory } from "../lib/actions";
 import { GoalStatus } from "@prisma/client";
 import Skeleton from "../../../components/atoms/skeleton";
@@ -126,26 +127,28 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           <div className="flex gap-2 border-b border-border">
             <button
               onClick={() => setSelectedTab("active")}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer flex items-center gap-2 ${
                 selectedTab === "active"
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              🎯 Active Goals
+              <Target className="w-4 h-4" />
+              Active Goals
               {selectedTab === "active" && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
             </button>
             <button
               onClick={() => setSelectedTab("achieved")}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
+              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer flex items-center gap-2 ${
                 selectedTab === "achieved"
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              🏆 Achieved Goals
+              <Trophy className="w-4 h-4" />
+              Achieved Goals
               {selectedTab === "achieved" && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
@@ -224,7 +227,7 @@ const UserStoryViewer = ({ userId }: UserStoryViewerProps) => {
           {!loading && !error && !story && (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📝</span>
+                <FileText className="w-8 h-8 text-muted-foreground" />
               </div>
               <p className="text-muted-foreground">
                 No story available for this period yet

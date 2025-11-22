@@ -1,5 +1,6 @@
 "use client";
 
+import { FileText, Trophy } from "lucide-react";
 import PopupMenu from "../atoms/popup-menu";
 
 interface UserNameMenuProps {
@@ -17,12 +18,12 @@ const UserNameMenu = ({
     {
       label: "View Feed",
       href: `/feed/user/${userId}?tab=feed`,
-      icon: "📝",
+      icon: <FileText className="w-4 h-4" />,
     },
     {
       label: "View Story",
       href: `/story/${userId}`,
-      icon: "🏆",
+      icon: <Trophy className="w-4 h-4" />,
     },
   ];
 
@@ -30,7 +31,7 @@ const UserNameMenu = ({
     <PopupMenu
       trigger={
         <span
-          className={`text-blue-500 hover:text-blue-400 font-semibold ${className}`}
+          className={`text-primary hover:text-primary/80 font-semibold ${className}`}
         >
           {userName}
         </span>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MessageCircle, Share2, Pencil } from "lucide-react";
 import AuthLayout from "../../../components/templates/auth-layout";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
@@ -116,7 +117,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
           </div>
 
           {/* Post Content */}
-          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8 mb-8">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-8 mb-8">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
@@ -147,10 +148,11 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/feed/${post.id}/edit`}
-                    className="px-3 py-1 text-sm text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer"
+                    className="px-3 py-1 text-sm text-muted-foreground hover:text-accent transition-colors rounded hover:bg-accent/10 cursor-pointer inline-flex items-center gap-1"
                     title="Edit post"
                   >
-                    ✏️ Edit
+                    <Pencil className="w-4 h-4" />
+                    Edit
                   </Link>
                   <DeletePostButton postId={post.id} />
                 </div>
@@ -175,21 +177,21 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 initialLikeCount={post._count.likes}
               />
               <span className="flex items-center space-x-2 text-muted-foreground">
-                <span>💬</span>
+                <MessageCircle className="w-4 h-4" />
                 <span>
                   {post._count.replies}{" "}
                   {post._count.replies === 1 ? "Reply" : "Replies"}
                 </span>
               </span>
               <button className="flex items-center space-x-2 text-muted-foreground hover:text-accent transition-colors cursor-pointer">
-                <span>🔄</span>
+                <Share2 className="w-4 h-4" />
                 <span>Share</span>
               </button>
             </div>
           </div>
 
           {/* Replies Section */}
-          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6 mb-8">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-8">
             <h3 className="text-lg font-semibold text-foreground mb-6">
               Replies ({post._count.replies})
             </h3>

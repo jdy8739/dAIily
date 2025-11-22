@@ -58,7 +58,7 @@ const SignupForm = ({ csrfToken }: SignupFormProps) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-card py-8 px-4 shadow-lg rounded-lg sm:px-10 border border-primary/30">
+      <div className="bg-card py-8 px-4 shadow-lg rounded-lg sm:px-10 border border-border">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-foreground text-center">
             Create your account

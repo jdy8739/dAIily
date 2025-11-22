@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Heart, MessageCircle } from "lucide-react";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
 import ClientDate from "../../../../components/atoms/client-date";
 
@@ -31,7 +32,7 @@ const UserFeedList = ({ initialPosts, loadMore }: UserFeedListProps) => {
         <Link
           key={post.id}
           href={`/feed/${post.id}`}
-          className="block p-4 border border-border rounded-lg hover:border-primary/50 hover:bg-accent/5 transition-all"
+          className="block p-6 border border-border rounded-lg hover:border-primary/50 hover:bg-accent/5 transition-all"
         >
           <h4 className="font-semibold text-foreground mb-2">{post.title}</h4>
           <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
@@ -39,8 +40,12 @@ const UserFeedList = ({ initialPosts, loadMore }: UserFeedListProps) => {
           </p>
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <ClientDate date={post.createdAt} />
-            <span>❤️ {post._count.likes}</span>
-            <span>💬 {post._count.replies}</span>
+            <span className="flex items-center gap-1">
+              <Heart className="w-4 h-4" /> {post._count.likes}
+            </span>
+            <span className="flex items-center gap-1">
+              <MessageCircle className="w-4 h-4" /> {post._count.replies}
+            </span>
           </div>
         </Link>
       )}

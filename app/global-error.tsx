@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -50,7 +51,7 @@ const GlobalError = ({ error, reset }: GlobalErrorProps) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <span style={{ fontSize: '2.5rem' }}>⚠️</span>
+                <AlertTriangle size={32} color='#ef4444' />
               </div>
             </div>
 

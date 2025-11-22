@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PenTool } from "lucide-react";
 import AuthLayout from "../../../../components/templates/auth-layout";
 import Tabs from "../../../../components/atoms/tabs";
 import {
@@ -122,9 +123,10 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                 </div>
                 <Link
                   href="/write"
-                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap"
+                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap gap-2"
                 >
-                  ✍️ Write New Entry
+                  <PenTool className="w-4 h-4" />
+                  Write New Entry
                 </Link>
               </div>
             </div>
@@ -246,7 +248,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
           </div>
 
           {/* Tabbed Content */}
-          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8">
+          <div className="bg-card rounded-lg shadow-sm border border-border p-8">
             <Tabs items={tabItems} defaultTab="feed" queryParam="tab" />
           </div>
         </div>
