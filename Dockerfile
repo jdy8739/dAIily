@@ -43,9 +43,12 @@ RUN --mount=from=builder,source=/app,target=/mnt/app,rw \
         cp -r /mnt/app/public/* ./public/; \
     fi
 
-# Copy Prisma files
+# Copy Prisma files and CLI
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # Copy entrypoint script
 COPY --chown=nextjs:nodejs entrypoint.sh /app/entrypoint.sh
