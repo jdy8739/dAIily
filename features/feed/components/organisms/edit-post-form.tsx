@@ -242,14 +242,16 @@ const EditPostForm = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             {isDraft && (
               <Button
                 type="button"
                 variant="outline"
+                size="md"
                 disabled={isSubmitting || aiLoading}
                 onClick={handleSaveDraft}
+                className="flex-1 sm:flex-none"
               >
                 Save Draft
               </Button>
@@ -258,31 +260,37 @@ const EditPostForm = ({
             <Button
               type="button"
               variant="ai"
+              size="md"
               disabled={isSubmitting || aiLoading}
               onClick={handleAiCorrect}
+              className="flex-1 sm:flex-none"
             >
-              <Sparkles className="w-4 h-4 mr-1" /> AI Correct
+              <Sparkles className="w-4 h-4 mr-1.5" /> AI Correct
             </Button>
 
             {hasChanges && (
               <Button
                 type="button"
                 variant="outline"
+                size="md"
                 disabled={isSubmitting || aiLoading}
                 onClick={handleRevert}
+                className="flex-1 sm:flex-none"
               >
-                <RotateCcw className="w-4 h-4 mr-1" /> Revert
+                <RotateCcw className="w-4 h-4 mr-1.5" /> Revert
               </Button>
             )}
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex gap-2 sm:gap-3">
             {isDraft && (
               <Button
                 type="button"
                 variant="outline"
+                size="md"
                 onClick={handleDelete}
                 disabled={isSubmitting || aiLoading}
+                className="flex-1 sm:flex-none"
               >
                 Delete
               </Button>
@@ -290,15 +298,17 @@ const EditPostForm = ({
             <Button
               type="button"
               variant="outline"
+              size="md"
               onClick={handleCancel}
               disabled={isSubmitting || aiLoading}
+              className="flex-1 sm:flex-none"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
-              size="lg"
+              size="md"
               disabled={
                 isSubmitting ||
                 aiLoading ||
@@ -306,6 +316,7 @@ const EditPostForm = ({
                 !content.trim() ||
                 !hasChanges
               }
+              className="w-full sm:w-auto"
             >
               {isSubmitting
                 ? isDraft
