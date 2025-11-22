@@ -159,13 +159,15 @@ const PostForm = () => {
           disabled={loading || aiLoading}
         />
 
-        <div className="flex items-center justify-between pt-4">
-          <div className="flex items-center space-x-3">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               type="button"
               variant="outline"
+              size="md"
               disabled={loading || aiLoading}
               onClick={onSaveDraft}
+              className="flex-1 sm:flex-none"
             >
               Save Draft
             </Button>
@@ -173,8 +175,10 @@ const PostForm = () => {
             <Button
               type="button"
               variant="ai"
+              size="md"
               disabled={loading || aiLoading}
               onClick={onAiCorrect}
+              className="flex-1 sm:flex-none"
             >
               <Sparkles className="w-4 h-4 mr-1.5" />
               AI Correct
@@ -184,8 +188,9 @@ const PostForm = () => {
           <Button
             type="submit"
             variant="primary"
-            size="lg"
+            size="md"
             disabled={loading || aiLoading}
+            className="w-full sm:w-auto"
           >
             {loading ? "Sharing..." : "Share Growth"}
           </Button>
