@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { prisma } from "../../../lib/prisma";
 import { validateCsrf } from "../../../lib/csrf-middleware";
 import { logger } from "../../../lib/logger";
-import { env } from "../../../lib/env";
 import {
   hashPassword,
   verifyPassword,
@@ -17,7 +16,10 @@ import {
   clearNextAuthCookies,
   createEmailVerificationToken,
 } from "../../../lib/auth";
-import { sendPasswordResetEmail, sendVerificationEmail } from "../../../lib/email";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "../../../lib/email";
 import {
   loginSchema,
   signupSchema,
@@ -63,8 +65,9 @@ const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
     // Check if email is verified
     if (!user.verified) {
       return {
-        error: "Please verify your email before logging in. Check your inbox for the verification link.",
-        unverified: true
+        error:
+          "Please verify your email before logging in. Check your inbox for the verification link.",
+        unverified: true,
       };
     }
 
@@ -119,7 +122,9 @@ const signupAction = async (
     // Generate and send verification email
     if (user.email) {
       try {
-        const verificationToken = await createEmailVerificationToken(user.email);
+        const verificationToken = await createEmailVerificationToken(
+          user.email
+        );
         await sendVerificationEmail(user.email, verificationToken, user.name);
         // logger.info({ email: user.email }, "Verification email sent");
         console.log("Verification email sent to:", user.email);
@@ -134,7 +139,9 @@ const signupAction = async (
     return { error: "Account creation failed. Please try again." };
   } finally {
     if (user) {
-      redirect("/login?message=Account created successfully. Please check your email to verify your account.");
+      redirect(
+        "/login?message=Account created successfully. Please check your email to verify your account."
+      );
     }
   }
 };
@@ -177,7 +184,10 @@ const passwordResetAction = async (
       try {
         await sendPasswordResetEmail(user.email, resetToken, user.name);
       } catch (emailError) {
-        logger.error({ err: emailError }, "Failed to send password reset email");
+        logger.error(
+          { err: emailError },
+          "Failed to send password reset email"
+        );
         // Don't throw error - still return success to avoid revealing email existence
       }
     }
@@ -265,14 +275,20 @@ const logoutAction = async () => {
     }
     await clearSessionCookie();
   } catch (error) {
-    logger.error({ err: error }, "Logout error - failed to clear custom session");
+    logger.error(
+      { err: error },
+      "Logout error - failed to clear custom session"
+    );
   }
 
   try {
     // Clear all NextAuth cookies (OAuth users) - server-side for security
     await clearNextAuthCookies();
   } catch (error) {
-    logger.error({ err: error }, "Logout error - failed to clear NextAuth cookies");
+    logger.error(
+      { err: error },
+      "Logout error - failed to clear NextAuth cookies"
+    );
   }
 
   // redirect() throws NEXT_REDIRECT - must be outside try-catch
