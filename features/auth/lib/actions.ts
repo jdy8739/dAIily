@@ -27,7 +27,6 @@ import {
   type PasswordResetFormData,
   type NewPasswordFormData,
 } from "../schemas";
-import { signOut } from "next-auth/react";
 import { User } from "next-auth";
 
 const loginAction = async (formData: LoginFormData & { csrfToken: string }) => {
@@ -256,19 +255,28 @@ const resetPasswordWithTokenAction = async (
 
 const logoutAction = async () => {
   try {
-    // Clear custom session (for email/password users)
     const cookieStore = await cookies();
-    // Use custom cookie name for email/password sessions
-    const sessionToken = cookieStore.get("session")?.value;
 
+    // Clear custom session cookie (email/password users)
+    const sessionToken = cookieStore.get("session")?.value;
     if (sessionToken) {
       await deleteSession(sessionToken);
-      await clearSessionCookie();
     }
+    await clearSessionCookie();
 
-    // Use NextAuth's signOut to properly handle OAuth logout and cookie cleanup
-    // This is the proper way to sign out and let NextAuth manage its cookies
-    await signOut({ redirect: false });
+    // Clear NextAuth session cookie (OAuth users) - server-side for security
+    const nextAuthCookieName =
+      env.NODE_ENV === "production"
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token";
+
+    cookieStore.set(nextAuthCookieName, "", {
+      httpOnly: true,
+      secure: env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
 
     redirect("/login");
   } catch (error) {
