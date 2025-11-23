@@ -264,7 +264,7 @@ const resetPasswordWithTokenAction = async (
   }
 };
 
-const logoutAction = async () => {
+const logoutAction = async (): Promise<void> => {
   const cookieStore = await cookies();
 
   try {
@@ -290,9 +290,6 @@ const logoutAction = async () => {
       "Logout error - failed to clear NextAuth cookies"
     );
   }
-
-  // redirect() throws NEXT_REDIRECT - must be outside try-catch
-  redirect("/login");
 };
 
 export {
