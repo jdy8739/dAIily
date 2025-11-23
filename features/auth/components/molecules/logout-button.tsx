@@ -15,9 +15,21 @@ const LogoutButton = ({ className = "" }: LogoutButtonProps) => {
     if (!confirmed) return;
 
     setLoading(true);
-    // redirect() in server action throws NEXT_REDIRECT which Next.js handles
-    // No try-catch needed - redirect will happen automatically
-    await logoutAction();
+    try {
+      await logoutAction();
+    } catch (error) {
+      // NEXT_REDIRECT throws an error that Next.js handles for navigation
+      // Only log if it's NOT a redirect error
+      if (
+        error instanceof Error &&
+        error.message.includes("NEXT_REDIRECT")
+      ) {
+        // Expected - redirect is happening, ignore
+        return;
+      }
+      console.error("Logout failed:", error);
+      setLoading(false);
+    }
   };
 
   return (
