@@ -14,6 +14,7 @@ import {
   createPasswordResetToken,
   deleteSession,
   clearSessionCookie,
+  clearNextAuthCookies,
   createEmailVerificationToken,
 } from "../../../lib/auth";
 import { sendPasswordResetEmail, sendVerificationEmail } from "../../../lib/email";
@@ -254,35 +255,28 @@ const resetPasswordWithTokenAction = async (
 };
 
 const logoutAction = async () => {
-  try {
-    const cookieStore = await cookies();
+  const cookieStore = await cookies();
 
+  try {
     // Clear custom session cookie (email/password users)
     const sessionToken = cookieStore.get("session")?.value;
     if (sessionToken) {
       await deleteSession(sessionToken);
     }
     await clearSessionCookie();
-
-    // Clear NextAuth session cookie (OAuth users) - server-side for security
-    const nextAuthCookieName =
-      env.NODE_ENV === "production"
-        ? "__Secure-next-auth.session-token"
-        : "next-auth.session-token";
-
-    cookieStore.set(nextAuthCookieName, "", {
-      httpOnly: true,
-      secure: env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 0,
-    });
-
-    redirect("/login");
   } catch (error) {
-    logger.error({ err: error }, "Logout error");
-    redirect("/login");
+    logger.error({ err: error }, "Logout error - failed to clear custom session");
   }
+
+  try {
+    // Clear all NextAuth cookies (OAuth users) - server-side for security
+    await clearNextAuthCookies();
+  } catch (error) {
+    logger.error({ err: error }, "Logout error - failed to clear NextAuth cookies");
+  }
+
+  // redirect() throws NEXT_REDIRECT - must be outside try-catch
+  redirect("/login");
 };
 
 export {

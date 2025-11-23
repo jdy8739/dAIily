@@ -127,6 +127,59 @@ const clearSessionCookie = async (): Promise<void> => {
   });
 };
 
+const clearNextAuthCookies = async (): Promise<void> => {
+  const cookieStore = await cookies();
+  const isProduction = env.NODE_ENV === "production";
+
+  // NextAuth cookie names differ between dev and prod
+  // Use set() with maxAge: 0 for reliable deletion across browsers
+  if (isProduction) {
+    // Production cookies with __Secure- and __Host- prefixes
+    cookieStore.set("__Secure-next-auth.session-token", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+    cookieStore.set("__Secure-next-auth.callback-url", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+    // __Host- cookies cannot have domain, must have secure and path=/
+    cookieStore.set("__Host-next-auth.csrf-token", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
+  } else {
+    // Development cookies without prefixes
+    cookieStore.set("next-auth.session-token", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "lax",
+    });
+    cookieStore.set("next-auth.callback-url", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "lax",
+    });
+    cookieStore.set("next-auth.csrf-token", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "lax",
+    });
+  }
+};
+
 // Current user helper - cached per request to prevent duplicate DB queries
 const getCurrentUser = cache(async () => {
   // First check NextAuth session (for OAuth users)
@@ -298,6 +351,7 @@ export {
   setSessionCookie,
   getSessionFromCookie,
   clearSessionCookie,
+  clearNextAuthCookies,
   getCurrentUser,
   generatePasswordResetToken,
   createPasswordResetToken,
