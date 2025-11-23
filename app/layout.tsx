@@ -84,7 +84,6 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/icon.svg",
   },
-  manifest: "/manifest.json",
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
