@@ -24,11 +24,13 @@ npm start
 ```
 
 **Pros**:
+
 - ✅ Auto-migrations work
 - ✅ Simple deployment
 - ✅ All dependencies available
 
 **Cons**:
+
 - ❌ Large image (~300MB)
 - ❌ Slower builds
 - ❌ Includes dev dependencies
@@ -57,16 +59,19 @@ node server.js
 ```
 
 **Migration**: Run manually when schema changes
+
 ```bash
 docker-compose exec app npx prisma db push
 ```
 
 **Pros**:
+
 - ✅ Small image (~100MB)
 - ✅ Fast startup
 - ✅ Production best practice
 
 **Cons**:
+
 - ❌ Manual migration step
 - ❌ Extra deployment complexity
 
@@ -85,11 +90,13 @@ COPY --from=builder /app/node_modules ./node_modules
 ```
 
 **Pros**:
+
 - ✅ Smaller than full (~150MB)
 - ✅ Auto-migrations work
 - ✅ No dev dependencies
 
 **Cons**:
+
 - ❌ Still larger than standalone
 
 **Use when**: Balance between size and convenience

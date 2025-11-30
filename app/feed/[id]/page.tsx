@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MessageCircle, Share2, Pencil } from "lucide-react";
+import { MessageCircle, Share2, Pencil, Bot } from "lucide-react";
 import AuthLayout from "../../../components/templates/auth-layout";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
@@ -12,6 +12,7 @@ import UserNameMenu from "../../../components/molecules/user-name-menu";
 import { getPostById } from "../../../features/feed/lib/queries";
 import ClientDate from "../../../components/atoms/client-date";
 import { generateArticleSchema } from "../../../lib/structured-data";
+import Badge from "../../../components/atoms/badge";
 
 interface FeedDetailPageProps {
   params: Promise<{ id: string }>;
@@ -72,6 +73,7 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
   }
 
   const isAuthor = currentUser?.id === post.author.id;
+  const isAIStory = post.title.startsWith("[AI]");
 
   // Generate Article structured data for SEO
   const articleSchema = generateArticleSchema({
@@ -103,9 +105,17 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
               ← Back to Feed
             </Link>
             <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl">
-              <h1 className="text-3xl font-bold text-accent-foreground mb-2">
-                {post.title}
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold text-accent-foreground">
+                  {post.title}
+                </h1>
+                {isAIStory && (
+                  <Badge variant="primary">
+                    <Bot className="w-4 h-4" />
+                    AI Story
+                  </Badge>
+                )}
+              </div>
               <div className="flex items-center space-x-2 text-accent-foreground/90">
                 <span>
                   By{" "}

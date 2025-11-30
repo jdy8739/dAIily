@@ -42,11 +42,11 @@
 
 ## Services Configuration
 
-| Service | Image | Memory | CPU | Notes |
-|---------|-------|--------|-----|-------|
-| **App** | node:20-alpine | 400M limit / 200M reserve | 0.5 / 0.25 | Heap: 300MB, auto migrations |
-| **Nginx** | nginx:alpine | 50M limit / 20M reserve | 0.2 / 0.1 | Gzip, 1y static cache, 256 workers |
-| **DB** | postgres:16-alpine | 200M limit / 100M reserve | 0.3 / 0.1 | max_connections: 20, 32MB shared_buffers |
+| Service   | Image              | Memory                    | CPU        | Notes                                    |
+| --------- | ------------------ | ------------------------- | ---------- | ---------------------------------------- |
+| **App**   | node:20-alpine     | 400M limit / 200M reserve | 0.5 / 0.25 | Heap: 300MB, auto migrations             |
+| **Nginx** | nginx:alpine       | 50M limit / 20M reserve   | 0.2 / 0.1  | Gzip, 1y static cache, 256 workers       |
+| **DB**    | postgres:16-alpine | 200M limit / 100M reserve | 0.3 / 0.1  | max_connections: 20, 32MB shared_buffers |
 
 ## Prerequisites
 
@@ -74,12 +74,14 @@ RESEND_API_KEY=<your-key>
 ```
 
 **OAuth redirect URIs**:
+
 - Google: `https://daiily.site/api/auth/callback/google`
 - GitHub: `https://daiily.site/api/auth/callback/github`
 
 ## Deployment Steps
 
 ### 1. Server Setup
+
 ```bash
 # Install Docker & Docker Compose
 sudo apt update
@@ -90,6 +92,7 @@ sudo usermod -aG docker ubuntu
 ```
 
 ### 2. Deploy Application
+
 ```bash
 # Copy project files to server
 scp -i key.pem -r . ubuntu@server-ip:~/daiily/
@@ -110,6 +113,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ### 3. Configure AWS Lightsail Firewall
+
 - Go to AWS Lightsail Console
 - Instance → Networking → Firewall
 - Add rules: HTTP (80), HTTPS (443), SSH (22)
@@ -129,6 +133,7 @@ docker-compose -f docker-compose.prod.yml logs -f app
 ```
 
 **Command breakdown**:
+
 - `build --no-cache app` - Rebuild app image from scratch (no cached layers)
 - `up -d` - Start all services in detached mode, recreates containers with new images
 - `logs -f app` - Follow app logs in real-time (Ctrl+C to exit)
@@ -140,6 +145,7 @@ docker-compose -f docker-compose.prod.yml logs -f app
 Migrations run automatically on startup. PostgreSQL has `max_connections=20` - set `connection_limit=10` in DATABASE_URL if needed.
 
 **Common commands**:
+
 ```bash
 docker-compose -f docker-compose.prod.yml exec db psql -U postgres -d daiily           # Connect to DB
 docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backup.sql  # Backup
@@ -149,6 +155,7 @@ docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < b
 ## Docker Commands Reference
 
 ### Container Management
+
 ```bash
 # List running containers
 docker-compose -f docker-compose.prod.yml ps
@@ -173,6 +180,7 @@ docker-compose -f docker-compose.prod.yml down -v
 ```
 
 ### Monitoring & Logs
+
 ```bash
 # View logs (real-time)
 docker-compose -f docker-compose.prod.yml logs -f          # All services
@@ -188,6 +196,7 @@ docker stats
 ```
 
 ### Health Checks
+
 ```bash
 # Check container status
 docker-compose -f docker-compose.prod.yml ps
@@ -204,19 +213,19 @@ curl -I https://daiily.site
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| 502 Bad Gateway | App container not running or network disconnected. Run: `docker-compose -f docker-compose.prod.yml restart` |
-| Site not accessible externally | Check AWS Lightsail firewall rules (ports 80, 443) |
-| SSL certificate errors | Run certbot and copy certificates to `./ssl/` directory |
-| Database connection failed | Use hex password without special characters in DATABASE_URL |
-| Nginx restarting | Check SSL certificates exist: `ls -la ssl/` |
-| Build memory errors | Add swap: `sudo fallocate -l 2G /swapfile && sudo swapon /swapfile` |
-| Environment validation failed | Ensure DATABASE_URL uses `db:5432` not `localhost:5432` |
-| Authentication failed (postgres) | Database created with old password. Run: `docker-compose -f docker-compose.prod.yml down -v && docker-compose -f docker-compose.prod.yml up -d` |
-| HTML entities in .env (&quot;) | Remove HTML entities, use plain quotes or no quotes for simple values |
-| Login always fails | Check app logs for database connection errors. Verify OAuth redirect URIs match domain |
-| App container missing after rebuild | Rebuilt app without restarting services. Run: `docker-compose -f docker-compose.prod.yml up -d` |
+| Issue                               | Solution                                                                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 502 Bad Gateway                     | App container not running or network disconnected. Run: `docker-compose -f docker-compose.prod.yml restart`                                     |
+| Site not accessible externally      | Check AWS Lightsail firewall rules (ports 80, 443)                                                                                              |
+| SSL certificate errors              | Run certbot and copy certificates to `./ssl/` directory                                                                                         |
+| Database connection failed          | Use hex password without special characters in DATABASE_URL                                                                                     |
+| Nginx restarting                    | Check SSL certificates exist: `ls -la ssl/`                                                                                                     |
+| Build memory errors                 | Add swap: `sudo fallocate -l 2G /swapfile && sudo swapon /swapfile`                                                                             |
+| Environment validation failed       | Ensure DATABASE_URL uses `db:5432` not `localhost:5432`                                                                                         |
+| Authentication failed (postgres)    | Database created with old password. Run: `docker-compose -f docker-compose.prod.yml down -v && docker-compose -f docker-compose.prod.yml up -d` |
+| HTML entities in .env (&quot;)      | Remove HTML entities, use plain quotes or no quotes for simple values                                                                           |
+| Login always fails                  | Check app logs for database connection errors. Verify OAuth redirect URIs match domain                                                          |
+| App container missing after rebuild | Rebuilt app without restarting services. Run: `docker-compose -f docker-compose.prod.yml up -d`                                                 |
 
 ## Optimizations
 
@@ -239,12 +248,14 @@ Monitor with: `docker stats` and `docker-compose -f docker-compose.prod.yml logs
 - **Total**: ~$6-8/month
 
 **Scaling**:
+
 - t3.micro: 10-20 concurrent users, 100K-500K requests/day
 - t3.small: 50-100 concurrent users, 1M+ requests/day
 
 ## Maintenance
 
 ### SSL Certificate Renewal
+
 ```bash
 # Renew Let's Encrypt certificates (run every 60 days)
 sudo certbot renew
@@ -255,6 +266,7 @@ docker-compose -f docker-compose.prod.yml restart nginx
 ```
 
 ### Backup Database
+
 ```bash
 # Create backup
 docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backup-$(date +%Y%m%d).sql
@@ -273,4 +285,3 @@ docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < b
 - CSP headers via Next.js middleware
 - Non-root user in Docker
 - Let's Encrypt SSL certificates (auto-renewal recommended)
-

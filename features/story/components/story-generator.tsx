@@ -3,17 +3,32 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import { BarChart3, Sparkles, PenTool, AlertTriangle, Lightbulb } from "lucide-react";
+import {
+  BarChart3,
+  Sparkles,
+  PenTool,
+  AlertTriangle,
+  Lightbulb,
+  RefreshCw,
+  Share2,
+  Eye,
+  Heart,
+  Target,
+  Zap,
+  Flame,
+} from "lucide-react";
 import Button from "../../../components/atoms/button";
 import Skeleton from "../../../components/atoms/skeleton";
 import { useCsrf } from "../../../components/providers/csrf-provider";
 import {
   getCachedStory,
   generateStory as generateStoryAction,
+  shareStoryToFeed as shareStoryToFeedAction,
 } from "../lib/actions";
 import ClientDate from "../../../components/atoms/client-date";
 
 type Period = "daily" | "weekly" | "monthly" | "yearly" | "all";
+type Harshness = "low" | "medium" | "harsh" | "brutal";
 
 const StoryGenerator = () => {
   const { token: csrfToken } = useCsrf();
@@ -27,12 +42,16 @@ const StoryGenerator = () => {
       ? urlPeriod
       : "all";
   });
+  const [harshness, setHarshness] = useState<Harshness>("medium");
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
   const [showGeneratePrompt, setShowGeneratePrompt] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [alreadyShared, setAlreadyShared] = useState(false);
+  const [sharedPostId, setSharedPostId] = useState<string | null>(null);
 
   // Load cached story on mount
   useEffect(() => {
@@ -122,7 +141,11 @@ const StoryGenerator = () => {
 
     try {
       // Generate new story
-      const result = await generateStoryAction(period, csrfToken ?? undefined);
+      const result = await generateStoryAction(
+        period,
+        harshness,
+        csrfToken ?? undefined
+      );
 
       if (!result.success) {
         if (result.error === "NO_POSTS") {
@@ -156,9 +179,15 @@ const StoryGenerator = () => {
     setLoading(true);
     setError(null);
     setStory("");
+    setAlreadyShared(false);
+    setSharedPostId(null);
 
     try {
-      const result = await generateStoryAction(period, csrfToken ?? undefined);
+      const result = await generateStoryAction(
+        period,
+        harshness,
+        csrfToken ?? undefined
+      );
 
       if (!result.success) {
         if (result.error === "NO_POSTS") {
@@ -188,6 +217,41 @@ const StoryGenerator = () => {
     }
   };
 
+  const shareToFeed = async () => {
+    setIsSharing(true);
+    setError(null);
+
+    try {
+      const result = await shareStoryToFeedAction(
+        period,
+        csrfToken ?? undefined
+      );
+
+      if (!result.success) {
+        if (result.error === "Invalid CSRF token") {
+          setError(
+            "Security token expired. Please refresh the page and try again."
+          );
+        } else {
+          setError(result.error || "Failed to share story to feed");
+        }
+        return;
+      }
+
+      // Success
+      setAlreadyShared(true);
+      setSharedPostId(result.postId);
+
+      // Redirect to feed with the new post
+      router.push(`/feed#post-${result.postId}`);
+    } catch (err) {
+      console.error("Share to feed error:", err);
+      setError("Failed to share story to feed. Please try again.");
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   const STORY_PERIOD_LABELS: Record<Period, string> = {
     daily: "Past 24 Hours",
     weekly: "Past Week",
@@ -196,8 +260,109 @@ const StoryGenerator = () => {
     all: "Entire Journey",
   };
 
+  const harshnessOptions = [
+    {
+      value: "low" as Harshness,
+      icon: Heart,
+      label: "Gentle",
+      color: "from-success/20 to-success/5",
+      iconColor: "text-success",
+    },
+    {
+      value: "medium" as Harshness,
+      icon: Target,
+      label: "Balanced",
+      color: "from-info/20 to-info/5",
+      iconColor: "text-info",
+    },
+    {
+      value: "harsh" as Harshness,
+      icon: Zap,
+      label: "Direct",
+      color: "from-warning/20 to-warning/5",
+      iconColor: "text-warning",
+    },
+    {
+      value: "brutal" as Harshness,
+      icon: Flame,
+      label: "Brutal",
+      color: "from-destructive/20 to-destructive/5",
+      iconColor: "text-destructive",
+    },
+  ];
+
+  const harshnessDescriptions: Record<Harshness, string> = {
+    low: "Gentle encouragement",
+    medium: "Balanced feedback",
+    harsh: "Direct honesty",
+    brutal: "Brutal truth",
+  };
+
   return (
     <div className="space-y-6">
+      {/* Feedback Intensity Selector */}
+      <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-2xl border border-border/30 p-10 shadow-lg backdrop-blur-sm">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-primary/60" />
+            <h3 className="text-base font-medium text-muted-foreground uppercase tracking-wide text-sm">
+              Feedback Style
+            </h3>
+          </div>
+          <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
+            Choose your coaching intensity
+          </p>
+        </div>
+
+        <div className="relative bg-muted/30 rounded-xl p-1.5 backdrop-blur-sm border border-border/20 max-w-2xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            {harshnessOptions.map(option => (
+              <button
+                key={option.value}
+                onClick={() => setHarshness(option.value)}
+                disabled={loading}
+                className={`
+                  relative px-4 py-3.5 rounded-lg transition-all duration-300 ease-out
+                  flex flex-col items-center gap-2 border
+                  ${
+                    harshness === option.value
+                      ? `bg-gradient-to-br ${option.color} shadow-md scale-105 border-border/40`
+                      : "border-transparent hover:bg-background/40"
+                  }
+                  ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                `}
+              >
+                <option.icon
+                  className={`w-5 h-5 transition-all duration-300 ${
+                    harshness === option.value
+                      ? `scale-110 ${option.iconColor}`
+                      : "opacity-60"
+                  }`}
+                />
+                <span
+                  className={`text-xs font-medium transition-all ${
+                    harshness === option.value
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {option.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center mt-6">
+          <p className="text-xs text-muted-foreground/60">
+            Selected:{" "}
+            <span className="text-foreground font-medium">
+              {harshnessDescriptions[harshness]}
+            </span>
+          </p>
+        </div>
+      </div>
+
       {/* Period Selector */}
       <div className="bg-card rounded-lg shadow-sm border border-border p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">
@@ -310,9 +475,35 @@ const StoryGenerator = () => {
                   </p>
                 )}
               </div>
-              <Button variant="outline" size="sm" onClick={regenerateStory}>
-                Regenerate
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={regenerateStory}
+                  disabled={loading || isSharing}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Regenerate
+                </Button>
+                {alreadyShared ? (
+                  <Link href={`/feed#post-${sharedPostId}`}>
+                    <Button variant="outline" size="sm">
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Feed Post
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={shareToFeed}
+                    disabled={loading || isSharing}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    {isSharing ? "Sharing..." : "Share to Feed"}
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="prose prose-sm max-w-none text-foreground">
               <div className="whitespace-pre-wrap leading-relaxed">{story}</div>

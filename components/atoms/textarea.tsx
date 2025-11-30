@@ -24,9 +24,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           </label>
         )}
         {description && (
-          <p className="text-xs text-muted-foreground mb-3">
-            {description}
-          </p>
+          <p className="text-xs text-muted-foreground mb-3">{description}</p>
         )}
         <textarea
           ref={ref}

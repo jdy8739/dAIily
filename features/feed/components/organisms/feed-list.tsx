@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle, Share2 } from "lucide-react";
+import { MessageCircle, Share2, Bot } from "lucide-react";
 import InfiniteScroll from "../../../../components/atoms/infinite-scroll";
 import LikeButton from "../molecules/like-button";
 import ClientDate from "../../../../components/atoms/client-date";
+import Badge from "../../../../components/atoms/badge";
 
 type FeedPost = {
   id: string;
@@ -56,6 +57,8 @@ const FeedListSkeleton = () => (
 );
 
 const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
+  const isAIStory = (title: string) => title.startsWith("[AI]");
+
   return (
     <InfiniteScroll
       items={initialPosts}
@@ -82,9 +85,17 @@ const FeedList = ({ initialPosts, loadMore }: FeedListProps) => {
                     className="text-xs text-secondary"
                   />
                 </div>
-                <h4 className="font-medium text-foreground text-sm mb-1.5">
-                  {post.title}
-                </h4>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <h4 className="font-medium text-foreground text-sm">
+                    {post.title}
+                  </h4>
+                  {isAIStory(post.title) && (
+                    <Badge variant="primary">
+                      <Bot className="w-3 h-3" />
+                      AI Story
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-muted-foreground text-sm mb-3 whitespace-pre-wrap line-clamp-3">
                   {post.content}
                 </p>

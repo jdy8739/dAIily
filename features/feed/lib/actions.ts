@@ -423,7 +423,10 @@ const loadMoreFeedPosts = async (page: number, itemsPerPage: number = 10) => {
       hasMore: posts.length === itemsPerPage,
     };
   } catch (error) {
-    logger.error({ err: error, page, itemsPerPage }, "Error loading more feed posts");
+    logger.error(
+      { err: error, page, itemsPerPage },
+      "Error loading more feed posts"
+    );
     return {
       items: [],
       hasMore: false,
@@ -477,7 +480,10 @@ const loadMoreDraftPosts = async (page: number, itemsPerPage: number = 10) => {
       hasMore: drafts.length === itemsPerPage,
     };
   } catch (error) {
-    logger.error({ err: error, page, itemsPerPage }, "Error loading more draft posts");
+    logger.error(
+      { err: error, page, itemsPerPage },
+      "Error loading more draft posts"
+    );
     return {
       items: [],
       hasMore: false,
@@ -526,7 +532,10 @@ const loadMoreUserPosts = async (
       hasMore: posts.length === itemsPerPage,
     };
   } catch (error) {
-    logger.error({ err: error, userId, page, itemsPerPage }, "Error loading more user posts");
+    logger.error(
+      { err: error, userId, page, itemsPerPage },
+      "Error loading more user posts"
+    );
     return {
       items: [],
       hasMore: false,

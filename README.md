@@ -5,6 +5,7 @@ A growth diary feed application where professionals share their daily experience
 ## Tech Stack
 
 ### Core
+
 - **Framework**: Next.js 15 with App Router + Turbopack
 - **Database**: PostgreSQL + Prisma ORM
 - **Styling**: Tailwind CSS v4 with CSS variables for theming
@@ -14,6 +15,7 @@ A growth diary feed application where professionals share their daily experience
 - **Architecture**: Headless, Feature-Sliced Design (FSD)
 
 ### Authentication & Security
+
 - **Authentication**: NextAuth.js with Prisma adapter
 - **OAuth Providers**: Google, GitHub
 - **Password Hashing**: bcryptjs
@@ -21,6 +23,7 @@ A growth diary feed application where professionals share their daily experience
 - **CSRF Protection**: Custom HMAC-SHA256 tokens for auth actions
 
 ### Features & Utilities
+
 - **AI Integration**: OpenAI for story generation
 - **Forms**: React Hook Form + @hookform/resolvers
 - **Validation**: Zod schemas
@@ -76,6 +79,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 ## Available Scripts
 
 ### Development
+
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build production bundle with Turbopack
 - `npm start` - Start production server
@@ -84,6 +88,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 - `npm run format:check` - Check code formatting
 
 ### Database
+
 - `npm run db:generate` - Generate Prisma client
 - `npm run db:push` - Push schema to database (no migrations)
 - `npm run db:migrate` - Create and run migrations
@@ -149,7 +154,9 @@ For detailed deployment instructions, environment setup, and infrastructure conf
 ```
 
 ### Feature Structure
+
 Each feature follows this pattern:
+
 ```
 /features/[feature]/
   ├── components/        # Feature-specific components (atomic design)
@@ -160,6 +167,7 @@ Each feature follows this pattern:
 ## Features
 
 ### Authentication
+
 - Email/password authentication with secure password hashing
 - OAuth integration (Google, GitHub)
 - Password reset via email
@@ -167,6 +175,7 @@ Each feature follows this pattern:
 - Session management with NextAuth.js
 
 ### Content Management
+
 - Create and edit daily growth stories
 - Draft system for work-in-progress posts
 - Rich text editing with AI assistance
@@ -174,16 +183,19 @@ Each feature follows this pattern:
 - Infinite scroll pagination
 
 ### Social Features
+
 - Public feed of user stories
 - User profiles with post history
 - View other users' growth journeys
 
 ### AI Integration
+
 - AI-powered story suggestions
 - Content generation assistance
 - OpenAI GPT integration
 
 ### UI/UX
+
 - Dark-first theme with Cursor Dark Midnight palette
 - Light mode support with CSS variables
 - Consistent design system (standardized buttons, typography, spacing)
@@ -194,6 +206,7 @@ Each feature follows this pattern:
 - Comprehensive design documentation (DESIGN_SPEC.md)
 
 ### Developer Experience
+
 - Structured logging with sensitive data redaction
 - Type-safe database queries with Prisma
 - Zod schema validation

@@ -28,13 +28,16 @@ const DraftsList = ({ initialDrafts, loadMore }: DraftsListProps) => {
   return (
     <InfiniteScroll
       items={initialDrafts}
-      renderItem={(draft) => (
+      renderItem={draft => (
         <div
           key={draft.id}
           className="bg-card rounded-lg shadow-sm border border-border p-6 hover:shadow-md hover:border-border transition-all duration-200"
         >
           <div className="flex items-start justify-between">
-            <Link href={`/feed/${draft.id}/edit`} className="flex-1 cursor-pointer">
+            <Link
+              href={`/feed/${draft.id}/edit`}
+              className="flex-1 cursor-pointer"
+            >
               <div className="flex items-center space-x-2 mb-2">
                 <span className="px-2 py-1 text-xs font-medium bg-success/20 text-success rounded">
                   DRAFT

@@ -161,7 +161,11 @@ body {
 
 /* Text gradient (Linear-style) */
 .text-gradient {
-  background: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--foreground) / 0.6));
+  background: linear-gradient(
+    to right,
+    hsl(var(--foreground)),
+    hsl(var(--foreground) / 0.6)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

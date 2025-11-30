@@ -30,7 +30,10 @@ const DraftsPage = async () => {
 
           <div className="space-y-6">
             {drafts.length !== 0 && (
-              <DraftsList initialDrafts={drafts} loadMore={loadMoreDraftPosts} />
+              <DraftsList
+                initialDrafts={drafts}
+                loadMore={loadMoreDraftPosts}
+              />
             )}
 
             <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">

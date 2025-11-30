@@ -23,9 +23,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
         {description && (
-          <p className="text-xs text-muted-foreground mb-3">
-            {description}
-          </p>
+          <p className="text-xs text-muted-foreground mb-3">{description}</p>
         )}
         <input
           ref={ref}

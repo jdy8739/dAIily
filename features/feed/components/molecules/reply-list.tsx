@@ -98,9 +98,7 @@ const ReplyList = ({
                   <p className="text-xs text-secondary">
                     <ClientDate date={reply.createdAt} />
                     {reply.updatedAt !== reply.createdAt && (
-                      <span className="ml-1 text-secondary/70">
-                        (edited)
-                      </span>
+                      <span className="ml-1 text-secondary/70">(edited)</span>
                     )}
                   </p>
                 </div>

@@ -34,7 +34,8 @@ export const GET = async (req: NextRequest) => {
     if (!period) {
       return new Response(
         JSON.stringify({
-          error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+          error:
+            "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
         }),
         {
           status: 400,
@@ -103,7 +104,8 @@ export const POST = async (req: NextRequest) => {
     if (!period) {
       return new Response(
         JSON.stringify({
-          error: "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
+          error:
+            "Invalid period. Must be one of: daily, weekly, monthly, yearly, all",
         }),
         {
           status: 400,

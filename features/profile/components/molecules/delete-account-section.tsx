@@ -39,7 +39,7 @@ const DeleteAccountSection = () => {
         <button
           type="button"
           onClick={handleDeleteAccount}
-          className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors font-semibold"
+          className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors font-semibold cursor-pointer"
         >
           Delete Account
         </button>

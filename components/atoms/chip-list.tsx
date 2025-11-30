@@ -88,9 +88,7 @@ const ChipList = ({
         </label>
       )}
       {description && (
-        <p className="text-xs text-muted-foreground mb-3">
-          {description}
-        </p>
+        <p className="text-xs text-muted-foreground mb-3">{description}</p>
       )}
 
       <div
@@ -138,9 +136,7 @@ const ChipList = ({
         </div>
       </div>
 
-      {error && (
-        <p className="mt-1 text-sm text-accent font-medium">{error}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-accent font-medium">{error}</p>}
 
       {maxItems && (
         <p className="mt-1 text-xs text-muted-foreground">

@@ -29,18 +29,14 @@ const MobileMenu = ({ userName }: MobileMenuProps) => {
         aria-label="Toggle menu"
         type="button"
       >
-        {isOpen ? (
-          <X className="w-5 h-5" />
-        ) : (
-          <Menu className="w-5 h-5" />
-        )}
+        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="absolute top-14 left-0 right-0 bg-card border-b border-border shadow-lg z-40">
           <nav className="flex flex-col divide-y divide-border/50">
-            {menuItems.map((item) => (
+            {menuItems.map(item => (
               <Link
                 key={item.href}
                 href={item.href}

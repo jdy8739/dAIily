@@ -71,9 +71,11 @@ pkill -f "prisma studio"
 ## Models
 
 ### User
+
 Core user model with authentication and profile information.
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `email` (String, unique): User email address
 - `name` (String?): Display name
@@ -83,6 +85,7 @@ Core user model with authentication and profile information.
 - `image` (String?): Profile image URL
 
 **Career Information:**
+
 - `currentRole` (String?): Job title
 - `experienceLevel` (ExperienceLevel): Career level (INTERN to C_LEVEL)
 - `industry` (String?): Industry sector
@@ -92,19 +95,23 @@ Core user model with authentication and profile information.
 - `bio` (String?): User biography
 
 **Goals & Achievements:**
+
 - `currentGoals` (String[]): Active goal descriptions
 - `achievementScore` (Int): Gamification score
 - `goals` (Goal[]): Related goals
 
 **Rate Limiting:**
+
 - `dailyGenerationCount` (Int): AI story generations today
 - `lastGenerationDate` (DateTime?): Last generation timestamp
 
 **Timestamps:**
+
 - `createdAt` (DateTime): Account creation
 - `updatedAt` (DateTime): Last update
 
 **Relations:**
+
 - `accounts` (Account[]): OAuth accounts
 - `sessions` (Session[]): Active sessions
 - `passwordReset` (PasswordReset[]): Password reset tokens
@@ -114,9 +121,11 @@ Core user model with authentication and profile information.
 - `replies` (Reply[]): Post replies
 
 ### Goal
+
 User goals with tracking and deadlines.
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId` (String): Owner reference
 - `title` (String): Goal description
@@ -128,45 +137,56 @@ User goals with tracking and deadlines.
 - `createdAt`, `updatedAt` (DateTime)
 
 **Indexes:**
+
 - `[userId, status]`: Filter user's active/completed goals
 - `[userId, period]`: Filter by time period
 
 ### Account
+
 OAuth provider accounts (NextAuth).
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId` (String): User reference
 - `type`, `provider`, `providerAccountId`: OAuth config
 - `refresh_token`, `access_token`, `expires_at`, `token_type`, `scope`, `id_token`, `session_state`: OAuth tokens
 
 **Constraints:**
+
 - Unique constraint on `[provider, providerAccountId]`
 
 ### Session
+
 User sessions (NextAuth).
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId` (String): User reference
 - `sessionToken` (String, unique): Session identifier
 - `expires` (DateTime): Expiration timestamp
 
 ### VerificationToken
+
 Email verification tokens (NextAuth).
 
 **Fields:**
+
 - `identifier` (String): Email or user ID
 - `token` (String, unique): Verification token
 - `expires` (DateTime): Expiration timestamp
 
 **Constraints:**
+
 - Unique constraint on `[identifier, token]`
 
 ### PasswordReset
+
 Password reset token management.
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId` (String): User reference
 - `token` (String, unique): Reset token
@@ -175,9 +195,11 @@ Password reset token management.
 - `createdAt` (DateTime)
 
 ### Post
+
 User-created posts (growth diary entries).
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `title` (String): Post title
 - `content` (String): Post body
@@ -186,34 +208,42 @@ User-created posts (growth diary entries).
 - `createdAt`, `updatedAt` (DateTime)
 
 **Relations:**
+
 - `author` (User): Post creator
 - `likes` (Like[]): Post likes
 - `replies` (Reply[]): Comments
 
 ### Like
+
 Post likes (many-to-many User ↔ Post).
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId`, `postId` (String): References
 - `createdAt` (DateTime)
 
 **Constraints:**
+
 - Unique constraint on `[userId, postId]` (one like per user per post)
 
 ### Reply
+
 Post comments/replies.
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `content` (String): Reply text
 - `authorId`, `postId` (String): References
 - `createdAt`, `updatedAt` (DateTime)
 
 ### Story
+
 AI-generated story suggestions.
 
 **Fields:**
+
 - `id` (String, CUID): Primary key
 - `userId` (String): User reference
 - `period` (String): Time period identifier
@@ -221,20 +251,25 @@ AI-generated story suggestions.
 - `createdAt`, `updatedAt` (DateTime)
 
 **Constraints:**
+
 - Unique constraint on `[userId, period]` (one story per period per user)
 
 ## Enums
 
 ### ExperienceLevel
+
 `INTERN | JUNIOR | MID_LEVEL | SENIOR | LEAD | MANAGER | DIRECTOR | VP | C_LEVEL`
 
 ### GoalPeriod
+
 `DAILY | WEEKLY | MONTHLY | QUARTERLY | YEARLY`
 
 ### GoalStatus
+
 `ACTIVE | COMPLETED`
 
 ### PostStatus
+
 `DRAFT | PUBLISHED`
 
 ## Relationships

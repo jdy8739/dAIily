@@ -45,10 +45,12 @@
 ### 3. Standardize Card Border Colors
 
 Choose one pattern and apply consistently:
+
 - Option A: `border-border/50` (subtle)
 - Option B: `border-border` (standard)
 
 Files to update (standardized to `border-border`):
+
 - [x] `features/story/components/story-generator.tsx:201,221` - `border-accent/30` → `border-border`
 - [x] `app/feed/[id]/page.tsx:119,192` - `border-accent/30` → `border-border`
 - [x] `features/feed/components/organisms/drafts-list.tsx:34` - `border-accent/30` → `border-border`
@@ -75,12 +77,14 @@ Files to update (standardized to `border-border`):
 ### 6. Establish Typography Hierarchy
 
 Standard sizes to apply:
+
 - h1: `text-3xl font-bold` (correct)
 - h2: `text-2xl font-bold` (correct)
 - h3: `text-xl font-semibold` (correct)
 - h4: `text-lg font-semibold` (correct)
 
 Files reviewed and fixed:
+
 - [x] `app/feed/user/[userId]/page.tsx:104` - `<h3 text-xl font-semibold>` ✓
 - [x] `app/feed/[id]/page.tsx:195` - Changed `<h3>` to `<h4 text-lg font-semibold>` (semantic fix)
 - [x] `features/goals/components/goals-section.tsx:138` - Changed `<h2>` to `<h3 text-lg font-semibold>` (semantic fix)
@@ -113,20 +117,24 @@ Files reviewed and fixed:
 ## Completed
 
 ### ✅ High Priority (100%)
+
 - [x] Replace Emojis with Lucide Icons (28 items)
 - [x] Fix Hardcoded Colors (1 item)
 
 ### ✅ Medium Priority (100%)
+
 - [x] Standardize Card Border Colors (7 files) → border-border
 - [x] Standardize Card Padding (5 files) → p-6
 - [x] Consolidate Inline Buttons (3 files) → Button component
 - [x] Establish Typography Hierarchy (semantic HTML fixes)
 
 ### ✅ Low Priority (100%)
+
 - [x] Review Text Color Usage (improved contrast with text-secondary)
 - [x] Document Design Standards (DESIGN_SPEC.md updated)
 
 ### ✅ Previous
+
 - [x] Remove old colors (destructive, warning, info)
 - [x] Apply 4-color palette (primary, secondary, accent, success)
 - [x] Unify big button font-weight to font-semibold

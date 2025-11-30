@@ -244,13 +244,7 @@ const seed = async () => {
       industry: "Technology",
       experienceLevel: "MID_LEVEL",
       yearsOfExperience: 3,
-      currentSkills: [
-        "TypeScript",
-        "React",
-        "Node.js",
-        "PostgreSQL",
-        "Docker",
-      ],
+      currentSkills: ["TypeScript", "React", "Node.js", "PostgreSQL", "Docker"],
       targetSkills: ["Kubernetes", "Go", "System Design", "AWS"],
       bio: "Passionate developer focused on building scalable applications and continuous learning.",
       currentGoals: [
@@ -355,7 +349,7 @@ const seed = async () => {
 };
 
 seed()
-  .catch((error) => {
+  .catch(error => {
     console.error("❌ Seed failed:", error);
     process.exit(1);
   })

@@ -7,7 +7,9 @@ import { logger } from "../../../lib/logger";
 
 const resendVerificationEmail = async (
   email: string
-): Promise<{ success: true; message: string } | { success: false; error: string }> => {
+): Promise<
+  { success: true; message: string } | { success: false; error: string }
+> => {
   try {
     // Find user by email
     const user = await prisma.user.findUnique({
@@ -18,7 +20,8 @@ const resendVerificationEmail = async (
     if (!user) {
       return {
         success: true,
-        message: "If an account with that email exists and is unverified, you will receive a verification link.",
+        message:
+          "If an account with that email exists and is unverified, you will receive a verification link.",
       };
     }
 
@@ -34,7 +37,8 @@ const resendVerificationEmail = async (
     if (!user.password) {
       return {
         success: false,
-        error: "This account uses OAuth sign-in and doesn't require email verification.",
+        error:
+          "This account uses OAuth sign-in and doesn't require email verification.",
       };
     }
 

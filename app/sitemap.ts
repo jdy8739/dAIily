@@ -30,7 +30,9 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     });
   } catch (error) {
     // Database not available during build - return static pages only
-    console.warn("Database not available for sitemap generation, returning static pages only");
+    console.warn(
+      "Database not available for sitemap generation, returning static pages only"
+    );
   }
 
   // Static pages

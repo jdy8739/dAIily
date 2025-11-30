@@ -31,9 +31,10 @@ export const generateMetadata = async ({
   }
 
   const title = `${user.name}'s Posts`;
-  const roleInfo = user.currentRole && user.industry
-    ? `${user.currentRole} in ${user.industry}`
-    : user.currentRole || user.industry || "Professional";
+  const roleInfo =
+    user.currentRole && user.industry
+      ? `${user.currentRole} in ${user.industry}`
+      : user.currentRole || user.industry || "Professional";
   const description = `View all posts from ${user.name} - ${roleInfo}. Follow their professional growth journey on Daiily.`;
 
   return {
@@ -118,7 +119,8 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                     Share Your Professional Journey
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    Document your growth, insights, and achievements. Your story inspires others!
+                    Document your growth, insights, and achievements. Your story
+                    inspires others!
                   </p>
                 </div>
                 <Link

@@ -23,21 +23,39 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="flex justify-between items-center h-14 gap-2 sm:gap-4">
             {/* Logo */}
-            <Link href="/feed" className="flex items-center space-x-2 flex-shrink-0">
-              <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="6" fill="url(#gradient)"/>
-                <rect x="6" y="22" width="4" height="4" rx="1" fill="white"/>
-                <rect x="11" y="18" width="4" height="8" rx="1" fill="white"/>
-                <rect x="16" y="14" width="4" height="12" rx="1" fill="white"/>
-                <rect x="21" y="10" width="4" height="16" rx="1" fill="white"/>
+            <Link
+              href="/feed"
+              className="flex items-center space-x-2 flex-shrink-0"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="32" height="32" rx="6" fill="url(#gradient)" />
+                <rect x="6" y="22" width="4" height="4" rx="1" fill="white" />
+                <rect x="11" y="18" width="4" height="8" rx="1" fill="white" />
+                <rect x="16" y="14" width="4" height="12" rx="1" fill="white" />
+                <rect x="21" y="10" width="4" height="16" rx="1" fill="white" />
                 <defs>
-                  <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#6366f1"/>
-                    <stop offset="100%" stopColor="#8b5cf6"/>
+                  <linearGradient
+                    id="gradient"
+                    x1="0"
+                    y1="0"
+                    x2="32"
+                    y2="32"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
                   </linearGradient>
                 </defs>
               </svg>
-              <h1 className="text-lg sm:text-xl font-semibold text-foreground hidden xs:inline">Daiily</h1>
+              <h1 className="text-lg sm:text-xl font-semibold text-foreground hidden xs:inline">
+                Daiily
+              </h1>
             </Link>
 
             {/* Navigation - Hidden on mobile, visible on sm+ */}

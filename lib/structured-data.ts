@@ -124,8 +124,15 @@ const generateArticleSchema = (params: {
   postId: string;
 }): Article => {
   const baseUrl = env.NEXTAUTH_URL;
-  const { title, content, authorName, authorId, publishedAt, updatedAt, postId } =
-    params;
+  const {
+    title,
+    content,
+    authorName,
+    authorId,
+    publishedAt,
+    updatedAt,
+    postId,
+  } = params;
 
   // Truncate content for description (max 160 chars)
   const description =
@@ -184,7 +191,13 @@ const generateProfilePageSchema = (params: {
   const baseUrl = env.NEXTAUTH_URL;
   const { name, userId, bio, image, currentRole } = params;
 
-  const person = generatePersonSchema({ name, userId, bio, image, currentRole });
+  const person = generatePersonSchema({
+    name,
+    userId,
+    bio,
+    image,
+    currentRole,
+  });
 
   return {
     "@context": "https://schema.org",

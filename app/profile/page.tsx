@@ -51,7 +51,11 @@ const ProfilePage = async () => {
 
           {/* Tabbed Content */}
           <div className="bg-card rounded-lg shadow-sm border border-border p-8">
-            <ProfileTabs items={tabItems} defaultTab="profile" queryParam="tab" />
+            <ProfileTabs
+              items={tabItems}
+              defaultTab="profile"
+              queryParam="tab"
+            />
           </div>
         </div>
       </div>

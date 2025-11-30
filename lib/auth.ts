@@ -275,9 +275,7 @@ const generateEmailVerificationToken = (): string => {
   );
 };
 
-const createEmailVerificationToken = async (
-  email: string
-): Promise<string> => {
+const createEmailVerificationToken = async (email: string): Promise<string> => {
   const token = generateEmailVerificationToken();
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 

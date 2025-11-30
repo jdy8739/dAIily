@@ -17,9 +17,7 @@ const FeedPage = async () => {
       <div className="min-h-[calc(100vh-56px)]">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="title-3 text-foreground mb-2">
-              Growth Feed
-            </h1>
+            <h1 className="title-3 text-foreground mb-2">Growth Feed</h1>
             <p className="text-muted-foreground text-sm">
               Discover and be inspired by others&apos; professional journeys
             </p>
@@ -42,10 +40,7 @@ const FeedPage = async () => {
                 </Link>
               </div>
             ) : (
-              <FeedList
-                initialPosts={posts}
-                loadMore={loadMoreFeedPosts}
-              />
+              <FeedList initialPosts={posts} loadMore={loadMoreFeedPosts} />
             )}
 
             {currentUser && (

@@ -138,7 +138,7 @@ const VerifyEmailContent = () => {
             </>
           )}
         </div>
-        </div>
+      </div>
     </div>
   );
 };
