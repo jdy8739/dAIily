@@ -43,9 +43,10 @@ RUN --mount=from=builder,source=/app,target=/mnt/app \
         cp -r /mnt/app/public ./public && chown -R nextjs:nodejs ./public; \
     fi
 
-# Copy entrypoint script
+# Copy entrypoint scripts
 COPY --chown=nextjs:nodejs entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY --chown=nextjs:nodejs entrypoint-baseline.sh /app/entrypoint-baseline.sh
+RUN chmod +x /app/entrypoint.sh /app/entrypoint-baseline.sh
 
 USER nextjs
 

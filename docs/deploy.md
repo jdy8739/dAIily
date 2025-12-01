@@ -78,7 +78,7 @@ RESEND_API_KEY=<your-key>
 - Google: `https://daiily.site/api/auth/callback/google`
 - GitHub: `https://daiily.site/api/auth/callback/github`
 
-## Deployment Steps
+## Initial Deployment
 
 ### 1. Server Setup
 
@@ -118,15 +118,74 @@ docker-compose -f docker-compose.prod.yml up -d
 - Instance → Networking → Firewall
 - Add rules: HTTP (80), HTTPS (443), SSH (22)
 
-### Update Deployment
+## Schema Updates & Migrations
+
+### Local Development (Before Deploying)
+
+```bash
+# 1. Update prisma/schema.prisma with your changes
+
+# 2. Create migration
+npx prisma migrate dev --name describe_your_changes
+
+# 3. Commit and push
+git add prisma/migrations/
+git commit -m "feat: update schema"
+git push
+```
+
+### Server Deployment with Schema Changes
+
+**For existing production database (first time migrating):**
+
+```bash
+# On server
+git pull
+
+# Backup database first
+mkdir -p backups
+docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backups/backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Run one-time baseline (syncs schema + marks migrations as applied)
+docker-compose -f docker-compose.prod.yml run --rm app /app/entrypoint-baseline.sh
+
+# Start services
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+**For subsequent schema updates (after baseline):**
+
+```bash
+# On server
+git pull
+
+# Backup database
+mkdir -p backups
+docker-compose -f docker-compose.prod.yml exec db pg_dump -U postgres daiily > backups/backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Rebuild and restart (migrations run automatically via entrypoint.sh)
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# Check logs
+docker-compose -f docker-compose.prod.yml logs -f app
+```
+
+### Rollback Schema Changes
+
+```bash
+# Restore from backup
+docker-compose -f docker-compose.prod.yml exec -T db psql -U postgres daiily < backups/backup_TIMESTAMP.sql
+docker-compose -f docker-compose.prod.yml restart app
+```
+
+## Code Updates (No Schema Changes)
 
 ```bash
 # Pull latest code
 git pull
 
-# Rebuild and restart (recommended)
-docker-compose -f docker-compose.prod.yml build --no-cache app
-docker-compose -f docker-compose.prod.yml up -d
+# Rebuild and restart
+docker-compose -f docker-compose.prod.yml up -d --build
 
 # Check logs
 docker-compose -f docker-compose.prod.yml logs -f app
@@ -134,8 +193,7 @@ docker-compose -f docker-compose.prod.yml logs -f app
 
 **Command breakdown**:
 
-- `build --no-cache app` - Rebuild app image from scratch (no cached layers)
-- `up -d` - Start all services in detached mode, recreates containers with new images
+- `up -d --build` - Rebuild images and restart containers in one command
 - `logs -f app` - Follow app logs in real-time (Ctrl+C to exit)
 
 **Important**: Always run `up -d` after `build` to recreate containers and reconnect Docker networks. Rebuilding only the app without restarting can cause 502 errors.
@@ -226,6 +284,7 @@ curl -I https://daiily.site
 | HTML entities in .env (&quot;)      | Remove HTML entities, use plain quotes or no quotes for simple values                                                                           |
 | Login always fails                  | Check app logs for database connection errors. Verify OAuth redirect URIs match domain                                                          |
 | App container missing after rebuild | Rebuilt app without restarting services. Run: `docker-compose -f docker-compose.prod.yml up -d`                                                 |
+| Migration error: database not empty | Database exists but migrations not tracked. Run baseline: `docker-compose -f docker-compose.prod.yml run --rm app /app/entrypoint-baseline.sh` |
 
 ## Optimizations
 
