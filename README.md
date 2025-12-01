@@ -190,9 +190,12 @@ Each feature follows this pattern:
 
 ### AI Integration
 
-- AI-powered story suggestions
-- Content generation assistance
-- OpenAI GPT integration
+- AI-powered story generation with 4 harshness levels (low, medium, harsh, brutal)
+- AI stories automatically shared to feed with `[AI]` badge
+- Content generation assistance and proofreading
+- OpenAI GPT-4o-mini integration
+- Rate limiting: 10 generations per day per user
+- AI stories are read-only (cannot be edited, can be deleted)
 
 ### UI/UX
 
@@ -223,5 +226,7 @@ Each feature follows this pattern:
 - **Design System**: Use CSS variables, Lucide icons, and standardized components
 - **No hardcoded colors**: Always use CSS variables for theming
 - **Typography**: Follow semantic HTML hierarchy (h1-h6) with consistent sizing
+- **AI Story Metadata**: Stories tracked via `storyGenerationId` and `storyPeriod` fields (not HTML comments)
+- **Story Navigation**: Direct links to `/story/${userId}` for instant client-side navigation
 
 See `CLAUDE.md` for detailed architecture guidelines and `DESIGN_SPEC.md` for UI/component standards.
