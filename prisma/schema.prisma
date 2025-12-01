@@ -142,21 +142,24 @@ model PasswordReset {
 }
 
 model Post {
-  id        String     @id @default(cuid())
-  title     String
-  content   String
-  status    PostStatus @default(DRAFT)
-  authorId  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  likes     Like[]
-  replies   Reply[]
+  id                  String     @id @default(cuid())
+  title               String
+  content             String
+  status              PostStatus @default(DRAFT)
+  authorId            String
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  storyGenerationId   String?    // Timestamp from story.updatedAt when this post was generated from a story
+  storyPeriod         String?    // Period of the story (daily, weekly, monthly, yearly, all)
+  author              User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes               Like[]
+  replies             Reply[]
 
   @@index([status])
   @@index([authorId])
   @@index([createdAt])
   @@index([status, createdAt])
+  @@index([authorId, storyGenerationId])
   @@map("posts")
 }
 

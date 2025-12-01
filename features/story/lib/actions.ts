@@ -701,12 +701,12 @@ const shareStoryToFeed = async (
     }
 
     // Check if this story generation was already shared
-    // We use a hidden marker in the content to track the exact generation
+    // Use storyGenerationId (timestamp) to track exact generation
     const storyGenerationId = story.updatedAt.getTime().toString();
     const existingPost = await prisma.post.findFirst({
       where: {
         authorId: currentUser.id,
-        content: { contains: `<!-- story-gen:${storyGenerationId} -->` },
+        storyGenerationId: storyGenerationId,
       },
     });
 
@@ -728,16 +728,15 @@ const shareStoryToFeed = async (
 
     const title = `[AI] ${periodLabels[period]} 성장 스토리`;
 
-    // Add hidden marker to track this generation
-    const content = `${story.content}\n\n<!-- story-gen:${storyGenerationId} -->`;
-
-    // Create post
+    // Create post with story metadata
     const post = await prisma.post.create({
       data: {
         title: sanitizeContent(title, 200),
-        content: sanitizeContent(content, 10000),
+        content: sanitizeContent(story.content, 10000),
         authorId: currentUser.id,
         status: "PUBLISHED",
+        storyGenerationId: storyGenerationId,
+        storyPeriod: period,
       },
     });
 
