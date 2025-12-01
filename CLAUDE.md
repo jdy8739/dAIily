@@ -159,6 +159,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Atomic operations to prevent race conditions
   - Automatic daily reset at midnight
   - Note: Other endpoints (auth, posts, goals) intentionally unprotected for MVP phase
+- **AI Story Management**: ✅ Implemented
+  - AI stories tracked via `Post.storyGenerationId` and `Post.storyPeriod` metadata fields
+  - Stories identified by `[AI]` title prefix and marked with AI badge
+  - AI stories are read-only (cannot be edited, only deleted)
+  - Duplicate share prevention via unique `storyGenerationId` per user
 
 ## Git Commit Policy
 
