@@ -157,8 +157,8 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
                 </div>
               </div>
 
-              {/* Edit and Delete buttons - only show to author */}
-              {isAuthor && (
+              {/* Edit and Delete buttons - only show to author (but not for AI stories) */}
+              {isAuthor && !isAIStory && (
                 <div className="flex items-center space-x-2">
                   <Link
                     href={`/feed/${post.id}/edit`}

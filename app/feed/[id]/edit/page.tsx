@@ -28,6 +28,12 @@ const EditPostPage = async ({ params }: EditPostPageProps) => {
     redirect(`/feed/${id}`);
   }
 
+  // Prevent editing of AI-generated stories
+  const isAIStory = post.title.startsWith("[AI]");
+  if (isAIStory) {
+    redirect(`/feed/${id}`);
+  }
+
   return (
     <AuthLayout>
       <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
