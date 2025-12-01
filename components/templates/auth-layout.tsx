@@ -17,6 +17,8 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
     redirect("/login");
   }
 
+  const userId = user.id;
+
   return (
     <div className="min-h-screen bg-background">
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -69,7 +71,7 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
                 ]}
               />
               <Link
-                href="/story"
+                href={`/story/${userId}`}
                 className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
               >
                 Story
