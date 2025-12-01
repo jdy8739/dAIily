@@ -196,7 +196,7 @@ Password reset token management.
 
 ### Post
 
-User-created posts (growth diary entries).
+User-created posts (growth diary entries) and AI-generated stories.
 
 **Fields:**
 
@@ -205,6 +205,8 @@ User-created posts (growth diary entries).
 - `content` (String): Post body
 - `status` (PostStatus): DRAFT or PUBLISHED
 - `authorId` (String): Author reference
+- `storyGenerationId` (String?): Timestamp link to Story.updatedAt for AI-generated posts
+- `storyPeriod` (String?): Period of the AI story (daily, weekly, monthly, yearly, all)
 - `createdAt`, `updatedAt` (DateTime)
 
 **Relations:**
@@ -212,6 +214,13 @@ User-created posts (growth diary entries).
 - `author` (User): Post creator
 - `likes` (Like[]): Post likes
 - `replies` (Reply[]): Comments
+
+**AI Story Posts:**
+
+- AI-generated stories are shared to feed as posts with `[AI]` prefix in title
+- `storyGenerationId` and `storyPeriod` track the source story generation
+- AI stories are read-only (cannot be edited, only deleted)
+- Duplicate share prevention via `storyGenerationId` uniqueness per user
 
 ### Like
 
@@ -305,6 +314,11 @@ All relations use `onDelete: Cascade` - deleting a user removes all associated d
    - `Like.[userId, postId]` - Prevent duplicate likes
    - `Story.[userId, period]` - One story per period
    - `Account.[provider, providerAccountId]` - OAuth uniqueness
+
+### Existing Post Indexes
+
+1. **AI Story Tracking:**
+   - `@@index([authorId, storyGenerationId])` - Efficient duplicate share detection
 
 ### Recommended Future Indexes
 
