@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 
 interface GlobalErrorProps {
@@ -9,6 +9,8 @@ interface GlobalErrorProps {
 }
 
 const GlobalError = ({ error, reset }: GlobalErrorProps) => {
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+
   useEffect(() => {
     // Log error to console in development
     if (process.env.NODE_ENV === "development") {
@@ -18,154 +20,55 @@ const GlobalError = ({ error, reset }: GlobalErrorProps) => {
 
   return (
     <html>
-      <body>
-        <div
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#09090b",
-            padding: "1rem",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "28rem",
-              width: "100%",
-              backgroundColor: "#18181b",
-              border: "1px solid rgba(239, 68, 68, 0.5)",
-              borderRadius: "0.5rem",
-              padding: "2rem",
-              boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <div
-                style={{
-                  width: "4rem",
-                  height: "4rem",
-                  backgroundColor: "rgba(239, 68, 68, 0.1)",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <AlertTriangle size={32} color="#ef4444" />
+      <body className="bg-background">
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <div className="w-full max-w-sm rounded-lg border border-destructive/50 bg-card p-8 shadow-lg">
+            {/* Icon Container */}
+            <div className="mb-6 flex items-center justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle size={32} className="text-destructive" />
               </div>
             </div>
 
-            <h1
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                textAlign: "center",
-                color: "#fafafa",
-                marginBottom: "0.5rem",
-              }}
-            >
+            {/* Error Title */}
+            <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
               Critical Error
             </h1>
-            <p
-              style={{
-                textAlign: "center",
-                color: "#a1a1aa",
-                marginBottom: "1.5rem",
-              }}
-            >
+
+            {/* Error Description */}
+            <p className="mb-6 text-center text-muted-foreground">
               A critical error occurred. Please refresh the page.
             </p>
 
+            {/* Development Error Details */}
             {process.env.NODE_ENV === "development" && error.message && (
-              <div
-                style={{
-                  marginBottom: "1.5rem",
-                  padding: "1rem",
-                  backgroundColor: "#27272a",
-                  borderRadius: "0.5rem",
-                  border: "1px solid #3f3f46",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "0.75rem",
-                    fontFamily: "monospace",
-                    color: "#ef4444",
-                    wordBreak: "break-word",
-                  }}
-                >
+              <div className="mb-6 rounded-lg border border-border bg-secondary/20 p-4">
+                <p className="break-words font-mono text-xs text-destructive">
                   {error.message}
                 </p>
                 {error.digest && (
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#71717a",
-                      marginTop: "0.5rem",
-                    }}
-                  >
+                  <p className="mt-2 text-xs text-muted-foreground">
                     Error ID: {error.digest}
                   </p>
                 )}
               </div>
             )}
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.75rem",
-              }}
-            >
+            {/* Button Container */}
+            <div className="flex flex-col gap-3">
               <button
                 onClick={reset}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#3b82f6",
-                  color: "#fafafa",
-                  border: "none",
-                  borderRadius: "0.375rem",
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  transition: "background-color 0.2s",
-                }}
-                onMouseOver={e =>
-                  (e.currentTarget.style.backgroundColor = "#2563eb")
-                }
-                onMouseOut={e =>
-                  (e.currentTarget.style.backgroundColor = "#3b82f6")
-                }
+                onMouseEnter={() => setHoveredButton("reset")}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="w-full rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Try Again
               </button>
               <button
                 onClick={() => (window.location.href = "/")}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#27272a",
-                  color: "#fafafa",
-                  border: "none",
-                  borderRadius: "0.375rem",
-                  fontWeight: 500,
-                  cursor: "pointer",
-                  transition: "background-color 0.2s",
-                }}
-                onMouseOver={e =>
-                  (e.currentTarget.style.backgroundColor = "#3f3f46")
-                }
-                onMouseOut={e =>
-                  (e.currentTarget.style.backgroundColor = "#27272a")
-                }
+                onMouseEnter={() => setHoveredButton("home")}
+                onMouseLeave={() => setHoveredButton(null)}
+                className="w-full rounded-md border border-border bg-secondary px-4 py-3 font-medium text-foreground transition-colors hover:bg-secondary/80"
               >
                 Go to Home
               </button>
