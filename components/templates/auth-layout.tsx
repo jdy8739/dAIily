@@ -62,10 +62,15 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
 
             {/* Navigation - Hidden on mobile, visible on sm+ */}
             <nav className="hidden sm:flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
+              <Link
+                href="/write"
+                className="text-xs sm:text-sm font-medium text-foreground hover:text-primary transition-colors whitespace-nowrap"
+              >
+                Write
+              </Link>
               <NavDropdown
                 label="Posts"
                 items={[
-                  { label: "Write", href: "/write" },
                   { label: "Feed", href: "/feed" },
                   { label: "Drafts", href: "/drafts" },
                 ]}
