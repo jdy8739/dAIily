@@ -39,7 +39,7 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
         setError(result.error);
 
         // If OAuth user, redirect to login after 3 seconds
-        if ((result as any).oauth) {
+        if (result.oauth) {
           setTimeout(() => {
             router.push("/login");
           }, 3000);
