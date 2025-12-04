@@ -62,7 +62,7 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
             Reset your password
           </h2>
           <p className="mt-2 text-sm text-muted-foreground text-center">
-            Enter your email address and we'll send you instructions to reset
+            Enter your email address and we&apos;ll send you instructions to reset
             your password.
           </p>
         </div>
@@ -114,7 +114,7 @@ const PasswordResetForm = ({ csrfToken }: PasswordResetFormProps) => {
             </div>
             <div>
               <span className="text-muted-foreground">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
               </span>
               <Link
                 href="/signup"

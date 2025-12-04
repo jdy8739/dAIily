@@ -430,7 +430,7 @@ const StoryGenerator = () => {
               No Posts in This Period
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              You haven't written any posts in the{" "}
+              You haven&apos;t written any posts in the{" "}
               {STORY_PERIOD_LABELS[period].toLowerCase()}. Start sharing your
               daily experiences to generate your growth story!
             </p>
@@ -469,7 +469,7 @@ const StoryGenerator = () => {
                   <p className="text-xs text-accent mt-1 flex items-center gap-1">
                     <AlertTriangle className="w-4 h-4" />
                     <span>
-                      This story is outdated. Recent posts and goals aren't
+                      This story is outdated. Recent posts and goals aren&apos;t
                       included.
                     </span>
                   </p>

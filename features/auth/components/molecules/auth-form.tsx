@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
+import { useForm, SubmitHandler, FieldValues, UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Input from "../../../../components/atoms/input";
@@ -26,12 +26,12 @@ const AuthForm = <T extends z.ZodType<FieldValues>>({
     handleSubmit,
     formState: { errors },
   } = useForm<z.infer<T>>({
-    // @ts-ignore - zodResolver type incompatibility with generic zod schemas
+    // @ts-expect-error - zodResolver type incompatibility with generic zod schemas
     resolver: zodResolver(schema),
   });
 
   return (
-    // @ts-ignore - generic type compatibility issue
+    // @ts-expect-error - generic type compatibility issue
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {children}
       <Button
@@ -57,7 +57,7 @@ const FormField = ({
   name: string;
   label: string;
   type?: string;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   error?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>) => (
   <Input

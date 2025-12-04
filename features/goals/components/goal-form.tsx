@@ -47,9 +47,10 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
       if (!isEditMode) {
         setTitle("");
       }
-    } catch (err: any) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An unknown error occurred";
       setError(
-        err.message || `Failed to ${isEditMode ? "update" : "create"} goal`
+        message || `Failed to ${isEditMode ? "update" : "create"} goal`
       );
     } finally {
       setLoading(false);
