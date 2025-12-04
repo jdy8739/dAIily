@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import LogoutButton from "../../features/auth/components/molecules/logout-button";
 import ThemeToggle from "../atoms/theme-toggle";
-import NavDropdown from "../molecules/nav-dropdown";
+import { HeaderNav } from "../molecules/header-nav";
 import MobileMenu from "../atoms/mobile-menu";
 
 interface AuthLayoutProps {
@@ -61,27 +61,7 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
             </Link>
 
             {/* Navigation - Hidden on mobile, visible on sm+ */}
-            <nav className="hidden sm:flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
-              <NavDropdown
-                label="Posts"
-                items={[
-                  { label: "Feed", href: "/feed" },
-                  { label: "Drafts", href: "/drafts" },
-                ]}
-              />
-              <Link
-                href="/write"
-                className="text-xs sm:text-sm font-medium text-foreground hover:text-primary transition-colors whitespace-nowrap"
-              >
-                Write
-              </Link>
-              <Link
-                href={`/story/${userId}`}
-                className="text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
-              >
-                Story
-              </Link>
-            </nav>
+            <HeaderNav userId={userId} />
 
             {/* Right section - Flexible spacing */}
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 ml-auto">

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "../../lib/utils";
 
 interface NavItem {
   label: string;
@@ -16,6 +18,9 @@ interface NavDropdownProps {
 const NavDropdown = ({ label, items }: NavDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  const isActive = items.some((item) => item.href === pathname);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,11 +40,19 @@ const NavDropdown = ({ label, items }: NavDropdownProps) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-1 cursor-pointer"
+        className={cn(
+          "text-sm font-medium transition-colors flex items-center space-x-1 cursor-pointer",
+          isActive
+            ? "text-foreground"
+            : "text-muted-foreground hover:text-foreground"
+        )}
       >
         <span>{label}</span>
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={cn(
+            "w-4 h-4 transition-transform",
+            isOpen && "rotate-180"
+          )}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -55,16 +68,24 @@ const NavDropdown = ({ label, items }: NavDropdownProps) => {
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-40 bg-card border border-border rounded-lg shadow-lg z-50">
-          {items.map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-colors first:rounded-t-lg last:rounded-b-lg"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {items.map((item) => {
+            const isItemActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  "block px-4 py-3 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg",
+                  isItemActive
+                    ? "text-foreground bg-accent/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
