@@ -5,6 +5,7 @@ import LogoutButton from "../../features/auth/components/molecules/logout-button
 import ThemeToggle from "../atoms/theme-toggle";
 import { HeaderNav } from "../molecules/header-nav";
 import MobileMenu from "../atoms/mobile-menu";
+import { ProfileLink } from "../atoms/profile-link";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -65,12 +66,7 @@ const AuthLayout = async ({ children }: AuthLayoutProps) => {
 
             {/* Right section - Flexible spacing */}
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 ml-auto">
-              <Link
-                href="/profile"
-                className="hidden sm:block text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              >
-                Profile
-              </Link>
+              <ProfileLink />
               <MobileMenu userName={user.name || "User"} />
               <LogoutButton className="hidden sm:block" />
               <ThemeToggle />
