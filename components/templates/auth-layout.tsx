@@ -6,7 +6,6 @@ import ThemeToggle from "../atoms/theme-toggle";
 import { HeaderNav } from "../molecules/header-nav";
 import { ProfileLink } from "../atoms/profile-link";
 import MobileMenu from "../atoms/mobile-menu";
-import { ProfileLink } from "../atoms/profile-link";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
