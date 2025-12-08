@@ -18,7 +18,7 @@ const cspHeader = `
   .trim();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const middleware = (_request: NextRequest) => {
+export const middleware = (_request: NextRequest) => {
   const response = NextResponse.next();
 
   // Add CSP header
@@ -36,7 +36,7 @@ const middleware = (_request: NextRequest) => {
   return response;
 };
 
-const config = {
+export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
@@ -48,5 +48,3 @@ const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
-
-export { middleware, config };
