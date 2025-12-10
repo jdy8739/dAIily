@@ -18,7 +18,7 @@ const cspHeader = `
   .trim();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const middleware = (_request: NextRequest) => {
+export const proxy = (_request: NextRequest) => {
   const response = NextResponse.next();
 
   // Add CSP header
