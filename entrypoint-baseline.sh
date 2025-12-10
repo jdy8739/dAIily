@@ -13,5 +13,5 @@ for migration in $(ls prisma/migrations/ | grep -v migration_lock); do
   npx prisma migrate resolve --applied "$migration" || true
 done
 
-echo "Starting application..."
-exec npm start
+echo "Starting standalone server..."
+exec node server.js

@@ -3,6 +3,7 @@ services:
     build: .
     environment:
       - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/daiily
     env_file:
       - .env
     expose:

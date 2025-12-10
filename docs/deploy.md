@@ -42,11 +42,11 @@
 
 ## Services Configuration
 
-| Service   | Image              | Memory                    | CPU        | Notes                                    |
-| --------- | ------------------ | ------------------------- | ---------- | ---------------------------------------- |
-| **App**   | node:20-alpine     | 400M limit / 200M reserve | 0.5 / 0.25 | Heap: 300MB, auto migrations             |
-| **Nginx** | nginx:alpine       | 50M limit / 20M reserve   | 0.2 / 0.1  | Gzip, 1y static cache, 256 workers       |
-| **DB**    | postgres:16-alpine | 200M limit / 100M reserve | 0.3 / 0.1  | max_connections: 20, 32MB shared_buffers |
+| Service   | Image              | Memory                    | CPU        | Notes                                              |
+| --------- | ------------------ | ------------------------- | ---------- | -------------------------------------------------- |
+| **App**   | node:20-alpine     | 400M limit / 200M reserve | 0.5 / 0.25 | Standalone mode, Heap: 300MB, auto migrations      |
+| **Nginx** | nginx:alpine       | 50M limit / 20M reserve   | 0.2 / 0.1  | Gzip, 1y static cache, 256 workers                 |
+| **DB**    | postgres:16-alpine | 200M limit / 100M reserve | 0.3 / 0.1  | max_connections: 20, 32MB shared_buffers           |
 
 ## Prerequisites
 
@@ -288,14 +288,19 @@ curl -I https://daiily.site
 
 ## Optimizations
 
+- **Standalone output mode**: Next.js outputs minimal server with only required dependencies (~50-70% smaller)
 - **Multi-stage Docker build**: Separates build and runtime stages
 - **Alpine Linux**: Tiny base image (5MB)
-- **Full node_modules**: Includes Prisma CLI for auto-migrations (~300MB total)
+- **Selective Prisma copy**: Only Prisma client and CLI for migrations (not full node_modules)
 - **Nginx**: 256 worker connections, gzip compression, 1-year static cache
 - **PostgreSQL**: shared_buffers 32MB, max_connections 20
 - **Node.js heap**: Limited to 300MB
 
-**Note**: Current setup uses full build (not standalone) to support automatic Prisma migrations on startup. See `.claude/history/output-method.md` for alternative approaches.
+**Benefits of standalone mode**:
+- Smaller Docker image size
+- Faster container startup
+- Lower memory footprint
+- Only necessary dependencies bundled
 
 Monitor with: `docker stats` and `docker-compose -f docker-compose.prod.yml logs -f`
 

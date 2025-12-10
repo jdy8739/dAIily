@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Standalone 출력 모드 (Docker 최적화)
+  output: "standalone",
+
   // gzip 압축으로 응답 크기 줄이기 (대역폭 절약)
   compress: true,
 

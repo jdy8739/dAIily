@@ -7,5 +7,5 @@ sleep 5
 echo "Running migrations..."
 npx prisma migrate deploy
 
-echo "Starting application..."
-exec npm start
+echo "Starting standalone server..."
+exec node server.js
