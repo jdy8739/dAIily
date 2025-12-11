@@ -456,7 +456,7 @@ const StoryGenerator = () => {
 
         {story && !loading && !error && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-border pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
               <div>
                 <h3 className="text-xl font-semibold text-foreground">
                   {STORY_PERIOD_LABELS[period]}
@@ -475,19 +475,20 @@ const StoryGenerator = () => {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={regenerateStory}
                   disabled={loading || isSharing}
+                  className="w-full sm:w-auto"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Regenerate
                 </Button>
                 {alreadyShared ? (
-                  <Link href={`/feed#post-${sharedPostId}`}>
-                    <Button variant="outline" size="sm">
+                  <Link href={`/feed#post-${sharedPostId}`} className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full">
                       <Eye className="w-4 h-4 mr-2" />
                       View Feed Post
                     </Button>
@@ -498,6 +499,7 @@ const StoryGenerator = () => {
                     size="sm"
                     onClick={shareToFeed}
                     disabled={loading || isSharing}
+                    className="w-full sm:w-auto"
                   >
                     <Share2 className="w-4 h-4 mr-2" />
                     {isSharing ? "Sharing..." : "Share to Feed"}
