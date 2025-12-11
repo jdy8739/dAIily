@@ -26,7 +26,7 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-RUN apk add --no-cache wget
+RUN apk add --no-cache wget postgresql-client
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -44,9 +44,18 @@ RUN --mount=from=builder,source=/app,target=/mnt/app \
         cp -r /mnt/app/public ./public && chown -R nextjs:nodejs ./public; \
     fi
 
-# Copy full node_modules for Prisma CLI (includes all dependencies needed for migrations)
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Copy Prisma schema for migrations
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copy original package.json to read Prisma version
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json.original
+
+# Install ONLY Prisma CLI for migrations (not entire node_modules)
+# This is much smaller than copying all node_modules (~5MB vs ~200MB)
+# IMPORTANT: Automatically match package.json prisma version (strips ^ or ~)
+RUN PRISMA_VERSION=$(grep '"prisma"' ./package.json.original | head -1 | sed 's/.*"\^*\([0-9.]*\)".*/\1/') && \
+    echo "Installing Prisma CLI version: ${PRISMA_VERSION}" && \
+    npm install --global prisma@${PRISMA_VERSION} --no-audit --no-fund
 
 # Copy entrypoint scripts
 COPY --chown=nextjs:nodejs entrypoint.sh /app/entrypoint.sh

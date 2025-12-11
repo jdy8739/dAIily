@@ -55,3 +55,6 @@ docs/
 Dockerfile
 docker-compose*.yml
 .dockerignore
+
+# Data
+backups
