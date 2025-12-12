@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "../components/providers/theme-provider";
 import SessionProvider from "../components/providers/session-provider";
@@ -10,12 +9,6 @@ import {
   generateOrganizationSchema,
   generateWebSiteSchema,
 } from "../lib/structured-data";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
@@ -90,7 +83,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const webSiteSchema = generateWebSiteSchema();
 
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Organization Schema */}
         <script
@@ -105,7 +98,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
         />
       </head>
-      <body className={`${inter.className} transition-colors antialiased`}>
+      <body className="transition-colors antialiased">
         <ErrorBoundary>
           <SessionProvider>
             <CsrfProvider>
