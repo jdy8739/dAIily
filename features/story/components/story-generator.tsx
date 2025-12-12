@@ -434,7 +434,7 @@ const StoryGenerator = () => {
               {STORY_PERIOD_LABELS[period].toLowerCase()}. Start sharing your
               daily experiences to generate your growth story!
             </p>
-            <Link href="/feed">
+            <Link href="/write">
               <Button variant="primary">Write Your First Post</Button>
             </Link>
           </div>

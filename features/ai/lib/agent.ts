@@ -8,7 +8,7 @@ const openai = new OpenAI({
 const agent = {
   name: "Goal and Career Manager",
   instructions: "You coach user's career and goals professionally.",
-  model: "gpt-4o-mini" as const,
+  model: "gpt-5.2" as const,
 };
 
 export { openai, agent };
