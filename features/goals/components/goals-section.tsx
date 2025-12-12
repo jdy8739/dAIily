@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Target, Trophy } from "lucide-react";
+import { Target, Trophy, Sparkles, TrendingUp } from "lucide-react";
 import { useCsrf } from "../../../components/providers/csrf-provider";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
@@ -122,88 +122,145 @@ const GoalsSection = () => {
 
   if (loading) {
     return (
-      <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-6">
-        <Skeleton className="h-48 w-full" />
+      <div className="bg-gradient-to-br from-card via-card to-success/5 rounded-2xl border border-border/30 p-8 shadow-lg">
+        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-lg shadow-sm border border-accent/30 overflow-hidden">
-      {/* Header with Collapse */}
+    <div className="bg-gradient-to-br from-card via-card to-success/5 rounded-2xl border border-border/30 shadow-lg overflow-hidden backdrop-blur-sm">
+      {/* Modern Header with Gradient */}
       <div
-        className="p-6 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
+        className="bg-gradient-to-r from-success/20 via-primary/10 to-accent/10 p-6 cursor-pointer hover:from-success/25 hover:via-primary/15 hover:to-accent/15 transition-all duration-300 border-b border-border/20"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <Target className="w-5 h-5" /> Your Goals
-        </h3>
-        <button className="text-muted-foreground hover:text-foreground">
-          {collapsed ? "▼" : "▲"}
-        </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-success/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-success/30">
+              <Target className="w-5 h-5 text-success" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                Your Goals
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Track your professional milestones
+              </p>
+            </div>
+          </div>
+          <button className="text-muted-foreground hover:text-foreground transition-transform duration-300 transform hover:scale-110">
+            <span className="text-xl">{collapsed ? "▼" : "▲"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Content */}
       {!collapsed && (
-        <div className="px-6 pb-6 space-y-4">
-          {/* Tab Switcher */}
-          <div className="flex gap-2 border-b border-border">
-            <button
-              onClick={() => {
-                setSelectedTab("active");
-                setShowForm(false);
-                setEditingGoalId(null);
-              }}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
-                selectedTab === "active"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Target className="w-4 h-4 inline-block mr-1" /> Active Goals
-              {selectedTab === "active" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setSelectedTab("achieved");
-                setShowForm(false);
-                setEditingGoalId(null);
-              }}
-              className={`px-4 py-2 text-sm font-medium transition-colors relative cursor-pointer ${
-                selectedTab === "achieved"
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Trophy className="w-4 h-4 inline-block mr-1" /> Achieved Goals
-              {selectedTab === "achieved" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-              )}
-            </button>
+        <div className="p-6 space-y-6">
+          {/* Modern Tab Switcher - Pill Style */}
+          <div className="relative bg-muted/30 rounded-xl p-1.5 backdrop-blur-sm border border-border/20">
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                onClick={() => {
+                  setSelectedTab("active");
+                  setShowForm(false);
+                  setEditingGoalId(null);
+                }}
+                className={`
+                  relative px-4 py-3 rounded-lg transition-all duration-300 ease-out
+                  flex items-center justify-center gap-2 border
+                  ${
+                    selectedTab === "active"
+                      ? "bg-gradient-to-br from-success/20 to-success/5 shadow-md scale-105 border-border/40"
+                      : "border-transparent hover:bg-background/40"
+                  }
+                `}
+              >
+                <Target
+                  className={`w-4 h-4 transition-all duration-300 ${
+                    selectedTab === "active"
+                      ? "scale-110 text-success"
+                      : "opacity-60"
+                  }`}
+                />
+                <span
+                  className={`text-sm font-medium transition-all ${
+                    selectedTab === "active"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Active Goals
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedTab("achieved");
+                  setShowForm(false);
+                  setEditingGoalId(null);
+                }}
+                className={`
+                  relative px-4 py-3 rounded-lg transition-all duration-300 ease-out
+                  flex items-center justify-center gap-2 border
+                  ${
+                    selectedTab === "achieved"
+                      ? "bg-gradient-to-br from-warning/20 to-warning/5 shadow-md scale-105 border-border/40"
+                      : "border-transparent hover:bg-background/40"
+                  }
+                `}
+              >
+                <Trophy
+                  className={`w-4 h-4 transition-all duration-300 ${
+                    selectedTab === "achieved"
+                      ? "scale-110 text-warning"
+                      : "opacity-60"
+                  }`}
+                />
+                <span
+                  className={`text-sm font-medium transition-all ${
+                    selectedTab === "achieved"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  Achieved
+                </span>
+              </button>
+            </div>
           </div>
 
-          {/* Period Selector */}
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-foreground">
-              Period:
-            </label>
-            <select
-              value={selectedPeriod}
-              onChange={e => {
-                setSelectedPeriod(e.target.value);
-                setShowForm(false);
-                setEditingGoalId(null);
-              }}
-              className="flex-1 h-14 px-4 py-3 border rounded-lg text-base bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors border-border hover:border-border/80"
-            >
+          {/* Period Selector - Modern Button Group */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary/60" />
+              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Time Period
+              </label>
+            </div>
+            <div className="flex flex-wrap gap-2">
               {GOAL_PERIODS.map(period => (
-                <option key={period} value={period}>
+                <button
+                  key={period}
+                  onClick={() => {
+                    setSelectedPeriod(period);
+                    setShowForm(false);
+                    setEditingGoalId(null);
+                  }}
+                  className={`
+                    px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                    border
+                    ${
+                      selectedPeriod === period
+                        ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
+                        : "bg-background/60 text-muted-foreground border-border/50 hover:border-primary/50 hover:text-foreground hover:scale-105"
+                    }
+                  `}
+                >
                   {GOAL_PERIOD_LABELS[period]}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           {/* Goal Display or Form */}
@@ -262,20 +319,39 @@ const GoalsSection = () => {
                       />
                     ))
                   ) : (
-                    <p className="text-muted-foreground text-sm text-center py-4">
-                      {selectedTab === "active"
-                        ? `No active ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`
-                        : `No achieved ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`}
-                    </p>
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-border/30">
+                        {selectedTab === "active" ? (
+                          <Sparkles className="w-8 h-8 text-muted-foreground" />
+                        ) : (
+                          <Trophy className="w-8 h-8 text-muted-foreground" />
+                        )}
+                      </div>
+                      <p className="text-muted-foreground text-sm font-medium mb-1">
+                        {selectedTab === "active"
+                          ? `No active ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`
+                          : `No achieved ${GOAL_PERIOD_LABELS[selectedPeriod].toLowerCase()} goals yet`}
+                      </p>
+                      {selectedTab === "active" && (
+                        <p className="text-xs text-muted-foreground/70">
+                          Set a goal to start tracking your progress
+                        </p>
+                      )}
+                    </div>
                   )}
 
                   {/* Add new goal button - only show in active tab when not in form mode */}
                   {selectedTab === "active" && !showForm && (
                     <button
                       onClick={() => setShowForm(true)}
-                      className="w-full border border-dashed border-border rounded-lg p-4 text-muted-foreground hover:text-foreground hover:border-accent transition-colors text-sm cursor-pointer"
+                      className="w-full border-2 border-dashed border-border/50 rounded-xl p-5 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-sm font-medium cursor-pointer group"
                     >
-                      + Add {GOAL_PERIOD_LABELS[selectedPeriod]} Goal
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                          <span className="text-primary text-lg">+</span>
+                        </div>
+                        <span>Add {GOAL_PERIOD_LABELS[selectedPeriod]} Goal</span>
+                      </div>
                     </button>
                   )}
                 </div>
