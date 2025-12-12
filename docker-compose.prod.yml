@@ -1,6 +1,7 @@
 services:
   app:
-    build: .
+    image: ${DOCKER_IMAGE:-ghcr.io/jeongdoyeong/daiily:latest}
+    build: .  # Fallback for local development
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/daiily
