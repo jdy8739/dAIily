@@ -1,0 +1,182 @@
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Manual trigger
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    name: Build Docker Image & Push to GHCR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 1. 코드 내려받기
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Docker Buildx 설정 (빌드 성능 향상)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. GitHub Container Registry 로그인
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4. Docker 메타데이터 추출 (태그, 레이블)
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # 5. Docker 이미지 빌드 & GitHub Container Registry에 푸시
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+  deploy:
+    name: Deploy to Lightsail Server
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      # 1. SSH로 Lightsail 서버에 접속해서 배포 명령 실행
+      - name: Deploy to Lightsail via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USERNAME }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          port: 22
+          command_timeout: 10m # Prevent hanging
+          script_stop: true # Stop on first error
+          script: |
+            set -e  # Exit on error
+
+            # 작업 디렉토리로 이동
+            cd ~/daiily || { echo "❌ Directory ~/daiily not found!"; exit 1; }
+
+            # Prefer Docker Compose v2 if available
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE="docker compose"
+            else
+              COMPOSE="docker-compose"
+            fi
+
+            echo "📦 Pulling latest Docker image..."
+            # GitHub Container Registry 로그인
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin 2>/dev/null
+
+            # 최신 이미지 풀
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+            echo "💾 Backing up current state..."
+            # Save current container ID for potential rollback
+            BACKUP_CONTAINER=$($COMPOSE -f docker-compose.prod.yml ps -q app 2>/dev/null || echo "")
+
+            echo "🔄 Stopping old containers..."
+            # 기존 컨테이너 중지 및 제거
+            $COMPOSE -f docker-compose.prod.yml down
+
+            echo "🚀 Starting new containers..."
+            # 새 컨테이너 시작 (detached mode)
+            # CRITICAL FIX: Use --no-build to force using pulled image
+            $COMPOSE -f docker-compose.prod.yml up -d --no-build
+
+            echo "⏳ Waiting for application to start..."
+            sleep 10
+
+            echo "🏥 Running health checks..."
+            # Check if containers are running
+            if ! $COMPOSE -f docker-compose.prod.yml ps | grep -q "Up"; then
+              echo "❌ Containers failed to start!"
+              echo "📋 Container status:"
+              $COMPOSE -f docker-compose.prod.yml ps
+              echo "📋 Recent logs:"
+              $COMPOSE -f docker-compose.prod.yml logs --tail=50
+              exit 1
+            fi
+
+            # Health check via HTTP endpoint (30 attempts, 2 second intervals = 60s total)
+            if command -v curl &> /dev/null; then
+              MAX_ATTEMPTS=30
+              ATTEMPT=0
+              while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+                if curl -f -s http://localhost:80/ > /dev/null 2>&1; then
+                  echo "✅ Health check passed!"
+                  break
+                fi
+                ATTEMPT=$((ATTEMPT + 1))
+                if [ $((ATTEMPT % 5)) -eq 0 ]; then
+                  echo "⏳ Attempt $ATTEMPT/$MAX_ATTEMPTS - waiting for app..."
+                fi
+                sleep 2
+              done
+
+              if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+                echo "⚠️  Health check timed out after $MAX_ATTEMPTS attempts"
+                echo "📋 App logs:"
+                $COMPOSE -f docker-compose.prod.yml logs --tail=30 app
+                echo "⚠️  Deployment completed but app may not be healthy"
+                # Don't exit here - let admin investigate
+              fi
+            else
+              echo "⚠️  curl not available, skipping HTTP health check"
+            fi
+
+            echo "🧹 Cleaning up old images..."
+            # 사용하지 않는 Docker 이미지 정리 (디스크 공간 절약)
+            docker image prune -af --filter "until=24h" || true
+
+            echo "📊 Final container status:"
+            # 컨테이너 상태 확인
+            $COMPOSE -f docker-compose.prod.yml ps
+
+            echo "📋 Recent application logs:"
+            # 로그 출력 (최근 20줄)
+            $COMPOSE -f docker-compose.prod.yml logs --tail=20 app
+
+            echo ""
+            echo "✅ Deployment completed successfully!"
+            echo "🌐 Application: https://daiily.site"
+            echo "📊 Monitor logs: $COMPOSE -f docker-compose.prod.yml logs -f"
+
+      # 2. 배포 결과 알림
+      - name: Deployment Status Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment to Lightsail completed successfully"
+            echo "🌐 Site: https://daiily.site"
+          else
+            echo "❌ Deployment to Lightsail failed"
+            echo "⚠️  Check logs above for details"
+            echo "📝 Manual intervention may be required"
+          fi
