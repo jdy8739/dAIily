@@ -487,7 +487,10 @@ const StoryGenerator = () => {
                   Regenerate
                 </Button>
                 {alreadyShared ? (
-                  <Link href={`/feed#post-${sharedPostId}`} className="w-full sm:w-auto">
+                  <Link
+                    href={`/feed#post-${sharedPostId}`}
+                    className="w-full sm:w-auto"
+                  >
                     <Button variant="outline" size="sm" className="w-full">
                       <Eye className="w-4 h-4 mr-2" />
                       View Feed Post

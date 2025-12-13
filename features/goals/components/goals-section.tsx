@@ -169,7 +169,7 @@ const GoalsSection = () => {
                 }}
                 className={`
                   relative px-4 py-3 rounded-lg transition-all duration-300 ease-out
-                  flex items-center justify-center gap-2 border
+                  flex items-center justify-center gap-2 border cursor-pointer
                   ${
                     selectedTab === "active"
                       ? "bg-gradient-to-br from-success/20 to-success/5 shadow-md scale-105 border-border/40"
@@ -202,7 +202,7 @@ const GoalsSection = () => {
                 }}
                 className={`
                   relative px-4 py-3 rounded-lg transition-all duration-300 ease-out
-                  flex items-center justify-center gap-2 border
+                  flex items-center justify-center gap-2 border cursor-pointer
                   ${
                     selectedTab === "achieved"
                       ? "bg-gradient-to-br from-warning/20 to-warning/5 shadow-md scale-105 border-border/40"
@@ -249,7 +249,7 @@ const GoalsSection = () => {
                   }}
                   className={`
                     px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                    border
+                    border cursor-pointer
                     ${
                       selectedPeriod === period
                         ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
@@ -350,7 +350,9 @@ const GoalsSection = () => {
                         <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                           <span className="text-primary text-lg">+</span>
                         </div>
-                        <span>Add {GOAL_PERIOD_LABELS[selectedPeriod]} Goal</span>
+                        <span>
+                          Add {GOAL_PERIOD_LABELS[selectedPeriod]} Goal
+                        </span>
                       </div>
                     </button>
                   )}
