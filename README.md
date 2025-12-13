@@ -97,9 +97,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Deployment
 
-The application is deployed at **https://daiily.site** using Docker and nginx.
+The application is deployed at **https://daiily.site** using Docker and nginx with GitHub Actions CI/CD.
 
-For detailed deployment instructions, environment setup, and infrastructure configuration, see [DEPLOY.md](./DEPLOY.md).
+For detailed deployment instructions, environment setup, and infrastructure configuration, see [.claude/deploy/CLAUDE.md](./.claude/deploy/CLAUDE.md).
 
 ## Project Structure
 
@@ -143,13 +143,11 @@ For detailed deployment instructions, environment setup, and infrastructure conf
   ├── migrations/        # Database migrations
   └── seed.ts            # Database seeding script
 
-/docs/                   # Documentation
-  ├── ai-review-concept.md       # AI story generation & security features
-  ├── db.md                      # Database schema & migration guide
-  ├── git-commit-guide.md        # Commit message conventions
-  └── DESIGN_SPEC.md             # Design standards & component documentation
-
-/.claude/                # Claude Code configuration
+/.claude/                # Claude Code configuration & documentation
+  ├── deploy/CLAUDE.md           # Deployment guide & infrastructure setup
+  ├── design/CLAUDE.md           # Design standards & component documentation
+  ├── database/CLAUDE.md         # Database schema & migration guide
+  └── agents/                    # AI agent configurations
 /scripts/                # Utility scripts
 ```
 
@@ -229,4 +227,4 @@ Each feature follows this pattern:
 - **AI Story Metadata**: Stories tracked via `storyGenerationId` and `storyPeriod` fields (not HTML comments)
 - **Story Navigation**: Direct links to `/story/${userId}` for instant client-side navigation
 
-See `CLAUDE.md` for detailed architecture guidelines and `DESIGN_SPEC.md` for UI/component standards.
+See [CLAUDE.md](./CLAUDE.md) for detailed architecture guidelines, [.claude/design/CLAUDE.md](./.claude/design/CLAUDE.md) for UI/component standards, and [.claude/database/CLAUDE.md](./.claude/database/CLAUDE.md) for database documentation.

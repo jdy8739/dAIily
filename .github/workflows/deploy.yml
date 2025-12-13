@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - 'Dockerfile'
+      - 'docker-compose.prod.yml'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch: # Manual trigger
 
 env:
