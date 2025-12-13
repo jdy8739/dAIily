@@ -19,7 +19,22 @@ RUN npx prisma generate
 COPY . .
 
 # Build application
-RUN npm run build
+# Provide dummy env vars for build-time (Next.js needs these during static analysis)
+RUN SKIP_ENV_VALIDATION=true \
+    DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" \
+    NEXTAUTH_URL="http://localhost:3000" \
+    NEXTAUTH_SECRET="dummy-secret-min-32-chars-long-12345" \
+    JWT_SECRET="dummy-jwt-secret-min-32-chars-long" \
+    SESSION_SECRET="dummy-session-secret-min-32-chars" \
+    CSRF_SECRET="dummy-csrf-secret-min-32-chars-lo" \
+    GOOGLE_CLIENT_ID="dummy" \
+    GOOGLE_CLIENT_SECRET="dummy" \
+    GITHUB_CLIENT_ID="dummy" \
+    GITHUB_CLIENT_SECRET="dummy" \
+    OPENAI_API_KEY="sk-dummy-key-for-build-only" \
+    RESEND_API_KEY="re_dummy" \
+    NODE_ENV="production" \
+    npm run build
 
 # Production stage
 FROM node:20-alpine AS runner
