@@ -2,18 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import OpenAI from "openai";
-import { env } from "@/lib/env";
 import {
   sanitizeContent,
   sanitizeGoalTitle,
   sanitizePeriod,
 } from "@/lib/sanitize";
 import { logger } from "@/lib/logger";
-
-const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,
-});
+import { openai, agent } from "@/features/ai/lib/agent";
 
 type GoalSelect = {
   id: string;
@@ -666,7 +661,7 @@ Content: ${sanitizeContent(p.content, 2000)}
 
     // Generate story (non-streaming)
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: agent.model,
       messages: [
         {
           role: "system",
