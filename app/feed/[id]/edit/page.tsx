@@ -36,34 +36,39 @@ const EditPostPage = async ({ params }: EditPostPageProps) => {
 
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-[calc(100vh-73px)] bg-background">
+        <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <Link
-              href={`/feed/${id}`}
-              className="inline-flex items-center text-primary hover:text-primary/80 transition-colors mb-4"
-            >
-              ← Back to Post
-            </Link>
-            <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl">
-              <h1 className="text-3xl font-bold text-accent-foreground mb-2">
-                Edit Your Post
-              </h1>
-              <p className="text-accent-foreground/90">
-                Update your professional growth story
-              </p>
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
+            <div className="px-4 py-3 sm:px-6 sm:py-4">
+              <Link
+                href={`/feed/${id}`}
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                ← Back to Post
+              </Link>
             </div>
           </div>
 
-          {/* Edit Form */}
-          <div className="bg-card rounded-lg shadow-sm border border-accent/30 p-8">
-            <EditPostForm
-              postId={post.id}
-              initialTitle={post.title}
-              initialContent={post.content}
-              isDraft={post.status === "DRAFT"}
-            />
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="mb-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                Edit Your Post
+              </h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Update your professional growth story
+              </p>
+            </div>
+
+            {/* Edit Form */}
+            <div className="bg-card rounded-lg shadow-sm border border-border p-8">
+              <EditPostForm
+                postId={post.id}
+                initialTitle={post.title}
+                initialContent={post.content}
+                isDraft={post.status === "DRAFT"}
+              />
+            </div>
           </div>
         </div>
       </div>

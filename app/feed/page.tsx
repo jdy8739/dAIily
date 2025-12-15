@@ -14,16 +14,19 @@ const FeedPage = async () => {
 
   return (
     <AuthLayout>
-      <div className="min-h-[calc(100vh-56px)]">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="title-3 text-foreground mb-2">Growth Feed</h1>
-            <p className="text-muted-foreground text-sm">
+      <div className="min-h-[calc(100vh-56px)] bg-background">
+        <div className="max-w-4xl mx-auto">
+          <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-border">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+              Growth Feed
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Discover and be inspired by others&apos; professional journeys
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="space-y-4">
             {posts.length === 0 ? (
               <div className="bg-card rounded-lg border border-border/50 p-8 text-center">
                 <h3 className="text-base font-medium text-foreground mb-2">
@@ -56,6 +59,7 @@ const FeedPage = async () => {
                 </Link>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
