@@ -4,19 +4,22 @@ import PostForm from "../../features/feed/components/organisms/post-form";
 const WritePage = async () => {
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-success/20 via-accent/10 to-primary/20 min-h-[calc(100vh-73px)]">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-success to-accent p-6 rounded-xl mb-8">
-            <h1 className="text-3xl font-bold text-success-foreground mb-2 text-foreground">
+      <div className="min-h-[calc(100vh-73px)] bg-background">
+        <div className="max-w-4xl mx-auto">
+          <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-border">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
               Share Your Daily Growth
             </h1>
-            <p className="text-success-foreground/90">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Record your professional achievements and learnings
             </p>
           </div>
-          <div className="bg-card rounded-lg shadow-sm border border-primary/30">
-            <div className="px-6 py-8">
-              <PostForm />
+
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="bg-card rounded-lg shadow-sm border border-border">
+              <div className="px-6 py-8">
+                <PostForm />
+              </div>
             </div>
           </div>
         </div>

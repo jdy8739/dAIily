@@ -17,16 +17,18 @@ const DraftsPage = async () => {
 
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-accent/20 via-primary/10 to-info/20 min-h-[calc(100vh-73px)]">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-accent to-info p-6 rounded-xl mb-8">
-            <h1 className="text-3xl font-bold text-accent-foreground mb-2">
+      <div className="min-h-[calc(100vh-73px)] bg-background">
+        <div className="max-w-4xl mx-auto">
+          <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-border">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
               My Drafts
             </h1>
-            <p className="text-accent-foreground/90">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Continue working on your unfinished posts
             </p>
           </div>
+
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
 
           <div className="space-y-6">
             {drafts.length !== 0 && (
@@ -50,6 +52,7 @@ const DraftsPage = async () => {
                 Write New Entry
               </Link>
             </div>
+          </div>
           </div>
         </div>
       </div>
