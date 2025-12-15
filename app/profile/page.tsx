@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentUser } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import AuthLayout from "../../components/templates/auth-layout";
@@ -34,28 +35,41 @@ const ProfilePage = async () => {
 
   return (
     <AuthLayout>
-      <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-success/20 min-h-screen">
-        <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-12 flex items-start gap-4">
-            <AvatarInitials name={user.name || "User"} size="lg" />
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground mb-1">
-                {user.name || "Profile"}
-              </h1>
-              <p className="text-muted-foreground">
-                Manage your personal information and career goals
-              </p>
+      <div className="min-h-screen bg-background">
+        <div className="max-w-4xl mx-auto">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
+            <div className="px-4 py-3 sm:px-6 sm:py-4">
+              <Link
+                href="/feed"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                ← Back to Feed
+              </Link>
             </div>
           </div>
 
-          {/* Tabbed Content */}
-          <div className="bg-card rounded-lg shadow-sm border border-border p-8">
-            <ProfileTabs
-              items={tabItems}
-              defaultTab="profile"
-              queryParam="tab"
-            />
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="mb-6">
+              <div className="flex items-start gap-4">
+                <AvatarInitials name={user.name || "User"} size="lg" />
+                <div className="flex-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">
+                    {user.name || "Profile"}
+                  </h1>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    Manage your personal information and career goals
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* Tabbed Content */}
+            <div className="bg-card rounded-lg shadow-sm border border-border p-8">
+              <ProfileTabs
+                items={tabItems}
+                defaultTab="profile"
+                queryParam="tab"
+              />
+            </div>
           </div>
         </div>
       </div>

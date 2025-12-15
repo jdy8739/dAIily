@@ -1,18 +1,13 @@
 import { NextRequest } from "next/server";
-import OpenAI from "openai";
 import { getCurrentUser } from "../../../../lib/auth";
 import { prisma } from "../../../../lib/prisma";
-import { env } from "../../../../lib/env";
 import { logger } from "../../../../lib/logger";
 import {
   sanitizeContent,
   sanitizeGoalTitle,
   sanitizePeriod,
 } from "../../../../lib/sanitize";
-
-const openai = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,
-});
+import { openai, agent } from "../../../../features/ai/lib/agent";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -259,7 +254,7 @@ Content: ${sanitizeContent(p.content, 2000)}
 
     // Generate story with streaming
     const stream = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: agent.model,
       messages: [
         {
           role: "system",
