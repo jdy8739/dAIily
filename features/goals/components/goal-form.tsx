@@ -82,7 +82,13 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
         {error && <p className="text-accent text-sm">{error}</p>}
 
         <div className="flex gap-2">
-          <Button type="submit" variant="primary" size="sm" disabled={loading}>
+          <Button
+            type="submit"
+            variant="primary"
+            size="sm"
+            disabled={loading}
+            className="flex-1"
+          >
             {loading
               ? isEditMode
                 ? "Updating..."
@@ -97,6 +103,7 @@ const GoalForm = ({ period, goal, onSubmit, onCancel }: GoalFormProps) => {
             size="sm"
             onClick={onCancel}
             disabled={loading}
+            className="flex-1"
           >
             Cancel
           </Button>

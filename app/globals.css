@@ -268,6 +268,10 @@ body {
   border-color: hsl(var(--accent));
 }
 
+.border-success {
+  border-color: hsl(var(--success));
+}
+
 .ring-ring {
   --tw-ring-color: hsl(var(--ring));
 }

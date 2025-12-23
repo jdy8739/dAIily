@@ -93,52 +93,56 @@ const GoalCard = ({
         </div>
 
         {goal.status === "ACTIVE" && (
-          <div className="flex gap-2 flex-wrap">
+          <div className="grid grid-cols-3 gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => onEdit(goal.id)}
               disabled={loading}
-              className="text-foreground border-border hover:bg-muted"
+              className="text-primary border-primary hover:border-primary hover:bg-primary/10"
             >
-              <Pencil className="w-4 h-4 mr-1" /> Edit
+              <Pencil className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Edit</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleComplete}
               disabled={loading}
-              className="text-success border-success hover:bg-success/10"
+              className="text-success border-success hover:border-success hover:bg-success/10"
             >
-              <Check className="w-4 h-4 mr-1" /> Complete
+              <Check className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Complete</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleRemove}
               disabled={loading}
-              className="text-accent border-accent hover:bg-accent/10"
+              className="text-accent border-accent hover:border-accent hover:bg-accent/10"
             >
-              <X className="w-4 h-4 mr-1" /> Delete
+              <X className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Delete</span>
             </Button>
           </div>
         )}
 
         {goal.status === "COMPLETED" && (
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <span className="text-success text-sm font-medium flex items-center gap-1">
               <Check className="w-4 h-4" /> Completed
             </span>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {onReactivate && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleReactivate}
                   disabled={loading}
-                  className="text-primary border-primary hover:bg-primary/10"
+                  className="text-primary border-primary hover:border-primary hover:bg-primary/10"
                 >
-                  <RotateCcw className="w-4 h-4 mr-1" /> Reactivate
+                  <RotateCcw className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Reactivate</span>
                 </Button>
               )}
               <Button
@@ -146,9 +150,10 @@ const GoalCard = ({
                 size="sm"
                 onClick={handleRemove}
                 disabled={loading}
-                className="text-accent border-accent hover:bg-accent/10"
+                className="text-accent border-accent hover:border-accent hover:bg-accent/10"
               >
-                <X className="w-4 h-4 mr-1" /> Delete
+                <X className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Delete</span>
               </Button>
             </div>
           </div>
