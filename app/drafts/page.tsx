@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AuthLayout from "../../components/templates/auth-layout";
+import WriteNewEntryLink from "../../components/atoms/write-new-entry-link";
 import { getCurrentUser } from "../../lib/auth";
 import { getUserDraftPosts } from "../../features/feed/lib/queries";
 import { loadMoreDraftPosts } from "../../features/feed/lib/actions";
@@ -48,19 +49,14 @@ const DraftsPage = async () => {
                 />
               )}
 
-              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
+              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-2xl border border-border/30 p-8 shadow-lg">
                 <h3 className="text-lg font-medium text-foreground mb-2">
                   Ready to write something new?
                 </h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-6">
                   Share your professional journey with the community
                 </p>
-                <Link
-                  href="/write"
-                  className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  Write New Entry
-                </Link>
+                <WriteNewEntryLink />
               </div>
             </div>
           </div>
