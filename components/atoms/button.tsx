@@ -25,7 +25,7 @@ const Button = ({
     secondary:
       "border border-secondary/40 bg-gradient-to-br from-secondary/15 to-secondary/5 text-secondary hover:scale-105 hover:shadow-md hover:from-secondary/25 hover:to-secondary/10 hover:border-secondary/60 disabled:hover:scale-100",
     outline:
-      "border border-border/50 bg-gradient-to-br from-background/80 to-background text-foreground hover:bg-muted/60 hover:shadow-sm hover:border-border/80",
+      "border border-border text-foreground bg-transparent hover:bg-muted/30 hover:border-foreground",
     ai: "border border-primary/40 bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:scale-105 hover:shadow-md hover:from-primary/30 hover:to-primary/15 hover:border-primary/60 disabled:hover:scale-100",
   };
 
