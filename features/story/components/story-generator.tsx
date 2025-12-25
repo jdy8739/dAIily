@@ -372,10 +372,15 @@ const StoryGenerator = () => {
           {(Object.keys(STORY_PERIOD_LABELS) as Period[]).map(p => (
             <Button
               key={p}
-              variant={period === p ? "primary" : "outline"}
+              variant="outline"
               size="sm"
               onClick={() => selectPeriod(p)}
               disabled={loading}
+              className={
+                period === p
+                  ? "text-primary border-primary hover:border-primary hover:bg-primary/10"
+                  : ""
+              }
             >
               {STORY_PERIOD_LABELS[p]}
             </Button>

@@ -6,6 +6,7 @@ import { useCsrf } from "../../../components/providers/csrf-provider";
 import GoalCard from "./goal-card";
 import GoalForm from "./goal-form";
 import Skeleton from "../../../components/atoms/skeleton";
+import Button from "../../../components/atoms/button";
 import { getGoals, createGoal, updateGoal, deleteGoal } from "../lib/actions";
 import { Goal as PrismaGoal, GoalStatus } from "@prisma/client";
 
@@ -240,25 +241,23 @@ const GoalsSection = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {GOAL_PERIODS.map(period => (
-                <button
+                <Button
                   key={period}
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setSelectedPeriod(period);
                     setShowForm(false);
                     setEditingGoalId(null);
                   }}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                    border cursor-pointer
-                    ${
-                      selectedPeriod === period
-                        ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
-                        : "bg-background/60 text-muted-foreground border-border/50 hover:border-primary/50 hover:text-foreground hover:scale-105"
-                    }
-                  `}
+                  className={
+                    selectedPeriod === period
+                      ? "text-primary border-primary hover:border-primary hover:bg-primary/10"
+                      : ""
+                  }
                 >
                   {GOAL_PERIOD_LABELS[period]}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
