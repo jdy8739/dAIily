@@ -161,7 +161,7 @@ const GoalsSection = () => {
         <div className="p-6 space-y-6">
           {/* Modern Tab Switcher - Pill Style */}
           <div className="relative bg-muted/30 rounded-xl p-1.5 backdrop-blur-sm border border-border/20">
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => {
                   setSelectedTab("active");
