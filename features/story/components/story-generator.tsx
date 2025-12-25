@@ -265,29 +265,21 @@ const StoryGenerator = () => {
       value: "low" as Harshness,
       icon: Heart,
       label: "Gentle",
-      color: "from-success/20 to-success/5",
-      iconColor: "text-success",
     },
     {
       value: "medium" as Harshness,
       icon: Target,
       label: "Balanced",
-      color: "from-info/20 to-info/5",
-      iconColor: "text-info",
     },
     {
       value: "harsh" as Harshness,
       icon: Zap,
       label: "Direct",
-      color: "from-warning/20 to-warning/5",
-      iconColor: "text-warning",
     },
     {
       value: "brutal" as Harshness,
       icon: Flame,
       label: "Brutal",
-      color: "from-destructive/20 to-destructive/5",
-      iconColor: "text-destructive",
     },
   ];
 
@@ -316,40 +308,64 @@ const StoryGenerator = () => {
 
         <div className="relative bg-muted/30 rounded-xl p-1.5 backdrop-blur-sm border border-border/20 max-w-2xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-            {harshnessOptions.map(option => (
-              <button
-                key={option.value}
-                onClick={() => setHarshness(option.value)}
-                disabled={loading}
-                className={`
-                  relative px-4 py-3.5 rounded-lg transition-all duration-300 ease-out
-                  flex flex-col items-center gap-2 border
-                  ${
-                    harshness === option.value
-                      ? `bg-gradient-to-br ${option.color} shadow-md scale-105 border-border/40`
-                      : "border-transparent hover:bg-background/40"
-                  }
-                  ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-                `}
-              >
-                <option.icon
-                  className={`w-5 h-5 transition-all duration-300 ${
-                    harshness === option.value
-                      ? `scale-110 ${option.iconColor}`
-                      : "opacity-60"
-                  }`}
-                />
-                <span
-                  className={`text-xs font-medium transition-all ${
-                    harshness === option.value
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
+            {harshnessOptions.map(option => {
+              const isActive = harshness === option.value;
+              const getActiveClasses = () => {
+                if (!isActive) return "";
+                switch (option.value) {
+                  case "low":
+                    return "bg-gradient-to-br from-success/40 to-success/20 border-success shadow-lg scale-105";
+                  case "medium":
+                    return "bg-gradient-to-br from-info/40 to-info/20 border-info shadow-lg scale-105";
+                  case "harsh":
+                    return "bg-gradient-to-br from-warning/40 to-warning/20 border-warning shadow-lg scale-105";
+                  case "brutal":
+                    return "bg-gradient-to-br from-destructive/40 to-destructive/20 border-destructive shadow-lg scale-105";
+                  default:
+                    return "";
+                }
+              };
+              const getIconClasses = () => {
+                if (!isActive) return "opacity-60";
+                switch (option.value) {
+                  case "low":
+                    return "scale-110 text-success";
+                  case "medium":
+                    return "scale-110 text-info";
+                  case "harsh":
+                    return "scale-110 text-warning";
+                  case "brutal":
+                    return "scale-110 text-destructive";
+                  default:
+                    return "";
+                }
+              };
+
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => setHarshness(option.value)}
+                  disabled={loading}
+                  className={`
+                    relative px-4 py-3.5 rounded-lg transition-all duration-300 ease-out
+                    flex flex-col items-center gap-2 border-2
+                    ${isActive ? getActiveClasses() : "border-transparent hover:bg-background/40"}
+                    ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                  `}
                 >
-                  {option.label}
-                </span>
-              </button>
-            ))}
+                  <option.icon
+                    className={`w-5 h-5 transition-all duration-300 ${getIconClasses()}`}
+                  />
+                  <span
+                    className={`text-xs font-medium transition-all ${
+                      isActive ? "text-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    {option.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -372,10 +388,15 @@ const StoryGenerator = () => {
           {(Object.keys(STORY_PERIOD_LABELS) as Period[]).map(p => (
             <Button
               key={p}
-              variant={period === p ? "primary" : "outline"}
+              variant="outline"
               size="sm"
               onClick={() => selectPeriod(p)}
               disabled={loading}
+              className={
+                period === p
+                  ? "text-primary border-primary hover:border-primary hover:bg-primary/10"
+                  : ""
+              }
             >
               {STORY_PERIOD_LABELS[p]}
             </Button>

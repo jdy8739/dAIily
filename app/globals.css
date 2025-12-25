@@ -16,6 +16,12 @@
   --accent-foreground: 220 10% 4%;
   --success: 92 28% 65%;
   --success-foreground: 220 10% 4%;
+  --info: 193 43% 67%;
+  --info-foreground: 220 10% 4%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 220 10% 4%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
   --card: 220 10% 6%;
   --card-foreground: 0 0% 98%;
   --popover: 220 10% 6%;
@@ -52,6 +58,12 @@
   --accent-foreground: 0 0% 100%;
   --success: 92 28% 45%;
   --success-foreground: 0 0% 100%;
+  --info: 193 43% 50%;
+  --info-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
   --card: 0 0% 100%;
   --card-foreground: 222 84% 5%;
   --popover: 0 0% 100%;
@@ -272,6 +284,54 @@ body {
   border-color: hsl(var(--success));
 }
 
+.bg-info {
+  background-color: hsl(var(--info));
+}
+
+.text-info {
+  color: hsl(var(--info));
+}
+
+.text-info-foreground {
+  color: hsl(var(--info-foreground));
+}
+
+.border-info {
+  border-color: hsl(var(--info));
+}
+
+.bg-warning {
+  background-color: hsl(var(--warning));
+}
+
+.text-warning {
+  color: hsl(var(--warning));
+}
+
+.text-warning-foreground {
+  color: hsl(var(--warning-foreground));
+}
+
+.border-warning {
+  border-color: hsl(var(--warning));
+}
+
+.bg-destructive {
+  background-color: hsl(var(--destructive));
+}
+
+.text-destructive {
+  color: hsl(var(--destructive));
+}
+
+.text-destructive-foreground {
+  color: hsl(var(--destructive-foreground));
+}
+
+.border-destructive {
+  border-color: hsl(var(--destructive));
+}
+
 .ring-ring {
   --tw-ring-color: hsl(var(--ring));
 }
@@ -291,4 +351,16 @@ body {
 
 .hover-success:hover {
   background-color: hsl(var(--success) / 0.9);
+}
+
+.hover-info:hover {
+  background-color: hsl(var(--info) / 0.9);
+}
+
+.hover-warning:hover {
+  background-color: hsl(var(--warning) / 0.9);
+}
+
+.hover-destructive:hover {
+  background-color: hsl(var(--destructive) / 0.9);
 }
