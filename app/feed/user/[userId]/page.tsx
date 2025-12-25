@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PenTool } from "lucide-react";
 import AuthLayout from "../../../../components/templates/auth-layout";
+import WriteNewEntryLink from "../../../../components/atoms/write-new-entry-link";
 import Tabs from "../../../../components/atoms/tabs";
 import {
   getUserById,
@@ -112,8 +112,8 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
             </div>
 
             {/* Write CTA */}
-            <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-info/10 border-2 border-primary/20 rounded-xl p-6 hover:border-primary/40 transition-all">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-2xl border border-border/30 p-8 shadow-lg">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="text-center md:text-left">
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     Share Your Professional Journey
@@ -123,13 +123,7 @@ const UserProfilePage = async ({ params }: UserProfilePageProps) => {
                     inspires others!
                   </p>
                 </div>
-                <Link
-                  href="/write"
-                  className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md whitespace-nowrap gap-2"
-                >
-                  <PenTool className="w-4 h-4" />
-                  Write New Entry
-                </Link>
+                <WriteNewEntryLink />
               </div>
             </div>
           </div>
