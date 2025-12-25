@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MessageCircle, Share2, Pencil, Bot } from "lucide-react";
 import AuthLayout from "../../../components/templates/auth-layout";
+import WriteNewEntryLink from "../../../components/atoms/write-new-entry-link";
 import { getCurrentUser } from "../../../lib/auth";
 import DeletePostButton from "../../../features/feed/components/molecules/delete-post-button";
 import LikeButton from "../../../features/feed/components/molecules/like-button";
@@ -238,19 +239,14 @@ const FeedDetailPage = async ({ params }: FeedDetailPageProps) => {
           </div>
 
           {/* Call to Action */}
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 rounded-lg p-6 text-center">
+          <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-2xl border border-border/30 p-8 shadow-lg text-center">
             <h3 className="text-lg font-medium text-foreground mb-2">
               Inspired by this story?
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-muted-foreground mb-6">
               Share your own professional growth journey
             </p>
-            <Link
-              href="/write"
-              className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            >
-              Write Your Entry
-            </Link>
+            <WriteNewEntryLink />
           </div>
           </div>
         </div>
