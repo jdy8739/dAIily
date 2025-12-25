@@ -22,15 +22,19 @@ const Chip = ({
   className = "",
 }: ChipProps) => {
   const baseClasses =
-    "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors cursor-pointer";
+    "inline-flex items-center gap-1.5 rounded-full font-medium transition-all duration-300 ease-out cursor-pointer";
 
   const variantClasses = {
-    default: "bg-muted text-muted-foreground hover:bg-muted/80",
-    primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-    accent: "bg-accent text-accent-foreground hover:bg-accent/80",
+    default:
+      "bg-gradient-to-r from-muted to-muted/50 text-muted-foreground hover:from-muted/80 hover:to-muted/40 hover:shadow-sm border border-border/20",
+    primary:
+      "bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:from-primary/30 hover:to-primary/15 hover:shadow-md border border-primary/30 hover:border-primary/50",
+    secondary:
+      "bg-gradient-to-br from-secondary/20 to-secondary/10 text-secondary hover:from-secondary/30 hover:to-secondary/15 hover:shadow-md border border-secondary/30 hover:border-secondary/50",
+    accent:
+      "bg-gradient-to-br from-accent/20 to-accent/10 text-accent hover:from-accent/30 hover:to-accent/15 hover:shadow-md border border-accent/30 hover:border-accent/50",
     outline:
-      "border border-border bg-background text-foreground hover:bg-muted/50",
+      "border border-border bg-background/50 text-foreground hover:bg-muted/60 hover:border-border/80 hover:shadow-sm",
   };
 
   const sizeClasses = {
