@@ -17,16 +17,16 @@ const Button = ({
   ...props
 }: ButtonProps) => {
   const baseClasses =
-    "font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer inline-flex items-center justify-center";
+    "font-medium rounded-lg transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer inline-flex items-center justify-center focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:outline-none";
 
   const variantClasses = {
     primary:
-      "bg-foreground text-background hover:bg-foreground/90 focus:ring-ring border border-transparent",
+      "border border-primary/40 bg-gradient-to-br from-primary/15 to-primary/5 text-primary hover:scale-105 hover:shadow-md hover:from-primary/25 hover:to-primary/10 hover:border-primary/60 disabled:hover:scale-100",
     secondary:
-      "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-ring border border-border/50",
+      "border border-secondary/40 bg-gradient-to-br from-secondary/15 to-secondary/5 text-secondary hover:scale-105 hover:shadow-md hover:from-secondary/25 hover:to-secondary/10 hover:border-secondary/60 disabled:hover:scale-100",
     outline:
-      "border border-border text-foreground bg-transparent hover:bg-accent hover:border-border/80 focus:ring-ring",
-    ai: "border border-primary/30 text-primary bg-primary/10 hover:bg-primary/20 focus:ring-ring",
+      "border border-border/50 bg-gradient-to-br from-background/80 to-background text-foreground hover:bg-muted/60 hover:shadow-sm hover:border-border/80",
+    ai: "border border-primary/40 bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:scale-105 hover:shadow-md hover:from-primary/30 hover:to-primary/15 hover:border-primary/60 disabled:hover:scale-100",
   };
 
   const sizeClasses = {

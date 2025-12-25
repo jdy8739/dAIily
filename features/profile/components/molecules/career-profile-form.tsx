@@ -8,6 +8,7 @@ import { Briefcase, Code, RotateCcw } from "lucide-react";
 import Input from "../../../../components/atoms/input";
 import Dropdown from "../../../../components/atoms/dropdown";
 import ChipList from "../../../../components/atoms/chip-list";
+import Button from "../../../../components/atoms/button";
 
 interface CareerProfileFormProps {
   user: User;
@@ -237,22 +238,25 @@ const CareerProfileForm = ({ user }: CareerProfileFormProps) => {
 
       <div className="pt-6 flex gap-3">
         {hasChanges && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="md"
             onClick={handleRevert}
             disabled={isSubmitting}
-            className="flex items-center justify-center px-6 py-3 border border-border text-foreground rounded-md hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
           >
             <RotateCcw className="w-4 h-4 mr-2" /> Revert
-          </button>
+          </Button>
         )}
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="md"
           disabled={isSubmitting || !hasChanges}
-          className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          className="flex-1"
         >
           {isSubmitting ? "Updating..." : "Update Career Information"}
-        </button>
+        </Button>
       </div>
     </form>
   );

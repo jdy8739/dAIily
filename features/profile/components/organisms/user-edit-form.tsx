@@ -7,6 +7,7 @@ import type { User } from "@prisma/client";
 import Input from "../../../../components/atoms/input";
 import Textarea from "../../../../components/atoms/textarea";
 import Dropdown from "../../../../components/atoms/dropdown";
+import Button from "../../../../components/atoms/button";
 import ClientDate from "../../../../components/atoms/client-date";
 
 interface UserEditFormProps {
@@ -321,8 +322,10 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
       </div>
 
       <div className="pt-4">
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="md"
           disabled={
             isSubmitting ||
             isDeleting ||
@@ -330,10 +333,10 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
             !name.trim() ||
             !email.trim()
           }
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-semibold"
+          className="w-full"
         >
           {isSubmitting ? "Updating..." : "Update Profile"}
-        </button>
+        </Button>
       </div>
 
       <div className="pt-2 text-center">
@@ -344,7 +347,7 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
 
       {/* Danger Zone */}
       <div className="mt-12 pt-8 border-t border-accent/30">
-        <div className="bg-accent/5 border border-accent/20 rounded-lg p-6">
+        <div className="bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/30 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-accent mb-2">
             Danger Zone
           </h3>
@@ -352,14 +355,15 @@ const UserEditForm = ({ user }: UserEditFormProps) => {
             Once you delete your account, there is no going back. All your
             posts, replies, and likes will be permanently deleted.
           </p>
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="md"
             onClick={handleDeleteAccount}
             disabled={isSubmitting || isDeleting}
-            className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors font-medium"
           >
             {isDeleting ? "Deleting Account..." : "Delete Account"}
-          </button>
+          </Button>
         </div>
       </div>
     </form>
