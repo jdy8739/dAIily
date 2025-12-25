@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteAccount } from "../../lib/actions";
+import Button from "../../../../components/atoms/button";
 
 const DeleteAccountSection = () => {
   const handleDeleteAccount = async () => {
@@ -28,7 +29,7 @@ const DeleteAccountSection = () => {
 
   return (
     <div className="mt-12 pt-8 border-t border-accent/30">
-      <div className="bg-accent/5 border border-accent/20 rounded-lg p-6">
+      <div className="bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/30 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-accent mb-2">
           Delete Account
         </h3>
@@ -36,13 +37,14 @@ const DeleteAccountSection = () => {
           Once you delete your account, there is no going back. All your posts,
           replies, and likes will be permanently deleted.
         </p>
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="md"
           onClick={handleDeleteAccount}
-          className="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors font-semibold cursor-pointer"
         >
           Delete Account
-        </button>
+        </Button>
       </div>
     </div>
   );

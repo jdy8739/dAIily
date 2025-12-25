@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Button from "../../../../components/atoms/button";
 
 interface TabItem {
   id: string;
@@ -57,24 +58,18 @@ const ProfileTabs = ({ items, defaultTab, queryParam }: ProfileTabsProps) => {
   return (
     <div className="w-full">
       {/* Pill-style Tab Navigation */}
-      <div className="flex flex-wrap gap-2 p-1 bg-muted/50 rounded-lg w-fit">
+      <div className="flex flex-wrap gap-2 w-fit">
         {items.map(item => (
-          <button
+          <Button
             key={item.id}
+            type="button"
+            variant={activeTab === item.id ? "primary" : "outline"}
+            size="md"
             onClick={() => handleTabChange(item.id)}
-            className={`
-              px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap
-              transition-all duration-200 cursor-pointer
-              ${
-                activeTab === item.id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }
-            `}
             aria-current={activeTab === item.id ? "page" : undefined}
           >
             {item.label}
-          </button>
+          </Button>
         ))}
       </div>
 
